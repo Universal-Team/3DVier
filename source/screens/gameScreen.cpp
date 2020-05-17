@@ -40,8 +40,12 @@ GameScreen::GameScreen() {
 	this->p1Name = Keyboard::getString(10, Lang::get("PLAYER1_NAME"), 0.6f);
 	this->p2Name = Keyboard::getString(10, Lang::get("PLAYER2_NAME"), 0.6f);
 	int Temp = Keyboard::getUint(255, Lang::get("ENTER_WIN_AMOUNT"));
-	if (Temp > 0)	this->winAmount = Temp;
-	else			this->winAmount = 3; // 3 Default.
+	
+	if (Temp > 0) {
+		this->winAmount = Temp;
+	} else {
+		this->winAmount = 3; // 3 Default.
+	}
 
 	this->currentGame = std::make_unique<Game>();
 	this->Refresh();
