@@ -28,9 +28,10 @@
 #define _3DVIER_HELPER_HPP
 
 #include <3ds.h>
+#include <string>
 
 namespace _3DVier_Helper {
-	int selectAvatar(int oldAvatar);
+	int selectAvatar(int oldAvatar, const std::string text);
 }
 
 #endif

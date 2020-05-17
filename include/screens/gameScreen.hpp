@@ -44,11 +44,16 @@ private:
 	int rowSelection = 3; // To select the Row.
 	int dropSelection = 0; // Where to drop.
 	void Refresh(); // Refresh the dropSelection.
-	bool isStats = false;
+
+	// Player Names etc.
 	int avatar1, avatar2, winAmount;
 	std::string p1Name, p2Name;
 	std::string getName(int Player) const;
 	int getAvatar(int Player) const;
+
+	// Special handle.
+	int handleAI();
+	int getValue(int row);
 
 	std::vector<ChipIcn> GamePos = {
 		// First Row -> 0-6.

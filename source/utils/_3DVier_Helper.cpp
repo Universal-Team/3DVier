@@ -34,7 +34,7 @@ extern std::unique_ptr<Config> config;
 extern touchPosition touch;
 
 // Select a Character.
-int _3DVier_Helper::selectAvatar(int oldAvatar) {
+int _3DVier_Helper::selectAvatar(int oldAvatar, const std::string text) {
 	int selection = 0;
 	int page = 1;
 	while(1) {
@@ -44,7 +44,7 @@ int _3DVier_Helper::selectAvatar(int oldAvatar) {
 		C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
 		GFX::DrawTop();
 		Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 190));
-		Gui::DrawStringCentered(0, 0, 0.8f, config->textColor(), "Select a character you want.", 390, 30);
+		Gui::DrawStringCentered(0, 0, 0.8f, config->textColor(), text, 390, 30);
 		if (page == 1) {
 			GFX::DrawPlayer(-5, 35, 1, 1, 0);
 			GFX::DrawPlayer(95, 35, 1, 1, 1);
@@ -56,6 +56,17 @@ int _3DVier_Helper::selectAvatar(int oldAvatar) {
 			GFX::DrawPlayer(195, 35, 1, 1, 6);
 			GFX::DrawPlayer(295, 35, 1, 1, 7);
 		}
+
+		Gui::Draw_Rect(10, 160, 80, 30, config->buttonColor());
+		Gui::Draw_Rect(110, 160, 80, 30, config->buttonColor());
+		Gui::Draw_Rect(210, 160, 80, 30, config->buttonColor());
+		Gui::Draw_Rect(310, 160, 80, 30, config->buttonColor());
+		if (page == 1) {
+			GFX::DrawButtonSelector(10 + (selection * 100), 160, 1, 1, true);
+		} else {
+			GFX::DrawButtonSelector(10 + ((selection-4) * 100), 160, 1, 1, true);
+		}
+
 		GFX::DrawBottom();
 		Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, 190));
 		C3D_FrameEnd(0);
