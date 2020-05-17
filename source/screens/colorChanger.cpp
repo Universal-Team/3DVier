@@ -49,7 +49,7 @@ void ColorChanger::DrawPreview(void) const {
 
 void ColorChanger::Draw(void) const {
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, 0, 0.9f, config->textColor(), "3DVier - UI Settings", 320);
+	Gui::DrawStringCentered(0, 0, 0.9f, config->textColor(), "3DVier - " + Lang::get("COLOR_SETTINGS"), 320);
 	DrawPreview();
 	GFX::DrawBottom();
 
@@ -58,42 +58,42 @@ void ColorChanger::Draw(void) const {
 	Gui::Draw_Rect(buttons[2].x, buttons[2].y, 95, 41, C2D_Color32(0, 0, 255, 255));
 
 	if (colorMode == 0) {
-		Gui::DrawStringCentered(0, 60, 0.7f, WHITE, "Selector Color", 320);
+		Gui::DrawStringCentered(0, 60, 0.7f, WHITE, Lang::get("SELECTOR_COLOR"), 320);
 		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(config->selectorColor(), 2).c_str(), 400);
 		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(config->selectorColor(), 1).c_str(), 400);
 		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(config->selectorColor(), 0).c_str(), 400);
 	} else if (colorMode == 1) {
-		Gui::DrawStringCentered(0, 60, 0.7f, WHITE, "Button Color", 320);
+		Gui::DrawStringCentered(0, 60, 0.7f, WHITE, Lang::get("BUTTON_COLOR"), 320);
 		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(config->buttonColor(), 2).c_str(), 400);
 		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(config->buttonColor(), 1).c_str(), 400);
 		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(config->buttonColor(), 0).c_str(), 400);
 	} else if (colorMode == 2) {
-		Gui::DrawStringCentered(0, 60, 0.7f, WHITE, "Bar Color", 320);
+		Gui::DrawStringCentered(0, 60, 0.7f, WHITE, Lang::get("BAR_COLOR"), 320);
 		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(config->barColor(), 2).c_str(), 400);
 		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(config->barColor(), 1).c_str(), 400);
 		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(config->barColor(), 0).c_str(), 400);
 	} else if (colorMode == 3) {
-		Gui::DrawStringCentered(0, 60, 0.7f, WHITE, "BG Color", 320);
+		Gui::DrawStringCentered(0, 60, 0.7f, WHITE, Lang::get("BG_COLOR"), 320);
 		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(config->bgColor(), 2).c_str(), 400);
 		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(config->bgColor(), 1).c_str(), 400);
 		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(config->bgColor(), 0).c_str(), 400);
 	} else if (colorMode == 4) {
-		Gui::DrawStringCentered(0, 60, 0.7f, WHITE, "Text Color", 320);
+		Gui::DrawStringCentered(0, 60, 0.7f, WHITE, Lang::get("TEXT_COLOR"), 320);
 		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(config->textColor(), 2).c_str(), 400);
 		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(config->textColor(), 1).c_str(), 400);
 		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(config->textColor(), 0).c_str(), 400);
 	} else if (colorMode == 5) {
-		Gui::DrawStringCentered(0, 60, 0.7f, WHITE, "Player 1 Chip Color", 320);
+		Gui::DrawStringCentered(0, 60, 0.7f, WHITE, Lang::get("P1CHIP_COLOR"), 320);
 		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(config->p1Chip(), 2).c_str(), 400);
 		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(config->p1Chip(), 1).c_str(), 400);
 		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(config->p1Chip(), 0).c_str(), 400);
 	} else if (colorMode == 6) {
-		Gui::DrawStringCentered(0, 60, 0.7f, WHITE, "Player 2 Chip Color", 320);
+		Gui::DrawStringCentered(0, 60, 0.7f, WHITE, Lang::get("P2CHIP_COLOR"), 320);
 		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(config->p2Chip(), 2).c_str(), 400);
 		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(config->p2Chip(), 1).c_str(), 400);
 		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(config->p2Chip(), 0).c_str(), 400);
 	} else if (colorMode == 7) {
-		Gui::DrawStringCentered(0, 60, 0.7f, WHITE, "Raster Color", 320);
+		Gui::DrawStringCentered(0, 60, 0.7f, WHITE, Lang::get("RASTER_COLOR"), 320);
 		Gui::DrawString(40, 98, 0.7f, WHITE, ColorHelper::getColorName(config->raster(), 2).c_str(), 400);
 		Gui::DrawString(140, 98, 0.7f, WHITE, ColorHelper::getColorName(config->raster(), 1).c_str(), 400);
 		Gui::DrawString(245, 98, 0.7f, WHITE, ColorHelper::getColorName(config->raster(), 0).c_str(), 400);
@@ -120,7 +120,7 @@ void ColorChanger::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (hDown & KEY_TOUCH) {
 		if (touching(touch, buttons[0])) {
-			int temp = Keyboard::getUint(255, "Enter the Red RGB.");
+			int temp = Keyboard::getUint(255, Lang::get("ENTER_RED_RGB"));
 			if(temp != -1) {
 				red = temp;
 				if (colorMode == 0) {
@@ -142,7 +142,7 @@ void ColorChanger::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 			}
 		} else if (touching(touch, buttons[1])) {
-			int temp = Keyboard::getUint(255, "Enter the Green RGB.");
+			int temp = Keyboard::getUint(255, Lang::get("ENTER_GREEN_RGB"));
 			if(temp != -1) {
 				green = temp;
 				if (colorMode == 0) {
@@ -164,7 +164,7 @@ void ColorChanger::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 			}
 		} else if (touching(touch, buttons[2])) {
-			int temp = Keyboard::getUint(255, "Enter the Blue RGB.");
+			int temp = Keyboard::getUint(255, Lang::get("ENTER_BLUE_RGB"));
 			if(temp != -1) {
 				blue = temp;
 				if (colorMode == 0) {

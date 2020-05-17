@@ -24,12 +24,11 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "colorChanger.hpp"
 #include "config.hpp"
 #include "credits.hpp"
 #include "gameScreen.hpp"
 #include "mainMenu.hpp"
-
+#include "uiSettings.hpp"
 
 extern std::unique_ptr<Config> config;
 extern bool exiting;
@@ -37,7 +36,7 @@ extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
 void MainMenu::Draw(void) const {
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, 0, 0.9f, config->textColor(), "3DVier - MainMenu");
+	Gui::DrawStringCentered(0, 0, 0.9f, config->textColor(), "3DVier - " + Lang::get("MAINMENU"));
 	GFX::DrawBottom();
 	for (int i = 0; i < 4; i++) {
 		Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, config->buttonColor());
@@ -46,9 +45,9 @@ void MainMenu::Draw(void) const {
 		}
 	}
 
-	Gui::DrawStringCentered(-80, mainButtons[0].y+12, 0.6f, config->textColor(), "New Game", 130);
-	Gui::DrawStringCentered(80, mainButtons[1].y+12, 0.6f, config->textColor(), "UI Settings", 130);
-	Gui::DrawStringCentered(-80, mainButtons[2].y+12, 0.6f, config->textColor(), "Credits", 130);
+	Gui::DrawStringCentered(-80, mainButtons[0].y+12, 0.6f, config->textColor(), Lang::get("NEW_GAME"), 130);
+	Gui::DrawStringCentered(80, mainButtons[1].y+12, 0.6f, config->textColor(), Lang::get("UI_SETTINGS"), 130);
+	Gui::DrawStringCentered(-80, mainButtons[2].y+12, 0.6f, config->textColor(), Lang::get("CREDITS"), 130);
 	Gui::DrawStringCentered(80, mainButtons[3].y+12, 0.6f, config->textColor(), "???", 130);
 }
 
@@ -58,7 +57,7 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		if (touching(touch, mainButtons[0])) {
 			Gui::setScreen(std::make_unique<GameScreen>());
 		} else if (touching(touch, mainButtons[1])) {
-			Gui::setScreen(std::make_unique<ColorChanger>());
+			Gui::setScreen(std::make_unique<UISettings>());
 		} else if (touching(touch, mainButtons[2])) {
 			Gui::setScreen(std::make_unique<Credits>());
 		} else if (touching(touch, mainButtons[3])) {
@@ -80,7 +79,7 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		if (Selection == 0) {
 			Gui::setScreen(std::make_unique<GameScreen>());
 		} else if (Selection == 1) {
-			Gui::setScreen(std::make_unique<ColorChanger>());
+			Gui::setScreen(std::make_unique<UISettings>());
 		} else if (Selection == 2) {
 			Gui::setScreen(std::make_unique<Credits>());
 		} else if (Selection == 3) {

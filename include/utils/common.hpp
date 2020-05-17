@@ -31,6 +31,7 @@
 #include "config.hpp"
 #include "gfx.hpp"
 #include "gui.hpp"
+#include "lang.hpp"
 #include "msg.hpp"
 #include "screenCommon.hpp"
 

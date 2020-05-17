@@ -25,27 +25,59 @@
 */
 
 #include "config.hpp"
-#include "credits.hpp"
+#include "langSelection.hpp"
 
 extern std::unique_ptr<Config> config;
-
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
-void Credits::Draw(void) const {
-	GFX::DrawTop();
-	Gui::DrawStringCentered(0, 0, 0.9f, config->textColor(), "3DVier - " + Lang::get("CREDITS"), 400);
-	Gui::DrawStringCentered(0, 30, 0.7f, config->textColor(), Lang::get("DEVELOPED_BY"), 390);
-	GFX::DrawSprite(sprites_stackZ_idx, 2, 80);
-	GFX::DrawSprite(sprites_universal_core_idx, 190, 105);
-	std::string currentVersion = Lang::get("CURRENT_VERSION");
-	currentVersion += V_STRING;
-	Gui::DrawString(395-Gui::GetStringWidth(0.70f, currentVersion), 217, 0.70f, config->textColor(), currentVersion, 400);
-	GFX::DrawBottom();
+// Get current lang.
+LangSelection::LangSelection() {
+	this->selectedLang = config->language();
 }
 
+void LangSelection::Draw(void) const {
+	GFX::DrawTop();
+	Gui::DrawStringCentered(0, 0, 0.7f, config->textColor(), Lang::get("SELECT_LANG"), 400);
+	GFX::DrawBottom();
 
-void Credits::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
-	if(hDown & KEY_B) {
+	for (int language = 0; language < 2; language++) {
+		Gui::Draw_Rect(langBlocks[language].x, langBlocks[language].y, langBlocks[language].w, langBlocks[language].h, config->buttonColor());
+		if (config->language() == language) {
+			Gui::Draw_Rect(langBlocks[language].x, langBlocks[language].y, langBlocks[language].w, langBlocks[language].h, config->selectorColor());
+		}
+	}
+
+	Gui::DrawString(langBlocks[0].x+25, langBlocks[0].y, 0.7f, config->textColor(), "Deutsch", 320);
+	Gui::DrawString(langBlocks[1].x+25, langBlocks[1].y, 0.7f, config->textColor(), "English", 320);
+}
+
+void LangSelection::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
+	if (hDown & KEY_TOUCH) {
+		for (int language = 0; language < 2; language++) {
+			if (touching(touch, langBlocks[language])) {
+				config->language(language);
+				Lang::load();
+			}
+		}
+	}
+
+	if (hDown & KEY_UP) {
+		if(this->selectedLang > 0) {
+			this->selectedLang--;
+			config->language(this->selectedLang);
+			Lang::load();
+		}
+	}
+
+	if (hDown & KEY_DOWN) {
+		if(this->selectedLang < 1) {
+			this->selectedLang++;
+			config->language(this->selectedLang);
+			Lang::load();
+		}
+	}
+	
+	if (hDown & KEY_B) {
 		Gui::screenBack();
 		return;
 	}

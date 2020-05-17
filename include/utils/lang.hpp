@@ -24,29 +24,16 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "config.hpp"
-#include "credits.hpp"
+#ifndef _3DVIER_LANG_HPP
+#define _3DVIER_LANG_HPP
 
-extern std::unique_ptr<Config> config;
+#include "json.hpp"
 
-extern bool touching(touchPosition touch, Structs::ButtonPos button);
+#include <string>
 
-void Credits::Draw(void) const {
-	GFX::DrawTop();
-	Gui::DrawStringCentered(0, 0, 0.9f, config->textColor(), "3DVier - " + Lang::get("CREDITS"), 400);
-	Gui::DrawStringCentered(0, 30, 0.7f, config->textColor(), Lang::get("DEVELOPED_BY"), 390);
-	GFX::DrawSprite(sprites_stackZ_idx, 2, 80);
-	GFX::DrawSprite(sprites_universal_core_idx, 190, 105);
-	std::string currentVersion = Lang::get("CURRENT_VERSION");
-	currentVersion += V_STRING;
-	Gui::DrawString(395-Gui::GetStringWidth(0.70f, currentVersion), 217, 0.70f, config->textColor(), currentVersion, 400);
-	GFX::DrawBottom();
+namespace Lang {
+	std::string get(const std::string &key);
+	void load();
 }
 
-
-void Credits::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
-	if(hDown & KEY_B) {
-		Gui::screenBack();
-		return;
-	}
-}
+#endif

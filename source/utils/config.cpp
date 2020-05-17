@@ -130,7 +130,7 @@ void Config::save() {
 		// Set values.
 		this->setInt("Player1_Chip", this->p1Chip());
 		this->setInt("Player2_Chip", this->p2Chip());
-		this->setInt("Raster", this->raster());
+		this->setInt("Raster_Color", this->raster());
 
 		this->setInt("Bar_Color", this->barColor());
 		this->setInt("Text_Color", this->textColor());

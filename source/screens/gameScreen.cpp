@@ -35,11 +35,14 @@ extern bool touching(touchPosition touch, Structs::ButtonPos button);
 GameScreen::GameScreen() {
 	// First we select the Avatars.
 	// Then the names.
-	this->avatar1 = _3DVier_Helper::selectAvatar(0, "Player 1: Select your avatar!");
-	this->avatar2 = _3DVier_Helper::selectAvatar(0, "Player 2: Select your avatar!");
-	this->p1Name = Keyboard::getString(10, "Enter Player 1's name.", 0.6f);
-	this->p2Name = Keyboard::getString(10, "Enter Player 2's name.", 0.6f);
-	this->winAmount = 3; // For now just 3.
+	this->avatar1 = _3DVier_Helper::selectAvatar(0, Lang::get("PLAYER1_CHAR"));
+	this->avatar2 = _3DVier_Helper::selectAvatar(0, Lang::get("PLAYER2_CHAR"));
+	this->p1Name = Keyboard::getString(10, Lang::get("PLAYER1_NAME"), 0.6f);
+	this->p2Name = Keyboard::getString(10, Lang::get("PLAYER2_NAME"), 0.6f);
+	int Temp = Keyboard::getUint(255, Lang::get("ENTER_WIN_AMOUNT"));
+	if (Temp > 0)	this->winAmount = Temp;
+	else			this->winAmount = 3; // 3 Default.
+
 	this->currentGame = std::make_unique<Game>();
 	this->Refresh();
 }
@@ -111,15 +114,15 @@ GFX::DrawTop(false);
 
 	GFX::DrawBottom();
 	Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, 210)); // Darken the screen.
-	Gui::DrawStringCentered(0, 0, 0.8f, config->textColor(), "Needed Wins to win: " + std::to_string(this->winAmount), 320);
+	Gui::DrawStringCentered(0, 0, 0.8f, config->textColor(), Lang::get("WINS_TO_WIN") + " " + std::to_string(this->winAmount), 320);
 
 	GFX::DrawChar(this->getAvatar(1), 30, 35, 1, 1);
 	Gui::DrawString(40, 160, 0.6f, config->textColor(), this->getName(1), 320);
-	Gui::DrawString(40, 180, 0.6f, config->textColor(), "Wins: " + std::to_string(this->currentGame->getScore(1)), 320);
+	Gui::DrawString(40, 180, 0.6f, config->textColor(), Lang::get("WINS") + " " + std::to_string(this->currentGame->getScore(1)), 320);
 
 	GFX::DrawChar(this->getAvatar(2), 170, 35, 1, 1);
 	Gui::DrawString(175, 160, 0.6f, config->textColor(), this->getName(2), 320);
-	Gui::DrawString(175, 180, 0.6f, config->textColor(), "Wins: " + std::to_string(this->currentGame->getScore(2)), 320);
+	Gui::DrawString(175, 180, 0.6f, config->textColor(), Lang::get("WINS") + " " + std::to_string(this->currentGame->getScore(2)), 320);
 }
 
 void GameScreen::Refresh() {
@@ -163,7 +166,7 @@ void GameScreen::Refresh() {
 
 void GameScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_START) {
-		if (Msg::promptMsg("Would you like to exit this game?")) {
+		if (Msg::promptMsg(Lang::get("GAME_EXIT"))) {
 			Gui::screenBack();
 			return;
 		}
@@ -173,16 +176,19 @@ void GameScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		if (this->currentGame->setChip(this->dropSelection, this->currentGame->currentPlayer()) == true) {
 			if (this->currentGame->checkMatches(this->currentGame->currentPlayer()) == true) {
 				if (this->currentGame->getScore(this->currentGame->currentPlayer()) < this->winAmount) {
-					Msg::DisplayWaitMsg(this->getName(this->currentGame->currentPlayer()) + " wins this match!\nNeeded Wins to win this game: " + std::to_string(this->winAmount) + ".");
+					char message [100];
+					snprintf(message, sizeof(message), Lang::get("GAME_WIN_ROUND").c_str(), this->getName(this->currentGame->currentPlayer()).c_str(), this->winAmount - this->currentGame->getScore(this->currentGame->currentPlayer()));
+					Msg::DisplayWaitMsg(message);
 					this->currentGame->clearField();
 					this->rowSelection = 3;
 					this->Refresh();
 					this->currentGame->currentPlayer(1);
 					return;
 				} else {
-					Msg::DisplayWaitMsg(this->getName(this->currentGame->currentPlayer()) + " wins this game!\nResult: "
-					+ this->getName(1) + ": " + std::to_string(this->currentGame->getScore(1)) + " | " + this->getName(2) + ": "
-					+ std::to_string(this->currentGame->getScore(2)));
+					char message [100];
+					snprintf(message, sizeof(message), Lang::get("GAME_RESULT").c_str(), this->getName(this->currentGame->currentPlayer()).c_str(),
+					 this->getName(1).c_str(), this->currentGame->getScore(1), this->getName(2).c_str(), this->currentGame->getScore(2));
+					Msg::DisplayWaitMsg(message);
 					Gui::screenBack();
 					return;
 				}
@@ -196,7 +202,7 @@ void GameScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			this->rowSelection = 3;
 			this->Refresh();
 			if (this->currentGame->allUsed()) {
-				Msg::DisplayWaitMsg("Game Over... all slots are used.\nWould you like to rematch?");
+				Msg::DisplayWaitMsg(Lang::get("GAME_ALL_USED"));
 				this->currentGame->clearField();
 				this->rowSelection = 3;
 				this->Refresh();
@@ -220,7 +226,17 @@ void GameScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 	}
 
+	if (hDown & KEY_R) {
+		this->rowSelection = 6;
+		this->Refresh();
+	}
+
+	if (hDown & KEY_L) {
+		this->rowSelection = 0;
+		this->Refresh();
+	}
+
 	if (hHeld & KEY_SELECT) {
-		Msg::HelperBox("Press \uE000 to select the position.\nUse the D-Pad to navigate.\nPress START to exit the game.");
+		Msg::HelperBox(Lang::get("GAME_INSTR"));
 	}
 }

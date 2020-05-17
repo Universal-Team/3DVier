@@ -24,28 +24,57 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "colorChanger.hpp"
 #include "config.hpp"
-#include "credits.hpp"
+#include "langSelection.hpp"
+#include "uiSettings.hpp"
+
 
 extern std::unique_ptr<Config> config;
-
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
-void Credits::Draw(void) const {
+void UISettings::Draw(void) const {
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, 0, 0.9f, config->textColor(), "3DVier - " + Lang::get("CREDITS"), 400);
-	Gui::DrawStringCentered(0, 30, 0.7f, config->textColor(), Lang::get("DEVELOPED_BY"), 390);
-	GFX::DrawSprite(sprites_stackZ_idx, 2, 80);
-	GFX::DrawSprite(sprites_universal_core_idx, 190, 105);
-	std::string currentVersion = Lang::get("CURRENT_VERSION");
-	currentVersion += V_STRING;
-	Gui::DrawString(395-Gui::GetStringWidth(0.70f, currentVersion), 217, 0.70f, config->textColor(), currentVersion, 400);
+	Gui::DrawStringCentered(0, 0, 0.9f, config->textColor(), "3DVier - " + Lang::get("UI_SETTINGS"));
 	GFX::DrawBottom();
+	for (int i = 0; i < 2; i++) {
+		Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, config->buttonColor());
+		if (this->Selection == i) {
+			GFX::DrawButtonSelector(mainButtons[i].x, mainButtons[i].y);
+		}
+	}
+
+	Gui::DrawStringCentered(0, mainButtons[0].y+12, 0.6f, config->textColor(), Lang::get("COLOR_SETTINGS"), 130);
+	Gui::DrawStringCentered(0, mainButtons[1].y+12, 0.6f, config->textColor(), Lang::get("LANGUAGE"), 130);
 }
 
 
-void Credits::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
-	if(hDown & KEY_B) {
+void UISettings::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
+	if (hDown & KEY_TOUCH) {
+		if (touching(touch, mainButtons[0])) {
+			Gui::setScreen(std::make_unique<ColorChanger>());
+		} else if (touching(touch, mainButtons[1])) {
+			Gui::setScreen(std::make_unique<LangSelection>());
+		}
+	}
+
+	if (hDown & KEY_DOWN) {
+		if (this->Selection < 1)	this->Selection++;
+	}
+
+	if (hDown & KEY_UP) {
+		if (this->Selection > 0)	this->Selection--;
+	}
+
+	if (hDown & KEY_A) {
+		if (Selection == 0) {
+			Gui::setScreen(std::make_unique<ColorChanger>());
+		} else if (Selection == 1) {
+			Gui::setScreen(std::make_unique<LangSelection>());
+		}
+	}
+
+	if (hDown & KEY_B) {
 		Gui::screenBack();
 		return;
 	}

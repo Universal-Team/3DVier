@@ -58,6 +58,7 @@ Result Init::Initialize() {
 	mkdir("sdmc:/3ds", 0777);	// For DSP dump
 	mkdir("sdmc:/3ds/3DVier", 0777); // main Path.
 	config = std::make_unique<Config>();
+	Lang::load();
 	Gui::loadSheet("romfs:/gfx/chars.t3x", characters);
 	Gui::loadSheet("romfs:/gfx/sprites.t3x", sprites);
 	osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users.

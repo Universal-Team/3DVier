@@ -45,6 +45,7 @@ int _3DVier_Helper::selectAvatar(int oldAvatar, const std::string text) {
 		GFX::DrawTop();
 		Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 190));
 		Gui::DrawStringCentered(0, 0, 0.8f, config->textColor(), text, 390, 30);
+		Gui::DrawStringCentered(0, 215, 0.6f, config->textColor(), Lang::get("CHAR_SELECT"), 390, 30);
 		if (page == 1) {
 			GFX::DrawPlayer(-5, 35, 1, 1, 0);
 			GFX::DrawPlayer(95, 35, 1, 1, 1);
