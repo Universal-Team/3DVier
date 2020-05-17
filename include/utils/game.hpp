@@ -63,6 +63,11 @@ public:
 		else							return false;
 	}
 
+	bool allUsed() const {
+		if (this->count > 41)	return true;
+		else						return false;
+	}
+
 private:
 	// Our matches field.
 	const std::vector<ChipMatches> posMatches = {
@@ -138,6 +143,7 @@ private:
 
 	std::vector<int> field; // 42 max.
 	int v_currentPlayer = 1;
+	int count = 0; // Game over by 42.
 };
 
 #endif

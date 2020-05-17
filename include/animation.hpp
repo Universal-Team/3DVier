@@ -32,8 +32,6 @@
 namespace Animation {
 	// Animated Sub Background.
 	void DrawSubBG(bool isTop = true);
-
-	void Drop(int Player, bool &drop, int pos);
 }
 
 #endif

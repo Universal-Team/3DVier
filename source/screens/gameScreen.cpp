@@ -112,6 +112,11 @@ void GameScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			}
 			this->rowSelection = 3;
 			this->Refresh();
+			if (this->currentGame->allUsed()) {
+				Msg::DisplayWaitMsg("Game Over... all slots are used.");
+				Gui::screenBack();
+				return;
+			}
 		}
 	}
 

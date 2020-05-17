@@ -33,6 +33,7 @@ Game::Game() {
 
 void Game::clearField() {
 	this->field.clear();
+	this->count = 0;
 	for (int i = 0; i < 42; i++) {
 		this->field.push_back({0});
 	}
@@ -47,6 +48,7 @@ bool Game::setChip(const int Position, const int Player) {
 
 	// Correct Row just in case.
 	this->field[Position] = Player;
+	this->count++;
 	return true;
 }
 
