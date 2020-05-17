@@ -1,0 +1,14 @@
+
+*.3dsx
+*.cia
+*.elf
+*.smdh
+*.bin
+*.exe
+*.lst
+*.map
+*.d
+*.o
+build/cards.h
+build/sprites.h
+*.t3x

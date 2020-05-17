@@ -1,0 +1,9 @@
+--atlas -f rgba8888 -z auto
+
+sprites/btnSelector.png
+sprites/btnSelector2.png
+sprites/circle.png
+sprites/circleSelector.png
+sprites/raster.png
+sprites/stackZ.png
+sprites/universal-core.png
