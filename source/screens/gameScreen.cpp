@@ -102,8 +102,8 @@ int GameScreen::handleAI() {
 
 
 void GameScreen::Draw(void) const {
-GFX::DrawTop(false);
-	Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 210)); // Darken the screen.
+	GFX::DrawTop(false);
+	if (config->darkenScreen())	Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 210)); // Darken the screen.
 	GFX::DrawRaster(114, 5);
 	// Draw current Player and the chip color.
 	GFX::DrawChar(this->getAvatar(this->currentGame->currentPlayer()), -5, 35, 1, 1);
@@ -117,7 +117,7 @@ GFX::DrawTop(false);
 	GFX::DrawSelectedChip(GamePos[this->dropSelection].X, GamePos[this->dropSelection].Y);
 
 	GFX::DrawBottom();
-	Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, 210)); // Darken the screen.
+	if (config->darkenScreen())	Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, 210)); // Darken the screen.
 	Gui::DrawStringCentered(0, 0, 0.8f, config->textColor(), Lang::get("WINS_TO_WIN") + " " + std::to_string(this->winAmount), 320);
 
 	GFX::DrawChar(this->getAvatar(1), 30, 35, 1, 1);

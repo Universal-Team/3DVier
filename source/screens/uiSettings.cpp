@@ -37,7 +37,7 @@ void UISettings::Draw(void) const {
 	GFX::DrawTop();
 	Gui::DrawStringCentered(0, 0, 0.9f, config->textColor(), "3DVier - " + Lang::get("UI_SETTINGS"));
 	GFX::DrawBottom();
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < 3; i++) {
 		Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, config->buttonColor());
 		if (this->Selection == i) {
 			GFX::DrawButtonSelector(mainButtons[i].x, mainButtons[i].y);
@@ -46,6 +46,7 @@ void UISettings::Draw(void) const {
 
 	Gui::DrawStringCentered(0, mainButtons[0].y+12, 0.6f, config->textColor(), Lang::get("COLOR_SETTINGS"), 130);
 	Gui::DrawStringCentered(0, mainButtons[1].y+12, 0.6f, config->textColor(), Lang::get("LANGUAGE"), 130);
+	Gui::DrawStringCentered(0, mainButtons[2].y+12, 0.6f, config->textColor(), Lang::get("TOGGLE_DIMMED_SCREEN"), 130);
 }
 
 
@@ -55,11 +56,19 @@ void UISettings::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			Gui::setScreen(std::make_unique<ColorChanger>());
 		} else if (touching(touch, mainButtons[1])) {
 			Gui::setScreen(std::make_unique<LangSelection>());
+		} else if (touching(touch, mainButtons[2])) {
+			if (config->darkenScreen()) {
+				if (Msg::promptMsg(Lang::get("DARKEN_MSG"))) {
+					config->darkenScreen(false);
+				}
+			} else {
+				config->darkenScreen(true);
+			}
 		}
 	}
 
 	if (hDown & KEY_DOWN) {
-		if (this->Selection < 1)	this->Selection++;
+		if (this->Selection < 2)	this->Selection++;
 	}
 
 	if (hDown & KEY_UP) {
@@ -71,6 +80,14 @@ void UISettings::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			Gui::setScreen(std::make_unique<ColorChanger>());
 		} else if (Selection == 1) {
 			Gui::setScreen(std::make_unique<LangSelection>());
+		} else if (Selection == 2) {
+			if (config->darkenScreen()) {
+				if (Msg::promptMsg(Lang::get("DARKEN_MSG"))) {
+					config->darkenScreen(false);
+				}
+			} else {
+				config->darkenScreen(true);
+			}
 		}
 	}
 

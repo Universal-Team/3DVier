@@ -42,7 +42,7 @@ void Config::initialize() {
 	this->setInt("Player1_Chip", C2D_Color32(255, 255, 255, 255));
 	this->setInt("Player2_Chip", C2D_Color32(0, 0, 0, 255));
 	this->setInt("Raster_Color", C2D_Color32(60, 60, 60, 255));
-
+	this->setBool("Darken_Screen", true);
 	this->setInt("Bar_Color", C2D_Color32(60, 60, 220, 255));
 	this->setInt("Text_Color", C2D_Color32(255, 255, 255, 255));
 	this->setInt("BG_Color", C2D_Color32(160, 160, 220, 255));
@@ -83,6 +83,11 @@ Config::Config() {
 		this->raster(this->getInt("Raster_Color"));
 	}
 
+	if (!this->json.contains("Darken_Screen")) {
+		this->darkenScreen(C2D_Color32(200, 0, 0, 255));
+	} else {
+		this->darkenScreen(this->getBool("Darken_Screen"));
+	}
 
 	if (!this->json.contains("Bar_Color")) {
 		this->barColor(C2D_Color32(220, 60, 0, 255));
@@ -131,7 +136,7 @@ void Config::save() {
 		this->setInt("Player1_Chip", this->p1Chip());
 		this->setInt("Player2_Chip", this->p2Chip());
 		this->setInt("Raster_Color", this->raster());
-
+		this->setBool("Darken_Screen", this->darkenScreen());
 		this->setInt("Bar_Color", this->barColor());
 		this->setInt("Text_Color", this->textColor());
 		this->setInt("BG_Color", this->bgColor());

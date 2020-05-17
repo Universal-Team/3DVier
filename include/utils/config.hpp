@@ -47,6 +47,9 @@ public:
 	// Raster color.
 	u32 raster() { return this->v_raster; }
 	void raster(u32 v) { this->v_raster = v; if (!this->changesMade)	this->changesMade = true; }
+	// Darken Screen in game.
+	bool darkenScreen() { return this->v_darkenScreen; }
+	void darkenScreen(bool v) { this->v_darkenScreen = v; if (!this->changesMade)	this->changesMade = true; }
 	// Bar Color.
 	u32 barColor() { return this->v_barColor; }
 	void barColor(u32 v) { this->v_barColor = v; if (!this->changesMade)	this->changesMade = true; }
@@ -81,6 +84,7 @@ private:
 	u32 v_p1Chip;
 	u32 v_p2Chip;
 	u32 v_raster;
+	bool v_darkenScreen;
 	u32 v_barColor;
 	u32 v_bgColor;
 	u32 v_textColor;

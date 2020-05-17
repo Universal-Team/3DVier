@@ -43,7 +43,7 @@ int _3DVier_Helper::selectAvatar(int oldAvatar, const std::string text) {
 		C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
 		C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
 		GFX::DrawTop();
-		Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 190));
+		if (config->darkenScreen())	Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 190));
 		Gui::DrawStringCentered(0, 0, 0.8f, config->textColor(), text, 390, 30);
 		Gui::DrawStringCentered(0, 215, 0.6f, config->textColor(), Lang::get("CHAR_SELECT"), 390, 30);
 		if (page == 1) {
@@ -69,7 +69,7 @@ int _3DVier_Helper::selectAvatar(int oldAvatar, const std::string text) {
 		}
 
 		GFX::DrawBottom();
-		Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, 190));
+		if (config->darkenScreen())	Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, 190));
 		C3D_FrameEnd(0);
 
 		// The input part.
