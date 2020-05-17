@@ -58,34 +58,45 @@ public:
 	// Check if chips matches.
 	bool checkMatches(int Player);
 	// Check if used.
-	bool isUsed(const int Position) const {
-		if (this->field[Position] != 0)	return true;
-		else							return false;
-	}
-
-	bool allUsed() const {
-		if (this->count > 41)	return true;
-		else						return false;
-	}
+	bool isUsed(const int Position) const;
+	// Check if all are used.
+	bool allUsed() const;
+	// Get the Score / wins.
+	const int getScore(int Player);
 
 private:
 	// Our matches field.
 	const std::vector<ChipMatches> posMatches = {
-		// +8
+		// +8 Right to Left up.
 		{0, 8, 16, 24},
 		{1, 9, 17, 25},
 		{2, 10, 18, 26},
 		{3, 11, 19, 27},
-		// +8
+		// +8 Right to Left up.
 		{7, 15, 23, 31},
 		{8, 16, 24, 32},
 		{9, 17, 25, 33},
 		{10, 18, 26, 34},
-		// +8
+		// +8 Right to Left up.
 		{14, 22, 30, 38},
 		{15, 23, 31, 39},
 		{16, 24, 32, 40},
 		{17, 25, 33, 41},
+		// +6 Left to Right up.
+		{3, 9, 15, 21},
+		{4, 10, 16, 22},
+		{5, 11, 17, 23},
+		{6, 12, 18, 24},
+		// +6 Left to Right up.
+		{10, 16, 22, 28},
+		{11, 17, 23, 29},
+		{12, 18, 24, 30},
+		{13, 19, 25, 31},
+		// +6 Left to Right up.
+		{17, 23, 29, 35},
+		{18, 24, 30, 36},
+		{19, 25, 31, 37},
+		{20, 26, 32, 38},
 		// +1
 		{0, 1, 2, 3},
 		{1, 2, 3, 4},
@@ -144,6 +155,7 @@ private:
 	std::vector<int> field; // 42 max.
 	int v_currentPlayer = 1;
 	int count = 0; // Game over by 42.
+	int v_p1Wins = 0, v_p2Wins = 0;
 };
 
 #endif

@@ -51,7 +51,7 @@ bool Msg::promptMsg2(std::string promptMsg)
 		C2D_TargetClear(Top, BLACK);
 		C2D_TargetClear(Bottom, BLACK);
 		GFX::DrawTop();
-		Gui::Draw_Rect(0, 80, 400, 80, C2D_Color32(85, 170, 255, 255));
+		Gui::Draw_Rect(0, 80, 400, 80, config->barColor());
 		Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.8f, promptMsg))/2, 0.8f, config->textColor(), promptMsg, 390, 70);
 		GFX::DrawBottom();
 		// Draw Bottom Screen part.

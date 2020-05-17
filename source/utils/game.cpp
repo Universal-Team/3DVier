@@ -53,10 +53,32 @@ bool Game::setChip(const int Position, const int Player) {
 }
 
 bool Game::checkMatches(int Player) {
+	bool matches = false;
 	for(uint i = 0; i < posMatches.size(); i++) {
 		if (this->field[posMatches[i].Pos1] == Player && this->field[posMatches[i].Pos2] == Player && this->field[posMatches[i].Pos3] == Player && this->field[posMatches[i].Pos4] == Player) {
-			return true;
+			matches = true;
 		}
 	}
-	return false;
+
+	// Cause it matches, give a ++ to the specific player. (+1 win.)
+	if (matches) {
+		if (Player == 1)	this->v_p1Wins++;
+		else				this->v_p2Wins++;
+	}
+	return matches;
+}
+
+bool Game::isUsed(const int Position) const {
+	if (this->field[Position] != 0)	return true;
+	else							return false;
+}
+
+bool Game::allUsed() const {
+	if (this->count > 41)	return true;
+	else						return false;
+}
+
+const int Game::getScore(int Player) {
+	if (Player == 1)	return this->v_p1Wins;
+	else				return this->v_p2Wins;
 }
