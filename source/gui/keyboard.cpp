@@ -63,47 +63,41 @@ Structs::Key NumpadStruct[] = {
 	{"1", 10, 30},
 	{"2", 90, 30},
 	{"3", 170, 30},
-
+	{"B", 250, 30},
 	{"4", 10, 100},
 	{"5", 90, 100},
 	{"6", 170, 100},
-
+	{"0", 250, 100},
 	{"7", 10, 170},
 	{"8", 90, 170},
 	{"9", 170, 170},
-
-	{"0", 250, 100},
-
 	{"E", 250, 170},
-
-	{"B", 250, 30},
 };
 Structs::ButtonPos Numbers [] = {
 	{10, 30, 60, 50}, // 1
 	{90, 30, 60, 50}, // 2
 	{170, 30, 60, 50}, // 3
-
+	{250, 30, 60, 50}, // Backspace.
 	{10, 100, 60, 50},
 	{90, 100, 60, 50},
 	{170, 100, 60, 50},
-
+	{250, 100, 60, 50}, // 0.
 	{10, 170, 60, 50},
 	{90, 170, 60, 50},
 	{170, 170, 60, 50},
-
-	{250, 100, 60, 50}, // 0.
-
 	{250, 170, 60, 50}, // Enter.
-
-	{250, 30, 60, 50}, // Backspace.
 };
 
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
-void Keyboard::Draw() {
-	for(uint i=0;i<(sizeof(LayoutABC)/sizeof(LayoutABC[0]));i++) {
-		C2D_DrawRectSolid(LayoutABC[i].x, LayoutABC[i].y, 0.5f, 30, 40, config->barColor() & C2D_Color32(255, 255, 255, 200));
-		if(layoutMode == 0) {
+void Keyboard::Draw(int selection) {
+	for (uint i=0;i<(sizeof(LayoutABC)/sizeof(LayoutABC[0]));i++) {
+		if (i == (uint)selection) {
+			C2D_DrawRectSolid(LayoutABC[i].x, LayoutABC[i].y, 0.5f, 30, 40, config->bgColor() & C2D_Color32(255, 255, 255, 200));
+		} else {
+			C2D_DrawRectSolid(LayoutABC[i].x, LayoutABC[i].y, 0.5f, 30, 40, config->barColor() & C2D_Color32(255, 255, 255, 200));
+		}
+		if (layoutMode == 0) {
 			char c[2] = {LayoutABC[i].character[0]};
 			Gui::DrawString(LayoutABC[i].x+5+(10-(Gui::GetStringWidth(0.55, c)/2)), LayoutABC[i].y+10+(10-(Gui::GetStringHeight(0.55, c)/2)), 0.55, config->textColor(), c);
 		} else if (layoutMode == 1) {
@@ -122,10 +116,14 @@ void Keyboard::Draw() {
 	C2D_DrawRectSolid(specialStuff[3].x, specialStuff[3].y, 0.5f, 30, 20, config->barColor() & C2D_Color32(255, 255, 255, 200));
 }
 
-void Keyboard::DrawNumpad()
+void Keyboard::DrawNumpad(int selection)
 {
 	for(uint i=0;i<(sizeof(NumpadStruct)/sizeof(NumpadStruct[0]));i++) {
-		Gui::Draw_Rect(NumpadStruct[i].x, NumpadStruct[i].y, 60, 50, config->barColor());
+		if (i == (uint)selection) {
+			Gui::Draw_Rect(NumpadStruct[i].x, NumpadStruct[i].y, 60, 50, config->bgColor());
+		} else {
+			Gui::Draw_Rect(NumpadStruct[i].x, NumpadStruct[i].y, 60, 50, config->barColor());
+		}
 		char c[2] = {NumpadStruct[i].character[0]};
 		Gui::DrawString(NumpadStruct[i].x+25, NumpadStruct[i].y+15, 0.72f, config->textColor(), c, 50);
 	}
@@ -144,7 +142,7 @@ std::string Keyboard::Numpad(uint maxLength, std::string Text)
 	int hDown;
 	touchPosition touch;
 	std::string string;
-	int keyDownDelay = 10, cursorBlink = 20;
+	int keyDownDelay = 10, cursorBlink = 20, selection = 0;
 	enter = false;
 	while(1) {
 		do {
@@ -159,7 +157,7 @@ std::string Keyboard::Numpad(uint maxLength, std::string Text)
 			if (cursorBlink < -20)	cursorBlink = 20;
 			Gui::ScreenDraw(Bottom);
 			Gui::Draw_Rect(0, 0, 320, 240, config->bgColor());
-			DrawNumpad();
+			DrawNumpad(selection);
 			scanKeys();
 			hDown = keysDown();
 			if (keyDownDelay > 0) {
@@ -171,6 +169,68 @@ std::string Keyboard::Numpad(uint maxLength, std::string Text)
 		if (keyDownDelay > 0) {
 		}
 		keyDownDelay = 10;
+
+		if (hDown & KEY_RIGHT) {
+			if (selection < 4)	selection++;
+			else if (selection > 3 && selection < 8)	selection++;
+			else if (selection > 7 && selection < 11)	selection++;
+		}
+
+		if (hDown & KEY_DOWN) {
+			if (selection < 4)	selection += 4;
+			else if (selection > 3 && selection < 8)	selection += 4;
+		}
+
+		if (hDown & KEY_UP) {
+			if (selection > 7)	selection -= 4;
+			else if (selection < 8 && selection > 3)	selection -= 4;
+		}
+
+		if (hDown & KEY_LEFT) {
+			if (selection > 7)	selection--;
+			else if (selection < 8 && selection > 3)	selection--;
+			else if (selection < 4 && selection > 0)	selection--;
+		}
+
+		if (hDown & KEY_A) {
+			if (string.length() < maxLength) {
+				switch(selection) {
+					case 0:
+						string += "1";
+						break;
+					case 1:
+						string += "2";
+						break;
+					case 2:
+						string += "3";
+						break;
+					case 4:
+						string += "4";
+						break;
+					case 5:
+						string += "5";
+						break;
+					case 6:
+						string += "6";
+						break;
+					case 7:
+						string += "0";
+						break;
+					case 8:
+						string += "7";
+						break;
+					case 9:
+						string += "8";
+						break;
+					case 10:
+						string += "9";
+						break;
+				}
+			}
+			if (selection == 3) {
+				if (string.length() > 0)	string = string.substr(0, string.length()-1);
+			} else if (selection == 11) {	enter = true; }
+		}
 
 		if (hDown & KEY_TOUCH) {
 			touchRead(&touch);
@@ -216,7 +276,7 @@ std::string Keyboard::getString(uint maxLength, std::string Text, float inputTex
 	int hDown;
 	touchPosition touch;
 	std::string string;
-	int keyDownDelay = 10, cursorBlink = 20;
+	int keyDownDelay = 10, cursorBlink = 20, selection = 0;
 	caps = false, shift = 0, enter = false;
 	while(1) {
 		do {
@@ -226,7 +286,7 @@ std::string Keyboard::getString(uint maxLength, std::string Text, float inputTex
 			GFX::DrawTop();
 			Gui::DrawString((400-Gui::GetStringWidth(0.8f, Text))/2, 2, 0.8f, config->textColor(), Text, 400);
 			GFX::DrawBottom();
-			Keyboard::Draw();
+			Keyboard::Draw(selection);
 			C2D_DrawRectSolid(0, 5, 0.5f, 320, 20, config->barColor() & C2D_Color32(200, 200, 200, 200));
 			Gui::DrawString(2, 5, inputTextSize, config->textColor(), (string+(cursorBlink-- > 0 ? "_" : "")).c_str(), 316);
 			if(cursorBlink < -20)	cursorBlink = 20;
@@ -242,19 +302,69 @@ std::string Keyboard::getString(uint maxLength, std::string Text, float inputTex
 		}
 		keyDownDelay = 10;
 
-		if (hidKeysDown() & KEY_R) {
+		if (hDown & KEY_R) {
 			if (layoutMode < 2)	layoutMode++;
-		} else if (hidKeysDown() & KEY_L) {
+		} else if (hDown & KEY_L) {
 			if (layoutMode > 0)	layoutMode--;
 		}
 
-		if(hDown & KEY_TOUCH) {
+		if (hDown & KEY_RIGHT) {
+			if (selection < 8)	selection++;
+			else if (selection > 7 && selection < 17)	selection++;
+			else if (selection > 16 && selection < 25)	selection++;
+		}
+
+		if (hDown & KEY_DOWN) {
+			if (selection < 8)	selection += 8;
+			else if (selection > 7 && selection < 17)	selection += 9;
+		}
+
+		if (hDown & KEY_UP) {
+			if (selection > 16)	selection -= 9;
+			else if (selection < 16 && selection > 7)	selection -= 8;
+		}
+
+		if (hDown & KEY_LEFT) {
+			if (selection > 16)	selection--;
+			else if (selection < 17 && selection > 7)	selection--;
+			else if (selection < 8 && selection > 0)	selection--;
+		}
+
+		// Enter a key.
+		if (hDown & KEY_A) {
+			if (string.length() < maxLength) {
+				char c;
+				switch(layoutMode) {
+					case 0:
+						c = LayoutABC[selection].character[0];
+						string += c;
+						break;
+					case 1:
+						c = Layoutabc[selection].character[0];
+						string += c;
+						break;
+					case 2:
+						c = LayoutSign[selection].character[0];
+						string += c;
+						break;
+				}
+			}
+		}
+
+		if (hDown & KEY_Y) {
+			if (string.length() < maxLength) {
+				string += " ";
+			}
+		}
+
+
+		if (hDown & KEY_TOUCH) {
 			touchRead(&touch);
-			if(string.length() < maxLength) {
+			if (string.length() < maxLength) {
 				if (layoutMode == 0) {
 					// Check if a regular key was pressed
 					for(uint i=0;i<(sizeof(LayoutABC)/sizeof(LayoutABC[0]));i++) {
-						if((touch.px > LayoutABC[i].x && touch.px < LayoutABC[i].x+38) && (touch.py > LayoutABC[i].y && touch.py < LayoutABC[i].y+28)) {
+						if ((touch.px > LayoutABC[i].x && touch.px < LayoutABC[i].x+38) && (touch.py > LayoutABC[i].y && touch.py < LayoutABC[i].y+28)) {
 							char c = LayoutABC[i].character[0];
 							string += c;
 							break;
@@ -264,7 +374,7 @@ std::string Keyboard::getString(uint maxLength, std::string Text, float inputTex
 				} else if (layoutMode == 1) {
 					// Check if a regular key was pressed
 					for(uint i=0;i<(sizeof(Layoutabc)/sizeof(Layoutabc[0]));i++) {
-						if((touch.px > Layoutabc[i].x && touch.px < Layoutabc[i].x+38) && (touch.py > Layoutabc[i].y && touch.py < Layoutabc[i].y+28)) {
+						if ((touch.px > Layoutabc[i].x && touch.px < Layoutabc[i].x+38) && (touch.py > Layoutabc[i].y && touch.py < Layoutabc[i].y+28)) {
 							char c = Layoutabc[i].character[0];
 							string += c;
 							break;
@@ -273,7 +383,7 @@ std::string Keyboard::getString(uint maxLength, std::string Text, float inputTex
 				} else if (layoutMode == 2) {
 					// Check if a regular key was pressed
 					for(uint i=0;i<(sizeof(LayoutSign)/sizeof(LayoutSign[0]));i++) {
-						if((touch.px > LayoutSign[i].x && touch.px < LayoutSign[i].x+38) && (touch.py > LayoutSign[i].y && touch.py < LayoutSign[i].y+28)) {
+						if ((touch.px > LayoutSign[i].x && touch.px < LayoutSign[i].x+38) && (touch.py > LayoutSign[i].y && touch.py < LayoutSign[i].y+28)) {
 							char c = LayoutSign[i].character[0];
 							string += c;
 							break;
@@ -293,12 +403,12 @@ std::string Keyboard::getString(uint maxLength, std::string Text, float inputTex
 			}
 			// Space.
 			if ((touch.px > specialStuff[1].x && touch.px < specialStuff[1].x+178) && (touch.py > specialStuff[1].y && touch.py < specialStuff[1].y+18)) {
-				if(string.length() < maxLength) {
+				if (string.length() < maxLength) {
 					string += " ";
 				}
 			}
 			// Remove.
-			if((touch.px > specialStuff[0].x && touch.px < specialStuff[0].x+38) && (touch.py > specialStuff[0].y && touch.py < specialStuff[0].y+28)) {
+			if ((touch.px > specialStuff[0].x && touch.px < specialStuff[0].x+38) && (touch.py > specialStuff[0].y && touch.py < specialStuff[0].y+28)) {
 				if (string.length() != 0) {
 					string = string.substr(0, string.length()-1);
 				}
