@@ -37,16 +37,18 @@ void UISettings::Draw(void) const {
 	GFX::DrawTop();
 	Gui::DrawStringCentered(0, 0, 0.9f, config->textColor(), "3DVier - " + Lang::get("UI_SETTINGS"));
 	GFX::DrawBottom();
-	for (int i = 0; i < 3; i++) {
+
+	for (int i = 0; i < 4; i++) {
 		Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, config->buttonColor());
 		if (this->Selection == i) {
 			GFX::DrawButtonSelector(mainButtons[i].x, mainButtons[i].y);
 		}
 	}
 
-	Gui::DrawStringCentered(0, mainButtons[0].y+12, 0.6f, config->textColor(), Lang::get("COLOR_SETTINGS"), 130);
-	Gui::DrawStringCentered(0, mainButtons[1].y+12, 0.6f, config->textColor(), Lang::get("LANGUAGE"), 130);
-	Gui::DrawStringCentered(0, mainButtons[2].y+12, 0.6f, config->textColor(), Lang::get("TOGGLE_DIMMED_SCREEN"), 130);
+	Gui::DrawStringCentered(-80, mainButtons[0].y+12, 0.6f, config->textColor(), Lang::get("COLOR_SETTINGS"), 130);
+	Gui::DrawStringCentered(80, mainButtons[1].y+12, 0.6f, config->textColor(), Lang::get("LANGUAGE"), 130);
+	Gui::DrawStringCentered(-80, mainButtons[2].y+12, 0.6f, config->textColor(), Lang::get("TOGGLE_DIMMED_SCREEN"), 130);
+	Gui::DrawStringCentered(80, mainButtons[3].y+12, 0.6f, config->textColor(), Lang::get("ALLOW_DROPS"), 130);
 }
 
 
@@ -60,33 +62,55 @@ void UISettings::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			if (config->darkenScreen()) {
 				if (Msg::promptMsg(Lang::get("DARKEN_MSG"))) {
 					config->darkenScreen(false);
+					Msg::DisplayWaitMsg(Lang::get("TURNED_OFF"));
 				}
 			} else {
 				config->darkenScreen(true);
+				Msg::DisplayWaitMsg(Lang::get("TURNED_ON"));
+			}
+		} else if (touching(touch, mainButtons[3])) {
+			if (config->allowDrop()) {
+				config->allowDrop(false);
+				Msg::DisplayWaitMsg(Lang::get("TURNED_OFF"));
+			} else {
+				config->allowDrop(true);
+				Msg::DisplayWaitMsg(Lang::get("TURNED_ON"));
 			}
 		}
 	}
 
-	if (hDown & KEY_DOWN) {
-		if (this->Selection < 2)	this->Selection++;
-	}
-
 	if (hDown & KEY_UP) {
-		if (this->Selection > 0)	this->Selection--;
+		if (this->Selection > 1)	this->Selection -= 2;
+	} else if (hDown & KEY_DOWN) {
+		if (this->Selection < 3 && this->Selection != 2 && this->Selection != 3)	this->Selection += 2;
+	} else if (hDown & KEY_LEFT) {
+		if (this->Selection%2) this->Selection--;
+	} else if (hDown & KEY_RIGHT) {
+		if (!(this->Selection%2)) this->Selection++;
 	}
 
 	if (hDown & KEY_A) {
-		if (Selection == 0) {
+		if (this->Selection == 0) {
 			Gui::setScreen(std::make_unique<ColorChanger>());
-		} else if (Selection == 1) {
+		} else if (this->Selection == 1) {
 			Gui::setScreen(std::make_unique<LangSelection>());
-		} else if (Selection == 2) {
+		} else if (this->Selection == 2) {
 			if (config->darkenScreen()) {
 				if (Msg::promptMsg(Lang::get("DARKEN_MSG"))) {
 					config->darkenScreen(false);
+					Msg::DisplayWaitMsg(Lang::get("TURNED_OFF"));
 				}
 			} else {
 				config->darkenScreen(true);
+				Msg::DisplayWaitMsg(Lang::get("TURNED_ON"));
+			}
+		} else if (this->Selection == 3) {
+			if (config->allowDrop()) {
+				config->allowDrop(false);
+				Msg::DisplayWaitMsg(Lang::get("TURNED_OFF"));
+			} else {
+				config->allowDrop(true);
+				Msg::DisplayWaitMsg(Lang::get("TURNED_ON"));
 			}
 		}
 	}

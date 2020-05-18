@@ -40,7 +40,7 @@ void MainMenu::Draw(void) const {
 	GFX::DrawBottom();
 	for (int i = 0; i < 4; i++) {
 		Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, config->buttonColor());
-		if (Selection == i) {
+		if (this->Selection == i) {
 			GFX::DrawButtonSelector(mainButtons[i].x, mainButtons[i].y);
 		}
 	}
@@ -65,24 +65,24 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 	}
 
-	if(hDown & KEY_UP) {
-		if(Selection > 1)	Selection -= 2;
-	} else if(hDown & KEY_DOWN) {
-		if(Selection < 3 && Selection != 2 && Selection != 3)	Selection += 2;
+	if (hDown & KEY_UP) {
+		if (this->Selection > 1)	this->Selection -= 2;
+	} else if (hDown & KEY_DOWN) {
+		if (this->Selection < 3 && this->Selection != 2 && this->Selection != 3)	this->Selection += 2;
 	} else if (hDown & KEY_LEFT) {
-		if (Selection%2) Selection--;
+		if (this->Selection%2) this->Selection--;
 	} else if (hDown & KEY_RIGHT) {
-		if (!(Selection%2)) Selection++;
+		if (!(this->Selection%2)) this->Selection++;
 	}
 
 	if (hDown & KEY_A) {
-		if (Selection == 0) {
+		if (this->Selection == 0) {
 			Gui::setScreen(std::make_unique<GameScreen>());
-		} else if (Selection == 1) {
+		} else if (this->Selection == 1) {
 			Gui::setScreen(std::make_unique<UISettings>());
-		} else if (Selection == 2) {
+		} else if (this->Selection == 2) {
 			Gui::setScreen(std::make_unique<Credits>());
-		} else if (Selection == 3) {
+		} else if (this->Selection == 3) {
 			// ?
 		}
 	}

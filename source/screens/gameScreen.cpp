@@ -100,7 +100,6 @@ int GameScreen::handleAI() {
 	return 0;
 }
 
-
 void GameScreen::Draw(void) const {
 	GFX::DrawTop(false);
 	if (config->darkenScreen())	Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 210)); // Darken the screen.
@@ -127,6 +126,48 @@ void GameScreen::Draw(void) const {
 	GFX::DrawChar(this->getAvatar(2), 170, 35, 1, 1);
 	Gui::DrawString(175, 160, 0.6f, config->textColor(), this->getName(2), 320);
 	Gui::DrawString(175, 180, 0.6f, config->textColor(), Lang::get("WINS") + " " + std::to_string(this->currentGame->getScore(2)), 320);
+}
+
+// Display drop effect.
+void GameScreen::displayAnimation() {
+	while(this->dropped) {
+		Gui::clearTextBufs();
+		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+		GFX::DrawTop(false);
+		if (config->darkenScreen())	Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 210)); // Darken the screen.
+		GFX::DrawChip(GamePos[this->rowSelection].X, this->dropPos, 1, 1, this->currentGame->currentPlayer());
+		GFX::DrawRaster(114, 5);
+		// Draw current Player and the chip color.
+		GFX::DrawChar(this->getAvatar(this->currentGame->currentPlayer()), -5, 35, 1, 1);
+		GFX::DrawChip(45, 165, 1, 1, this->currentGame->currentPlayer());
+		for (int i = 0; i < (int)this->currentGame->getField().size(); i++) {
+			if (this->currentGame->getField()[i] != 0) {
+				GFX::DrawChip(GamePos[i].X, GamePos[i].Y, 1, 1, this->currentGame->getField()[i]);
+			}
+		}
+		// Draw the temporary chip.
+		GFX::DrawSelectedChip(GamePos[this->dropSelection].X, GamePos[this->dropSelection].Y);
+
+		GFX::DrawBottom();
+		if (config->darkenScreen())	Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, 210)); // Darken the screen.
+		Gui::DrawStringCentered(0, 0, 0.8f, config->textColor(), Lang::get("WINS_TO_WIN") + " " + std::to_string(this->winAmount), 320);
+
+		GFX::DrawChar(this->getAvatar(1), 30, 35, 1, 1);
+		Gui::DrawString(40, 160, 0.6f, config->textColor(), this->getName(1), 320);
+		Gui::DrawString(40, 180, 0.6f, config->textColor(), Lang::get("WINS") + " " + std::to_string(this->currentGame->getScore(1)), 320);
+
+		GFX::DrawChar(this->getAvatar(2), 170, 35, 1, 1);
+		Gui::DrawString(175, 160, 0.6f, config->textColor(), this->getName(2), 320);
+		Gui::DrawString(175, 180, 0.6f, config->textColor(), Lang::get("WINS") + " " + std::to_string(this->currentGame->getScore(2)), 320);
+		C3D_FrameEnd(0);
+
+		if (this->dropPos < GamePos[this->dropSelection].Y) {
+			this->dropPos += 9;
+		} else {
+			this->dropPos = 0;
+			this->dropped = false;
+		}
+	}
 }
 
 void GameScreen::Refresh() {
@@ -177,6 +218,13 @@ void GameScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_A) {
+		// Only do drop animation if allowed.
+		if (config->allowDrop()) {
+			if (this->currentGame->canDrop(this->dropSelection)) {
+				this->dropped = true;
+				this->displayAnimation();
+			}
+		}
 		if (this->currentGame->setChip(this->dropSelection, this->currentGame->currentPlayer()) == true) {
 			if (this->currentGame->checkMatches(this->currentGame->currentPlayer()) == true) {
 				if (this->currentGame->getScore(this->currentGame->currentPlayer()) < this->winAmount) {

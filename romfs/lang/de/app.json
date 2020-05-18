@@ -1,5 +1,6 @@
 {
 	"A_CONTINUE": "Drücke \uE000 zum fortfahren.",
+	"ALLOW_DROPS": " Drop Animation umschalten",
 	"BAR_COLOR": "Balkenfarbe",
 	"BG_COLOR": "Hintergrundfarbe",
 	"BUTTON_COLOR": "Schaltflächenfarbe",
@@ -35,6 +36,8 @@
 	"SELECTOR_COLOR": "Selektorfarbe",
 	"TEXT_COLOR": "Textfarbe",
 	"TOGGLE_DIMMED_SCREEN": "Dimmbildschirm umschalten",
+	"TURNED_OFF": "Ausgeschaltet!",
+	"TURNED_ON": "Eingeschaltet!",
 	"UI_SETTINGS": "UI Einstellungen",
 	"WINS": "Siege:",
 	"WINS_TO_WIN": "Benötigte Siege zum Gewinn:",

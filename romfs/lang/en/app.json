@@ -1,5 +1,6 @@
 {
 	"A_CONTINUE": "Press \uE000 to continue.",
+	"ALLOW_DROPS": "Allow Drop-animation",
 	"BAR_COLOR": "Bar Color",
 	"BG_COLOR": "Background Color",
 	"BUTTON_COLOR": "Button Color",
@@ -35,6 +36,8 @@
 	"SELECTOR_COLOR": "Selector Color",
 	"TEXT_COLOR": "Text Color",
 	"TOGGLE_DIMMED_SCREEN": "Toggle dimmed screen",
+	"TURNED_OFF": "Turned off!",
+	"TURNED_ON": "Turned on!",
 	"UI_SETTINGS": "UI Settings",
 	"WINS": "Wins:",
 	"WINS_TO_WIN": "Needed wins to win:",

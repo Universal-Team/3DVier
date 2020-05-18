@@ -41,9 +41,10 @@ private:
 	int Selection = 0;
 
 	std::vector<Structs::ButtonPos> mainButtons = {
-		{90, 40, 140, 40},  // Colors.
-		{90, 100, 140, 40}, // Language.
-		{90, 160, 140, 40}, // ?.
+		{10, 70, 140, 40}, // Colors.
+		{170, 70, 140, 40}, // Language.
+		{10, 145, 140, 40}, // Toggle dimmed Screen.
+		{170, 145, 140, 40} // Toggle drop animation.
 	};
 };
 

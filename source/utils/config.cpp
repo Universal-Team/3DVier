@@ -43,6 +43,7 @@ void Config::initialize() {
 	this->setInt("Player2_Chip", C2D_Color32(0, 0, 0, 255));
 	this->setInt("Raster_Color", C2D_Color32(60, 60, 60, 255));
 	this->setBool("Darken_Screen", true);
+	this->setBool("Allow_Drop", true);
 	this->setInt("Bar_Color", C2D_Color32(60, 60, 220, 255));
 	this->setInt("Text_Color", C2D_Color32(255, 255, 255, 255));
 	this->setInt("BG_Color", C2D_Color32(160, 160, 220, 255));
@@ -84,9 +85,15 @@ Config::Config() {
 	}
 
 	if (!this->json.contains("Darken_Screen")) {
-		this->darkenScreen(C2D_Color32(200, 0, 0, 255));
+		this->darkenScreen(true);
 	} else {
 		this->darkenScreen(this->getBool("Darken_Screen"));
+	}
+
+	if (!this->json.contains("Allow_Drop")) {
+		this->allowDrop(true);
+	} else {
+		this->allowDrop(this->getBool("Allow_Drop"));
 	}
 
 	if (!this->json.contains("Bar_Color")) {
@@ -137,6 +144,7 @@ void Config::save() {
 		this->setInt("Player2_Chip", this->p2Chip());
 		this->setInt("Raster_Color", this->raster());
 		this->setBool("Darken_Screen", this->darkenScreen());
+		this->setBool("Allow_Drop", this->allowDrop());
 		this->setInt("Bar_Color", this->barColor());
 		this->setInt("Text_Color", this->textColor());
 		this->setInt("BG_Color", this->bgColor());

@@ -43,6 +43,9 @@ private:
 	std::unique_ptr<Game> currentGame; // Our game pointer.
 	int rowSelection = 3; // To select the Row.
 	int dropSelection = 0; // Where to drop.
+	bool dropped = false; // Chip is dropped.
+	int dropPos = 0; // Chip animation position.
+	void displayAnimation(); // The Drop animation!
 	void Refresh(); // Refresh the dropSelection.
 
 	// Player Names etc.

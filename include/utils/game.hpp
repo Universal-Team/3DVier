@@ -63,7 +63,8 @@ public:
 	bool allUsed() const;
 	// Get the Score / wins.
 	const int getScore(int Player);
-
+	// Return if chip can be dropped.
+	bool canDrop(const int Position);
 private:
 	// Our matches field.
 	const std::vector<ChipMatches> posMatches = {

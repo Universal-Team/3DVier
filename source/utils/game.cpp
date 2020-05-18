@@ -52,6 +52,14 @@ bool Game::setChip(const int Position, const int Player) {
 	return true;
 }
 
+bool Game::canDrop(const int Position) {
+	// Here we check if the Position is already used.
+	if (this->field[Position] != 0) {
+		return false;
+	}
+	return true;
+}
+
 bool Game::checkMatches(int Player) {
 	bool matches = false;
 	for(uint i = 0; i < posMatches.size(); i++) {
