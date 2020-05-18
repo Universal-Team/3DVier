@@ -162,9 +162,9 @@ std::string Keyboard::Numpad(uint maxLength, std::string Text)
 			DrawNumpad();
 			scanKeys();
 			hDown = keysDown();
-			if(keyDownDelay > 0) {
+			if (keyDownDelay > 0) {
 				keyDownDelay--;
-			} else if(keyDownDelay == 0) {
+			} else if (keyDownDelay == 0) {
 				keyDownDelay--;
 			}
 		} while(!hDown);
@@ -232,19 +232,22 @@ std::string Keyboard::getString(uint maxLength, std::string Text, float inputTex
 			if(cursorBlink < -20)	cursorBlink = 20;
 			scanKeys();
 			hDown = keysDown();
-			if(keyDownDelay > 0) {
+			if (keyDownDelay > 0) {
 				keyDownDelay--;
-			} else if(keyDownDelay == 0) {
+			} else if (keyDownDelay == 0) {
 				keyDownDelay--;
 			}
 		} while(!hDown);
-		if(keyDownDelay > 0) {
+		if (keyDownDelay > 0) {
 		}
 		keyDownDelay = 10;
 
-		if (hDown & KEY_DOWN) {
-
+		if (hidKeysDown() & KEY_R) {
+			if (layoutMode < 2)	layoutMode++;
+		} else if (hidKeysDown() & KEY_L) {
+			if (layoutMode > 0)	layoutMode--;
 		}
+
 		if(hDown & KEY_TOUCH) {
 			touchRead(&touch);
 			if(string.length() < maxLength) {
@@ -307,6 +310,7 @@ std::string Keyboard::getString(uint maxLength, std::string Text, float inputTex
 		}
 
 		if (hDown & KEY_START || enter) {
+			layoutMode = 0; // Reset.
 			break;
 		}
 	}
