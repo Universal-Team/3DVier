@@ -53,6 +53,9 @@ public:
 	// Allow drops.
 	bool allowDrop() { return this->v_allowDrops; }
 	void allowDrop(bool v) { this->v_allowDrops = v; if (!this->changesMade)	this->changesMade = true; }
+	// Drop Modes
+	int dropMode() { return this->v_dropMode; }
+	void dropMode(int v) { this->v_dropMode = v; if (!this->changesMade)	this->changesMade = true; }
 	// Bar Color.
 	u32 barColor() { return this->v_barColor; }
 	void barColor(u32 v) { this->v_barColor = v; if (!this->changesMade)	this->changesMade = true; }
@@ -89,6 +92,7 @@ private:
 	u32 v_raster;
 	bool v_darkenScreen;
 	bool v_allowDrops;
+	int v_dropMode;
 	u32 v_barColor;
 	u32 v_bgColor;
 	u32 v_textColor;

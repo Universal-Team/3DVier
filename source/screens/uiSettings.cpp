@@ -38,7 +38,7 @@ void UISettings::Draw(void) const {
 	Gui::DrawStringCentered(0, 0, 0.9f, config->textColor(), "3DVier - " + Lang::get("UI_SETTINGS"));
 	GFX::DrawBottom();
 
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 6; i++) {
 		Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, config->buttonColor());
 		if (this->Selection == i) {
 			GFX::DrawButtonSelector(mainButtons[i].x, mainButtons[i].y);
@@ -49,6 +49,8 @@ void UISettings::Draw(void) const {
 	Gui::DrawStringCentered(80, mainButtons[1].y+12, 0.6f, config->textColor(), Lang::get("LANGUAGE"), 130);
 	Gui::DrawStringCentered(-80, mainButtons[2].y+12, 0.6f, config->textColor(), Lang::get("TOGGLE_DIMMED_SCREEN"), 130);
 	Gui::DrawStringCentered(80, mainButtons[3].y+12, 0.6f, config->textColor(), Lang::get("ALLOW_DROPS"), 130);
+	Gui::DrawStringCentered(-80, mainButtons[4].y+12, 0.6f, config->textColor(), Lang::get("ANIMATION_MODE"), 130);
+	Gui::DrawStringCentered(80, mainButtons[5].y+12, 0.6f, config->textColor(), "???", 130);
 }
 
 
@@ -76,17 +78,29 @@ void UISettings::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				config->allowDrop(true);
 				Msg::DisplayWaitMsg(Lang::get("TURNED_ON"));
 			}
+		} else if (touching(touch, mainButtons[4])) {
+			if (config->allowDrop()) {
+				std::vector<std::string> temp;
+				temp.push_back({Lang::get("BOUNCY_ANIM")});
+				temp.push_back({Lang::get("SMOOTH_ANIM")});
+				config->dropMode(GFX::selectList(temp, Lang::get("SELECT_ANIM_MODE"), config->dropMode()));
+			} else {
+				Msg::DisplayWaitMsg(Lang::get("ANIMATION_DISABLED"));
+			}
 		}
 	}
 
 	if (hDown & KEY_UP) {
 		if (this->Selection > 1)	this->Selection -= 2;
-	} else if (hDown & KEY_DOWN) {
-		if (this->Selection < 3 && this->Selection != 2 && this->Selection != 3)	this->Selection += 2;
-	} else if (hDown & KEY_LEFT) {
+	}
+	if (hDown & KEY_DOWN) {
+		if (this->Selection < 4)	this->Selection += 2;
+	}
+	if (hDown & KEY_LEFT) {
 		if (this->Selection%2) this->Selection--;
-	} else if (hDown & KEY_RIGHT) {
-		if (!(this->Selection%2)) this->Selection++;
+	}
+	if (hDown & KEY_RIGHT) {
+		if (!(this->Selection%2))	this->Selection++;
 	}
 
 	if (hDown & KEY_A) {
@@ -111,6 +125,15 @@ void UISettings::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			} else {
 				config->allowDrop(true);
 				Msg::DisplayWaitMsg(Lang::get("TURNED_ON"));
+			}
+		} else if (this->Selection == 4) {
+			if (config->allowDrop()) {
+				std::vector<std::string> temp;
+				temp.push_back({Lang::get("BOUNCY_ANIM")});
+				temp.push_back({Lang::get("SMOOTH_ANIM")});
+				config->dropMode(GFX::selectList(temp, Lang::get("SELECT_ANIM_MODE"), config->dropMode()));
+			} else {
+				Msg::DisplayWaitMsg(Lang::get("ANIMATION_DISABLED"));
 			}
 		}
 	}

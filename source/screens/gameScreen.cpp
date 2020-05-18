@@ -130,6 +130,8 @@ void GameScreen::Draw(void) const {
 
 // Display drop effect.
 void GameScreen::displayAnimation() {
+	// Down speed.
+	int downSpeed = 5;
 	while(this->dropped) {
 		Gui::clearTextBufs();
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
@@ -161,11 +163,23 @@ void GameScreen::displayAnimation() {
 		Gui::DrawString(175, 180, 0.6f, config->textColor(), Lang::get("WINS") + " " + std::to_string(this->currentGame->getScore(2)), 320);
 		C3D_FrameEnd(0);
 
-		if (this->dropPos < GamePos[this->dropSelection].Y) {
-			this->dropPos += 9;
-		} else {
-			this->dropPos = 0;
-			this->dropped = false;
+		// Mode 0 would be "bouncy".
+		if (config->dropMode() == 0) {
+			if (this->dropPos < GamePos[this->dropSelection].Y) {
+				downSpeed = downSpeed * 1.4;
+				this->dropPos = this->dropPos + downSpeed;
+			} else {
+				this->dropPos = 0;
+				this->dropped = false;
+			}
+			// Mode 1 would be "Smooth".
+		} else if (config->dropMode() == 1) {
+			if (this->dropPos < GamePos[this->dropSelection].Y) {
+				this->dropPos += 9;
+			} else {
+				this->dropPos = 0;
+				this->dropped = false;
+			}
 		}
 	}
 }

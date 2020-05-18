@@ -44,6 +44,7 @@ void Config::initialize() {
 	this->setInt("Raster_Color", C2D_Color32(60, 60, 60, 255));
 	this->setBool("Darken_Screen", true);
 	this->setBool("Allow_Drop", true);
+	this->setInt("Drop_Mode", 0);
 	this->setInt("Bar_Color", C2D_Color32(60, 60, 220, 255));
 	this->setInt("Text_Color", C2D_Color32(255, 255, 255, 255));
 	this->setInt("BG_Color", C2D_Color32(160, 160, 220, 255));
@@ -96,6 +97,12 @@ Config::Config() {
 		this->allowDrop(this->getBool("Allow_Drop"));
 	}
 
+	if (!this->json.contains("Drop_Mode")) {
+		this->dropMode(0);
+	} else {
+		this->dropMode(this->getInt("Drop_Mode"));
+	}
+
 	if (!this->json.contains("Bar_Color")) {
 		this->barColor(C2D_Color32(220, 60, 0, 255));
 	} else {
@@ -145,6 +152,7 @@ void Config::save() {
 		this->setInt("Raster_Color", this->raster());
 		this->setBool("Darken_Screen", this->darkenScreen());
 		this->setBool("Allow_Drop", this->allowDrop());
+		this->setInt("DROP_MODE", this->dropMode());
 		this->setInt("Bar_Color", this->barColor());
 		this->setInt("Text_Color", this->textColor());
 		this->setInt("BG_Color", this->bgColor());
