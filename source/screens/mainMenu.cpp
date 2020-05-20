@@ -26,7 +26,7 @@
 
 #include "config.hpp"
 #include "credits.hpp"
-#include "gameScreen.hpp"
+#include "GameSelectMode.hpp"
 #include "mainMenu.hpp"
 #include "uiSettings.hpp"
 
@@ -55,7 +55,7 @@ void MainMenu::Draw(void) const {
 void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_TOUCH) {
 		if (touching(touch, mainButtons[0])) {
-			Gui::setScreen(std::make_unique<GameScreen>());
+			Gui::setScreen(std::make_unique<GameSelect>());
 		} else if (touching(touch, mainButtons[1])) {
 			Gui::setScreen(std::make_unique<UISettings>());
 		} else if (touching(touch, mainButtons[2])) {
@@ -77,7 +77,7 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (hDown & KEY_A) {
 		if (this->Selection == 0) {
-			Gui::setScreen(std::make_unique<GameScreen>());
+			Gui::setScreen(std::make_unique<GameSelect>());
 		} else if (this->Selection == 1) {
 			Gui::setScreen(std::make_unique<UISettings>());
 		} else if (this->Selection == 2) {

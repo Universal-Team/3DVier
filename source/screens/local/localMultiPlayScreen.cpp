@@ -24,96 +24,67 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "_3DVier_Helper.hpp"
 #include "config.hpp"
-#include "gameScreen.hpp"
-#include "keyboard.hpp"
+#include "localMultiPlayScreen.hpp"
 
 extern std::unique_ptr<Config> config;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
-GameScreen::GameScreen() {
-	// First we select the Avatars.
-	// Then the names.
-	this->avatar1 = _3DVier_Helper::selectAvatar(0, Lang::get("PLAYER1_CHAR"));
-	this->avatar2 = _3DVier_Helper::selectAvatar(0, Lang::get("PLAYER2_CHAR"));
-	this->p1Name = Keyboard::getString(10, Lang::get("PLAYER1_NAME"), 0.6f);
-	this->p2Name = Keyboard::getString(10, Lang::get("PLAYER2_NAME"), 0.6f);
-	int Temp = Keyboard::getUint(255, Lang::get("ENTER_WIN_AMOUNT"));
-	
-	if (Temp > 0) {
-		this->winAmount = Temp;
-	} else {
-		this->winAmount = 3; // 3 Default.
-	}
-
-	this->currentGame = std::make_unique<Game>();
+LocalMultiPlayScreen::LocalMultiPlayScreen(std::shared_ptr<LocalNetwork> &network) {
+	this->room = network;
+	this->avatar1 = 0;
+	this->avatar2 = 5;
+	this->pullNames();
+	this->currentGame = std::make_shared<Game>();
+	this->winAmount = 3;
 	this->Refresh();
 }
 
-std::string GameScreen::getName(int Player) const {
+// Pulls the names of the network.
+void LocalMultiPlayScreen::pullNames() {
+	std::vector<std::string> temp = this->room->getPlayerNames();
+	if (temp.size() == 2) {
+		this->p1Name = temp[0];
+		this->p2Name = temp[1];
+	} else {
+		this->p1Name = "?";
+		this->p2Name = "?";
+	}
+}
+
+std::string LocalMultiPlayScreen::getName(int Player) const {
 	if (Player == 1)	return this->p1Name;
 	else 				return this->p2Name;
 }
 
-int GameScreen::getAvatar(int Player) const {
+int LocalMultiPlayScreen::getAvatar(int Player) const {
 	if (Player == 1)	return this->avatar1;
 	else				return this->avatar2;
 }
 
-
-// Should be basically a helper for the AI in the future.
-int GameScreen::getValue(int row) {
-	if (!this->currentGame->isUsed(row)) {
-		return row;
-	}
-
-	if (!this->currentGame->isUsed(row + 7)) {
-		return row + 7;
-	}
-
-	if (!this->currentGame->isUsed(row + 14)) {
-		return row + 14;
-	}
-
-	if (!this->currentGame->isUsed(row + 21)) {
-		return row + 21;
-	}
-
-	if (!this->currentGame->isUsed(row + 28)) {
-		return row + 28;
-	}
-
-	if (!this->currentGame->isUsed(row + 35)) {
-		return row + 35;
-	}
-
-	if (this->currentGame->isUsed(row + 35)) {
-		return -1;
-	}
-
-	return -1;
-}
-
-// TODO.
-int GameScreen::handleAI() {
-	return 0;
-}
-
-void GameScreen::Draw(void) const {
+void LocalMultiPlayScreen::Draw(void) const {
 	GFX::DrawTop(false);
 	if (config->darkenScreen())	Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 210)); // Darken the screen.
 	GFX::DrawRaster(114, 5);
 	// Draw current Player and the chip color.
 	GFX::DrawChar(this->getAvatar(this->currentGame->currentPlayer()), -5, 35, 1, 1);
 	GFX::DrawChip(45, 165, 1, 1, this->currentGame->currentPlayer());
+	if (this->delay > 0) {
+		Gui::DrawString(30, 200, 0.5f, config->textColor(), Lang::get("DELAY") + std::to_string(this->delay), 80);
+	} else {
+		Gui::DrawString(30, 200, 0.5f, config->textColor(), Lang::get("PLAY"), 80);
+	}
+
 	for (int i = 0; i < (int)this->currentGame->getField().size(); i++) {
 		if (this->currentGame->getField()[i] != 0) {
 			GFX::DrawChip(GamePos[i].X, GamePos[i].Y, 1, 1, this->currentGame->getField()[i]);
 		}
 	}
+
 	// Draw the temporary chip.
-	GFX::DrawSelectedChip(GamePos[this->dropSelection].X, GamePos[this->dropSelection].Y);
+	if (this->currentGame->currentPlayer() == this->room->getPosition()) {
+		GFX::DrawSelectedChip(GamePos[this->dropSelection].X, GamePos[this->dropSelection].Y);
+	}
 
 	GFX::DrawBottom();
 	if (config->darkenScreen())	Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, 210)); // Darken the screen.
@@ -126,18 +97,75 @@ void GameScreen::Draw(void) const {
 	GFX::DrawChar(this->getAvatar(2), 170, 35, 1, 1);
 	Gui::DrawString(175, 160, 0.6f, config->textColor(), this->getName(2), 320);
 	Gui::DrawString(175, 180, 0.6f, config->textColor(), Lang::get("WINS") + " " + std::to_string(this->currentGame->getScore(2)), 320);
+	if (this->currentGame->currentPlayer() != this->room->getPosition()) {
+		Gui::DrawStringCentered(0, 216, 0.7, config->textColor(), Lang::get("WAITING_FOR") + this->getName(this->currentGame->currentPlayer()) + Lang::get("TURN"));
+	} else {
+		Gui::DrawStringCentered(0, 216, 0.7, config->textColor(), Lang::get("YOUR_TURN"));
+	}
+}
+
+void LocalMultiPlayScreen::Refresh() {
+	// Here we set the "dropSelection".
+	if (!this->currentGame->isUsed(rowSelection)) {
+		this->dropSelection = this->rowSelection;
+		return;
+	}
+
+	if (!this->currentGame->isUsed(rowSelection + 7)) {
+		this->dropSelection = this->rowSelection + 7;
+		return;
+	}
+
+	if (!this->currentGame->isUsed(rowSelection + 14)) {
+		this->dropSelection = this->rowSelection + 14;
+		return;
+	}
+
+	if (!this->currentGame->isUsed(rowSelection + 21)) {
+		this->dropSelection = this->rowSelection + 21;
+		return;
+	}
+
+	if (!this->currentGame->isUsed(rowSelection + 28)) {
+		this->dropSelection = this->rowSelection + 28;
+		return;
+	}
+
+	if (!this->currentGame->isUsed(rowSelection + 35)) {
+		this->dropSelection = this->rowSelection + 35;
+		return;
+	}
+	// Display indicator on the last position, if row is full.
+	if (this->currentGame->isUsed(rowSelection + 35)) {
+		this->dropSelection = this->rowSelection + 35;
+		return;
+	}
+}
+
+void LocalMultiPlayScreen::sendPlay() {
+	if (this->currentGame->canDrop(this->dropSelection) == true) {
+		this->playPkg = {(u8)this->dropSelection, (u8)this->rowSelection, (u8)this->currentGame->currentPlayer(), true};
+		this->room->sendPlay(playPkg);
+		this->lastPlayer = this->playPkg.LastPlayer;
+	}
+}
+
+// ONLY DO REFRESH IF IT REALLY MISSED ONE PLAY!!! Otherwise it will cause buggy stuff and you have to restart 3DVier.
+void LocalMultiPlayScreen::sendLastPlay() {
+	this->room->sendPlay(playPkg, true);
 }
 
 // Display drop effect.
-void GameScreen::displayAnimation() {
+void LocalMultiPlayScreen::displayAnimation(int dropSel) {
 	// Down speed.
 	int downSpeed = 5;
-	while(this->dropped) {
+	bool dropped = true;
+	while(dropped) {
 		Gui::clearTextBufs();
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 		GFX::DrawTop(false);
 		if (config->darkenScreen())	Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 210)); // Darken the screen.
-		GFX::DrawChip(GamePos[this->rowSelection].X, this->dropPos, 1, 1, this->currentGame->currentPlayer());
+		GFX::DrawChip(GamePos[dropSel].X, this->dropPos, 1, 1, this->currentGame->currentPlayer());
 		GFX::DrawRaster(114, 5);
 		// Draw current Player and the chip color.
 		GFX::DrawChar(this->getAvatar(this->currentGame->currentPlayer()), -5, 35, 1, 1);
@@ -147,8 +175,6 @@ void GameScreen::displayAnimation() {
 				GFX::DrawChip(GamePos[i].X, GamePos[i].Y, 1, 1, this->currentGame->getField()[i]);
 			}
 		}
-		// Draw the temporary chip.
-		GFX::DrawSelectedChip(GamePos[this->dropSelection].X, GamePos[this->dropSelection].Y);
 
 		GFX::DrawBottom();
 		if (config->darkenScreen())	Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, 210)); // Darken the screen.
@@ -170,7 +196,7 @@ void GameScreen::displayAnimation() {
 				this->dropPos = this->dropPos + downSpeed;
 			} else {
 				this->dropPos = 0;
-				this->dropped = false;
+				dropped = false;
 			}
 			// Mode 1 would be "Smooth".
 		} else if (config->dropMode() == 1) {
@@ -178,14 +204,14 @@ void GameScreen::displayAnimation() {
 				this->dropPos += 9;
 			} else {
 				this->dropPos = 0;
-				this->dropped = false;
+				dropped = false;
 			}
 		}
 	}
 }
 
 // Clear's the field by dropping the chips.
-void GameScreen::clearField() {
+void LocalMultiPlayScreen::clearField() {
 	bool hasWon = true;
 	int Pos = 0;
 	int max = 0;
@@ -234,148 +260,161 @@ void GameScreen::clearField() {
 		if (GamePos[max].Y + Pos < 240) {
 			Pos = Pos + downSpeed;
 		} else {
-			// Clear Gamefield etc and make ready for next round.
-			this->currentGame->clearField();
-			this->rowSelection = 3;
-			this->currentGame->currentPlayer(1);
 			hasWon = false;
 		}
 	}
 }
 
-void GameScreen::Refresh() {
-	// Here we set the "dropSelection".
-	if (!this->currentGame->isUsed(rowSelection)) {
-		this->dropSelection = this->rowSelection;
-		return;
-	}
+void LocalMultiPlayScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
+	if (this->delay > 0)	this->delay--;
 
-	if (!this->currentGame->isUsed(rowSelection + 7)) {
-		this->dropSelection = this->rowSelection + 7;
-		return;
-	}
-
-	if (!this->currentGame->isUsed(rowSelection + 14)) {
-		this->dropSelection = this->rowSelection + 14;
-		return;
-	}
-
-	if (!this->currentGame->isUsed(rowSelection + 21)) {
-		this->dropSelection = this->rowSelection + 21;
-		return;
-	}
-
-	if (!this->currentGame->isUsed(rowSelection + 28)) {
-		this->dropSelection = this->rowSelection + 28;
-		return;
-	}
-
-	if (!this->currentGame->isUsed(rowSelection + 35)) {
-		this->dropSelection = this->rowSelection + 35;
-		return;
-	}
-	// Display indicator on the last position, if row is full.
-	if (this->currentGame->isUsed(rowSelection + 35)) {
-		this->dropSelection = this->rowSelection + 35;
-		return;
-	}
-}
-
-
-void GameScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
-	if (hDown & KEY_START) {
-		if (Msg::promptMsg(Lang::get("GAME_EXIT"))) {
-			Gui::screenBack();
-			return;
+	if (this->currentGame->currentPlayer() != this->room->getPosition()) {
+		if (this->room->getRound().Done != true) {
+			this->room->receivePlay(); // Receive the play data...
 		}
 	}
 
-	if (hDown & KEY_A) {
-		// Only do drop animation if allowed.
+	if (hDown & KEY_SELECT) {
+		if (Msg::promptMsg(Lang::get("REFRESH_WARN"))) {
+			this->sendLastPlay();
+		}
+	}
+
+	if (this->room->getRound().Done) {
+		// Make sure to get ready.
+		this->room->sendDone(this->room->getPosition()-1, true);
+		while(!this->room->everyoneDone()) {
+			this->room->receiveDone();
+		}
+
+		this->room->sendDone(this->room->getPosition()-1, false);
+		while(this->room->everyoneDone()) {
+			this->room->receiveDone();
+		}
+
 		if (config->allowDrop()) {
-			if (this->currentGame->canDrop(this->dropSelection)) {
-				this->dropped = true;
-				this->displayAnimation();
-			}
+			this->displayAnimation(this->room->getRound().Row);
 		}
-		if (this->currentGame->setChip(this->dropSelection, this->currentGame->currentPlayer()) == true) {
+
+		if (this->currentGame->setChip(this->room->getRound().Position, this->currentGame->currentPlayer()) == true) {
 			if (this->currentGame->checkMatches(this->currentGame->currentPlayer()) == true) {
 				if (this->currentGame->getScore(this->currentGame->currentPlayer()) < this->winAmount) {
-					// Only do animation drop if drop enabled.
+
 					if (config->allowDrop()) {
 						this->clearField();
 					}
 
 					char message [100];
 					snprintf(message, sizeof(message), Lang::get("GAME_WIN_ROUND").c_str(), this->getName(this->currentGame->currentPlayer()).c_str(), this->winAmount - this->currentGame->getScore(this->currentGame->currentPlayer()));
-					Msg::DisplayWaitMsg(message);
+					Msg::DisplayMultiPlayMsg(message);
 
-					// For people without drop animations.
-					if (!config->allowDrop()) {
-						this->currentGame->clearField();
-						this->rowSelection = 3;
-						this->currentGame->currentPlayer(1);
-					}
+					this->currentGame->clearField();
+					this->rowSelection = 3;
+					this->currentGame->currentPlayer(1);
 					// Refresh selector.
 					this->Refresh();
-					return;
 				} else {
-					// Only do animation drop if drop enabled.
 					if (config->allowDrop()) {
 						this->clearField();
 					}
 					char message [100];
 					snprintf(message, sizeof(message), Lang::get("GAME_RESULT").c_str(), this->getName(this->currentGame->currentPlayer()).c_str(),
 					 this->getName(1).c_str(), this->currentGame->getScore(1), this->getName(2).c_str(), this->currentGame->getScore(2));
-					Msg::DisplayWaitMsg(message);
+					Msg::DisplayMultiPlayMsg(message);
+
+					// Send not ready here and receive.
+					this->room->sendReady(this->room->getPosition()-1, false);
+					while(this->room->everyoneReady()) {
+						this->room->receiveReady();
+					}
+
+					// Set the round stuff to false, so it won't conflict.
+					this->room->sendPlay({(u8)-1, (u8)-1, false});
+					while(this->room->getRound().Done == true) {
+						this->room->receivePlay(); // Receive the play data...
+					}
 					Gui::screenBack();
 					return;
 				}
 			} else {
-				if (this->currentGame->currentPlayer() == 1) {
-					this->currentGame->currentPlayer(2);
-				} else {
+				this->rowSelection = 3;
+				this->Refresh();
+				if (this->currentGame->allUsed()) {
+					Msg::DisplayMultiPlayMsg(Lang::get("GAME_ALL_USED"));
+					this->currentGame->clearField();
+					this->rowSelection = 3;
+					this->Refresh();
 					this->currentGame->currentPlayer(1);
 				}
 			}
-			this->rowSelection = 3;
-			this->Refresh();
-			if (this->currentGame->allUsed()) {
-				Msg::DisplayWaitMsg(Lang::get("GAME_ALL_USED"));
-				this->currentGame->clearField();
-				this->rowSelection = 3;
-				this->Refresh();
+
+			// Send confirmation about done and receive.
+			this->room->sendDone(this->room->getPosition()-1, true);
+			while(!this->room->everyoneDone()) {
+				this->room->receiveDone();
+			}
+
+			// Set the round stuff to false, so it won't conflict.
+			this->room->sendPlay({(u8)-1, (u8)-1, false});
+			while(this->room->getRound().Done == true) {
+				this->room->receivePlay(); // Receive the play data...
+			}
+
+			// Here we send and receive "done" -> false.. to basically reset it.
+			this->room->sendDone(this->room->getPosition()-1, false);
+			while(this->room->everyoneDone()) {
+				this->room->receiveDone();
+			}
+
+			// Switch player.
+			if (this->currentGame->currentPlayer() == 1) {
+				this->currentGame->currentPlayer(2);
+			} else {
 				this->currentGame->currentPlayer(1);
-				return;
+			}
+			// Do the delay to 120 to avoid desync.
+			this->delay = 120;
+		}
+	}
+
+	// Only do this when Player Amount is 2.
+	if (this->room->getPlayerCount() == 2) {
+		if (this->room->isPlayer(this->currentGame->currentPlayer())) {
+			if (hDown & KEY_A) {
+				if (!this->delay) {
+					this->sendPlay();
+				} else {
+					Msg::DisplayMultiPlayMsg(Lang::get("TOO_FAST"));
+				}
+			}
+
+			if (hDown & KEY_RIGHT) {
+				if (this->rowSelection < 6) {
+					this->rowSelection++;
+					this->Refresh();
+				}
+			}
+
+			if (hDown & KEY_LEFT) {
+				if (this->rowSelection > 0) {
+					this->rowSelection--;
+					this->Refresh();
+				}
+			}
+
+			if (hDown & KEY_R) {
+				this->rowSelection = 6;
+				this->Refresh();
+			}
+
+			if (hDown & KEY_L) {
+				this->rowSelection = 0;
+				this->Refresh();
 			}
 		}
-	}
-
-	if (hDown & KEY_RIGHT) {
-		if (this->rowSelection < 6) {
-			this->rowSelection++;
-			this->Refresh();
-		}
-	}
-
-	if (hDown & KEY_LEFT) {
-		if (this->rowSelection > 0) {
-			this->rowSelection--;
-			this->Refresh();
-		}
-	}
-
-	if (hDown & KEY_R) {
-		this->rowSelection = 6;
-		this->Refresh();
-	}
-
-	if (hDown & KEY_L) {
-		this->rowSelection = 0;
-		this->Refresh();
-	}
-
-	if (hHeld & KEY_SELECT) {
-		Msg::HelperBox(Lang::get("GAME_INSTR"));
+	} else {
+		Msg::DisplayWaitMsg(Lang::get("SOMEONE_LEFT"));
+		Gui::screenBack();
+		return;
 	}
 }

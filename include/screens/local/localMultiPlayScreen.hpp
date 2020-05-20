@@ -24,30 +24,38 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _3DVIER_GAME_SCREEN_HPP
-#define _3DVIER_GAME_SCREEN_HPP
+#ifndef _3DVIER_LOCAL_MULTI_GAME_SCREEN_HPP
+#define _3DVIER_LOCAL_MULTI_GAME_SCREEN_HPP
 
 #include "common.hpp"
 #include "game.hpp"
+#include "localNetwork.hpp"
 #include "structs.hpp"
 
 #include <vector>
 
-class GameScreen : public Screen
+class LocalMultiPlayScreen : public Screen
 {
 public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
-	GameScreen();
+	LocalMultiPlayScreen(std::shared_ptr<LocalNetwork> &network);
 private:
-	std::unique_ptr<Game> currentGame; // Our game pointer.
+	std::shared_ptr<Game> currentGame; // Our game pointer.
+	PlayPackage playPkg = {0, 0, 1, false};
+	std::shared_ptr<LocalNetwork> room;
 	int rowSelection = 3; // To select the Row.
 	int dropSelection = 0; // Where to drop.
 	bool dropped = false; // Chip is dropped.
 	int dropPos = 0; // Chip animation position.
-	void displayAnimation(); // The Drop animation!
+	int delay = 60;
+	void displayAnimation(int dropSel); // The Drop animation!
 	void Refresh(); // Refresh the dropSelection.
 	void clearField(); // Clear the field and make ready for next round.
+	int Position; // Needed?
+	int lastPlayer = 1; // Probably not needed at all.
+	void sendPlay(); // Send your play.
+	void sendLastPlay(); // Basically refresh the receive console using this.
 
 	// Player Names etc.
 	int avatar1, avatar2, winAmount;
@@ -55,9 +63,7 @@ private:
 	std::string getName(int Player) const;
 	int getAvatar(int Player) const;
 
-	// Special handle.
-	int handleAI();
-	int getValue(int row);
+	void pullNames();
 
 	std::vector<ChipIcn> GamePos = {
 		// First Row -> 0-6.

@@ -236,3 +236,8 @@ void GFX::DrawPlayer(int x, int y, float ScaleX, float ScaleY, int player) {
 			break;
 	}
 }
+
+void GFX::Button(const ButtonStruct btn) {
+	Gui::Draw_Rect(btn.X, btn.Y, btn.xSize, btn.ySize, config->buttonColor());
+	Gui::DrawStringCentered(btn.X - 160 + (btn.xSize/2), btn.Y + (btn.ySize/2) - 10, 0.6f, config->textColor(), Lang::get(btn.Text), btn.X-10, btn.Y-5);
+}

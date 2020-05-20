@@ -35,26 +35,50 @@
 
 bool exiting = false;
 touchPosition touch;
-
+u32 hDown, hHeld;
 std::unique_ptr<Config> config;
-
+bool hasUDSInitialized = false;
 // Include all spritesheet's.
 C2D_SpriteSheet characters;
 C2D_SpriteSheet sprites;
 
-
 // If button Position pressed -> Do something.
 bool touching(touchPosition touch, Structs::ButtonPos button) {
-	if (touch.px >= button.x && touch.px <= (button.x + button.w) && touch.py >= button.y && touch.py <= (button.y + button.h))
-		return true;
-	else
-		return false;
+	if (touch.px >= button.x && touch.px <= (button.x + button.w) && touch.py >= button.y && touch.py <= (button.y + button.h))	return true;
+	else	return false;
+}
+
+bool btnTouch(touchPosition touch, ButtonStruct button) {
+	if (touch.px >= button.X && touch.px <= (button.X + button.xSize) && touch.py >= button.Y && touch.py <= (button.Y + button.ySize))	return true;
+	else	return false;
+}
+
+// Here we init the UDS Service.
+void Init::initUDS() {
+	// Only initialize, if not already initialized.
+	if (!hasUDSInitialized) {
+		Result res = udsInit(0x3000, NULL);
+		// Because UDS failed to init, do not set hasInitialized.
+		if (res != 0) {
+			return;
+		}
+		hasUDSInitialized = true;
+	}
+}
+
+// Exit UDS Service.
+void Init::exitUDS() {
+	if (hasUDSInitialized) {
+		udsExit();
+		hasUDSInitialized = false;
+	}
 }
 
 Result Init::Initialize() {
 	gfxInitDefault();
 	romfsInit();
 	Gui::init();
+	cfguInit(); // Needed for UDS to get the console's config.
 	mkdir("sdmc:/3ds", 0777);	// For DSP dump
 	mkdir("sdmc:/3ds/3DVier", 0777); // main Path.
 	config = std::make_unique<Config>();
@@ -74,8 +98,8 @@ Result Init::MainLoop() {
 	{
 		// Scan all the Inputs.
 		hidScanInput();
-		u32 hDown = hidKeysDown();
-		u32 hHeld = hidKeysHeld();
+		hDown = hidKeysDown();
+		hHeld = hidKeysHeld();
 		hidTouchRead(&touch);
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 		C2D_TargetClear(Top, BLACK);
@@ -93,7 +117,9 @@ Result Init::Exit() {
 	Gui::exit();
 	Gui::unloadSheet(characters);
 	Gui::unloadSheet(sprites);
-	config->save();
+	config->save(); // Save Config if changes made.
+	Init::exitUDS(); // Just to make sure UDS is properly exited.
+	cfguExit();
 	gfxExit();
 	romfsExit();
 	return 0;

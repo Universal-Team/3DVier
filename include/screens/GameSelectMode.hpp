@@ -24,42 +24,49 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef GFX_HPP
-#define GFX_HPP
+#ifndef _3DVIER_GAMESELECT_MODE_HPP
+#define _3DVIER_GAMESELECT_MODE_HPP
 
-#include "chars.h"
-#include "colorHelper.hpp"
-#include "sprites.h"
+#include "common.hpp"
+#include "structs.hpp"
 
-#include <string>
+#include <vector>
 
-struct ButtonStruct {
-	int X;
-	int Y;
-	float xSize;
-	float ySize;
-	std::string Text;
-};
-
-namespace GFX
+class GameSelect : public Screen
 {
-	// Basic GUI.
-	void DrawTop(bool useBars = true);
-	void DrawBottom(bool useBars = true);
-	void DrawFileBrowseBG(bool isTop = true);
-	int selectList(std::vector<std::string> content, std::string msg, int oldIndex);
-	void DrawSprite(int index, int x, int y, float ScaleX = 1, float ScaleY = 1);
-	// Selectors.
-	void DrawButtonSelector(int x, int y, float ScaleX = 1, float ScaleY = 1, bool useSmall = false);
-	void DrawSelectedChip(int x, int y, float ScaleX = 1, float ScaleY = 1);
-	
-	void DrawChar(int image, int x, int y, float ScaleX = 1, float ScaleY = 1);
-	void DrawChip(int x, int y, float ScaleX = 1, float ScaleY = 1, int player = 1);
-	void DrawRaster(int x, int y);
-	void DrawPlayer(int x, int y, float ScaleX, float ScaleY, int player);
+public:
+	void Draw(void) const override;
+	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
+private:
+	int mainSelection = 0;
+	int createSelection = 0;
+	int typeSelection = 0;
+	int Mode = 0;
 
-	// Buttons.
-	void Button(const ButtonStruct btn);
-}
+	// Screen draws.
+	void DrawFirstSelection(void) const;
+	void DrawTypeSelection(void) const;
+	void DrawCreateSelection(void) const;
+	// Screen Logics.
+	void firstLogic(u32 hDown, u32 hHeld, touchPosition touch);
+	void typeLogic(u32 hDown, u32 hHeld, touchPosition touch);
+	void createLogic(u32 hDown, u32 hHeld, touchPosition touch);
+
+	std::vector<ButtonStruct> mainButtons = {
+		{90, 60, 140, 40, "SINGLE_PLAYER"},
+		{90, 130, 140, 40, "MULTI_PLAYER"}
+	};
+
+	std::vector<ButtonStruct> createMode = {
+		{90, 60, 140, 40, "CREATE_ROOM"},
+		{90, 130, 140, 40, "JOIN_ROOM"}
+	};
+
+	std::vector<ButtonStruct> typeBtn = {
+		{90, 40, 140, 40, "SINGLE_CONSOLE"},
+		{90, 100, 140, 40, "LOCAL_CONSOLE"},
+		{90, 160, 140, 40, "ONLINE_CONSOLE"}
+	};
+};
 
 #endif

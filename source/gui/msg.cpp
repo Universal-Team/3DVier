@@ -51,8 +51,8 @@ bool Msg::promptMsg2(std::string promptMsg)
 		C2D_TargetClear(Top, BLACK);
 		C2D_TargetClear(Bottom, BLACK);
 		GFX::DrawTop();
-		Gui::Draw_Rect(0, 80, 400, 80, config->barColor());
-		Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.8f, promptMsg))/2, 0.8f, config->textColor(), promptMsg, 390, 70);
+		Gui::Draw_Rect(0, 60, 400, 100, config->barColor());
+		Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.8f, promptMsg))/2-10, 0.8f, config->textColor(), promptMsg, 390, 90);
 		GFX::DrawBottom();
 		// Draw Bottom Screen part.
 		Gui::Draw_Rect(10, 100, 140, 40, config->buttonColor());
@@ -182,4 +182,30 @@ void Msg::DisplayMsg(std::string Message) {
 
 void Msg::NotImplementedYet(void) {
 	Msg::DisplayWaitMsg(Lang::get("NOT_IMPLEMENTED_YET"));
+}
+
+// Display a Message, which can be skipped with Y.
+void Msg::DisplayMultiPlayMsg(std::string waitMsg, ...)
+{
+	Gui::clearTextBufs();
+	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+	C2D_TargetClear(Top, BLACK);
+	C2D_TargetClear(Bottom, BLACK);
+	GFX::DrawTop();
+	Gui::Draw_Rect(0, 80, 400, 80, config->barColor());
+	Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.8f, waitMsg))/2, 0.8f, config->textColor(), waitMsg, 390, 70);
+	Gui::DrawStringCentered(0, 214, 0.8f, config->textColor(), Lang::get("Y_CONTINUE"), 390);
+	GFX::DrawBottom();
+	Gui::Draw_Rect(100, 100, 140, 40, config->buttonColor());
+	Gui::DrawStringCentered(-60+70, 105, 0.8f, config->textColor(), Lang::get("OK"), 140);
+	C3D_FrameEnd(0);
+
+	while(1)
+	{
+		gspWaitForVBlank();
+		hidScanInput();
+		hidTouchRead(&touch);
+		if((hidKeysDown() & KEY_Y) || (hidKeysDown() & KEY_TOUCH && touching(touch, promptBtn[2])))
+			break;
+	}
 }

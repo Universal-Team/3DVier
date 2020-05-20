@@ -24,42 +24,30 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef GFX_HPP
-#define GFX_HPP
+#ifndef _3DVIER_LOCAL_ROOM_LIST_SCREEN_HPP
+#define _3DVIER_LOCAL_ROOM_LIST_SCREEN_HPP
 
-#include "chars.h"
-#include "colorHelper.hpp"
-#include "sprites.h"
+#include "common.hpp"
+#include "localNetwork.hpp"
+#include "structs.hpp"
+#include <vector>
 
-#include <string>
+constexpr int NetworkListRoomsPerScreen = 3;
 
-struct ButtonStruct {
-	int X;
-	int Y;
-	float xSize;
-	float ySize;
-	std::string Text;
-};
-
-namespace GFX
+class LocalRoomList : public Screen
 {
-	// Basic GUI.
-	void DrawTop(bool useBars = true);
-	void DrawBottom(bool useBars = true);
-	void DrawFileBrowseBG(bool isTop = true);
-	int selectList(std::vector<std::string> content, std::string msg, int oldIndex);
-	void DrawSprite(int index, int x, int y, float ScaleX = 1, float ScaleY = 1);
-	// Selectors.
-	void DrawButtonSelector(int x, int y, float ScaleX = 1, float ScaleY = 1, bool useSmall = false);
-	void DrawSelectedChip(int x, int y, float ScaleX = 1, float ScaleY = 1);
-	
-	void DrawChar(int image, int x, int y, float ScaleX = 1, float ScaleY = 1);
-	void DrawChip(int x, int y, float ScaleX = 1, float ScaleY = 1, int player = 1);
-	void DrawRaster(int x, int y);
-	void DrawPlayer(int x, int y, float ScaleX, float ScaleY, int player);
-
-	// Buttons.
-	void Button(const ButtonStruct btn);
-}
+public:
+	void Draw(void) const override;
+	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
+	LocalRoomList();
+	~LocalRoomList();
+private:
+	void joinRoom(int i);
+	void refreshList();
+	void joinSelectedRoom();
+	std::vector<std::shared_ptr<LocalNetwork>> rooms;
+	int selectedRoom;
+	int roomsScroll;
+};
 
 #endif
