@@ -2,7 +2,7 @@
 A Connect Four clone for Nintendo 3DS.
 
 ## Screenshots
-![MainMenu](https://github.com/SuperSaiyajinStackZ/3DVier/blob/master/Screenshots/mainMenu.png)![Char Selection](https://github.com/SuperSaiyajinStackZ/3DVier/blob/master/Screenshots/charSelection.png)![Color Settings](https://github.com/SuperSaiyajinStackZ/3DVier/blob/master/Screenshots/colorSettings.png)![Credits](https://github.com/SuperSaiyajinStackZ/3DVier/blob/master/Screenshots/credits.png)![In Game](https://github.com/SuperSaiyajinStackZ/3DVier/blob/master/Screenshots/inGame.png)![Keyboard](https://github.com/SuperSaiyajinStackZ/3DVier/blob/master/Screenshots/keyboard.png)![Language Selection](https://github.com/SuperSaiyajinStackZ/3DVier/blob/master/Screenshots/langSelection.png)![UI Settings](https://github.com/SuperSaiyajinStackZ/3DVier/blob/master/Screenshots/uiSettings.png)
+![MainMenu](https://github.com/Universal-Team/3DVier/blob/master/Screenshots/mainMenu.png)![Char Selection](https://github.com/Universal-Team/3DVier/blob/master/Screenshots/charSelection.png)![Color Settings](https://github.com/Universal-Team/3DVier/blob/master/Screenshots/colorSettings.png)![Credits](https://github.com/Universal-Team/3DVier/blob/master/Screenshots/credits.png)![In Game](https://github.com/Universal-Team/3DVier/blob/master/Screenshots/inGame.png)![Keyboard](https://github.com/Universal-Team/3DVier/blob/master/Screenshots/keyboard.png)![Language Selection](https://github.com/Universal-Team/3DVier/blob/master/Screenshots/langSelection.png)![UI Settings](https://github.com/Universal-Team/3DVier/blob/master/Screenshots/uiSettings.png)
 
 ## Compilation
 
