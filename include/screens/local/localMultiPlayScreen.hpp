@@ -1,6 +1,6 @@
 /*
 *   This file is part of 3DVier
-*   Copyright (C) 2020 SuperSaiyajinStackZ
+*   Copyright (C) 2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -24,8 +24,8 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _3DVIER_LOCAL_MULTI_GAME_SCREEN_HPP
-#define _3DVIER_LOCAL_MULTI_GAME_SCREEN_HPP
+#ifndef _3DVIER_LOCAL_MULTI_PLAY_SCREEN_HPP
+#define _3DVIER_LOCAL_MULTI_PLAY_SCREEN_HPP
 
 #include "common.hpp"
 #include "game.hpp"

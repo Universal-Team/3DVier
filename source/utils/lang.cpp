@@ -1,6 +1,6 @@
 /*
 *   This file is part of 3DVier
-*   Copyright (C) 2020 SuperSaiyajinStackZ
+*   Copyright (C) 2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -44,6 +44,6 @@ std::string langs[] = {"de", "en"};
 void Lang::load() {
 	FILE* values;
 	values = fopen(("romfs:/lang/"+langs[config->language()]+"/app.json").c_str(), "rt");
-	if(values)	appJson = nlohmann::json::parse(values, nullptr, false);
+	if (values)	appJson = nlohmann::json::parse(values, nullptr, false);
 	fclose(values);
 }

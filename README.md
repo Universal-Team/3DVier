@@ -21,3 +21,4 @@ You need support for 3DVier? Then don't be shy to join the Universal-Server's Di
 ## Others
 - [devkitPro](https://github.com/devkitPro), [Fincs](https://github.com/fincs), [Smealum](https://github.com/smealum), [Wintermute](https://github.com/WinterMute): For devkitARM, Citro2D, Citro3D and Libctru.
 - [Universal-Core](https://github.com/Universal-Team/Universal-Core): The code for the UI.
+- [Yahtzee3DS](https://github.com/LiquidFenrir/Yahtzee3DS): For inspiring me for local stuff. Without it, I probably might stuck on the LocalPlay implementation.

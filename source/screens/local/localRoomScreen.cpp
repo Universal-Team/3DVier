@@ -1,6 +1,6 @@
 /*
 *   This file is part of 3DVier
-*   Copyright (C) 2020 SuperSaiyajinStackZ
+*   Copyright (C) 2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -43,9 +43,7 @@ LocalRoomScreen::LocalRoomScreen() {
 	this->ownerLeft = false;
 }
 
-LocalRoomScreen::~LocalRoomScreen() {
-	Init::exitUDS();
-}
+LocalRoomScreen::~LocalRoomScreen() { Init::exitUDS(); }
 
 LocalRoomScreen::LocalRoomScreen(int playerID, std::shared_ptr<LocalNetwork>& room)
 {

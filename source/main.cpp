@@ -1,6 +1,6 @@
 /*
 *   This file is part of 3DVier
-*   Copyright (C) 2020 SuperSaiyajinStackZ
+*   Copyright (C) 2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -26,6 +26,4 @@
 
 #include "init.hpp"
 
-int main() {
-	Init::MainLoop();
-}
+int main() { Init::MainLoop(); }
