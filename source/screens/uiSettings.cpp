@@ -36,6 +36,7 @@ extern bool touching(touchPosition touch, Structs::ButtonPos button);
 void UISettings::Draw(void) const {
 	GFX::DrawTop();
 	Gui::DrawStringCentered(0, 0, 0.9f, config->textColor(), "3DVier - " + Lang::get("UI_SETTINGS"));
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 	GFX::DrawBottom();
 
 	for (int i = 0; i < 6; i++) {
@@ -51,15 +52,16 @@ void UISettings::Draw(void) const {
 	Gui::DrawStringCentered(80, mainButtons[3].y+12, 0.6f, config->textColor(), Lang::get("ALLOW_DROPS"), 130);
 	Gui::DrawStringCentered(-80, mainButtons[4].y+12, 0.6f, config->textColor(), Lang::get("ANIMATION_MODE"), 130);
 	Gui::DrawStringCentered(80, mainButtons[5].y+12, 0.6f, config->textColor(), "???", 130);
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 }
 
 
 void UISettings::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_TOUCH) {
 		if (touching(touch, mainButtons[0])) {
-			Gui::setScreen(std::make_unique<ColorChanger>());
+			Gui::setScreen(std::make_unique<ColorChanger>(), true, true);
 		} else if (touching(touch, mainButtons[1])) {
-			Gui::setScreen(std::make_unique<LangSelection>());
+			Gui::setScreen(std::make_unique<LangSelection>(), true, true);
 		} else if (touching(touch, mainButtons[2])) {
 			if (config->darkenScreen()) {
 				if (Msg::promptMsg(Lang::get("DARKEN_MSG"))) {
@@ -105,9 +107,9 @@ void UISettings::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (hDown & KEY_A) {
 		if (this->Selection == 0) {
-			Gui::setScreen(std::make_unique<ColorChanger>());
+			Gui::setScreen(std::make_unique<ColorChanger>(), true, true);
 		} else if (this->Selection == 1) {
-			Gui::setScreen(std::make_unique<LangSelection>());
+			Gui::setScreen(std::make_unique<LangSelection>(), true, true);
 		} else if (this->Selection == 2) {
 			if (config->darkenScreen()) {
 				if (Msg::promptMsg(Lang::get("DARKEN_MSG"))) {
@@ -139,7 +141,7 @@ void UISettings::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_B) {
-		Gui::screenBack();
+		Gui::screenBack(true);
 		return;
 	}
 }

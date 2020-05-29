@@ -75,6 +75,7 @@ void LocalMultiPlayScreen::Draw(void) const {
 		Gui::DrawString(30, 200, 0.5f, config->textColor(), Lang::get("PLAY"), 80);
 	}
 
+
 	for (int i = 0; i < (int)this->currentGame->getField().size(); i++) {
 		if (this->currentGame->getField()[i] != 0) {
 			GFX::DrawChip(GamePos[i].X, GamePos[i].Y, 1, 1, this->currentGame->getField()[i]);
@@ -86,6 +87,7 @@ void LocalMultiPlayScreen::Draw(void) const {
 		GFX::DrawSelectedChip(GamePos[this->dropSelection].X, GamePos[this->dropSelection].Y);
 	}
 
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 	GFX::DrawBottom();
 	if (config->darkenScreen())	Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, 210)); // Darken the screen.
 	Gui::DrawStringCentered(0, 0, 0.8f, config->textColor(), Lang::get("WINS_TO_WIN") + " " + std::to_string(this->winAmount), 320);
@@ -102,6 +104,7 @@ void LocalMultiPlayScreen::Draw(void) const {
 	} else {
 		Gui::DrawStringCentered(0, 216, 0.7, config->textColor(), Lang::get("YOUR_TURN"));
 	}
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 }
 
 void LocalMultiPlayScreen::Refresh() {
@@ -333,7 +336,7 @@ void LocalMultiPlayScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 					while(this->room->getRound().Done == true) {
 						this->room->receivePlay(); // Receive the play data...
 					}
-					Gui::screenBack();
+					Gui::screenBack(true);
 					return;
 				}
 			} else {
@@ -414,7 +417,7 @@ void LocalMultiPlayScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 	} else {
 		Msg::DisplayWaitMsg(Lang::get("SOMEONE_LEFT"));
-		Gui::screenBack();
+		Gui::screenBack(true);
 		return;
 	}
 }

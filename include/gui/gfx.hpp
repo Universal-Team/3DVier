@@ -41,8 +41,7 @@ struct ButtonStruct {
 	std::string Text;
 };
 
-namespace GFX
-{
+namespace GFX {
 	// Basic GUI.
 	void DrawTop(bool useBars = true);
 	void DrawBottom(bool useBars = true);

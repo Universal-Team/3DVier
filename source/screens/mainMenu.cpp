@@ -37,6 +37,7 @@ extern bool touching(touchPosition touch, Structs::ButtonPos button);
 void MainMenu::Draw(void) const {
 	GFX::DrawTop();
 	Gui::DrawStringCentered(0, 0, 0.9f, config->textColor(), "3DVier - " + Lang::get("MAINMENU"));
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 	GFX::DrawBottom();
 	for (int i = 0; i < 4; i++) {
 		Gui::Draw_Rect(mainButtons[i].x, mainButtons[i].y, mainButtons[i].w, mainButtons[i].h, config->buttonColor());
@@ -49,17 +50,18 @@ void MainMenu::Draw(void) const {
 	Gui::DrawStringCentered(80, mainButtons[1].y+12, 0.6f, config->textColor(), Lang::get("UI_SETTINGS"), 130);
 	Gui::DrawStringCentered(-80, mainButtons[2].y+12, 0.6f, config->textColor(), Lang::get("CREDITS"), 130);
 	Gui::DrawStringCentered(80, mainButtons[3].y+12, 0.6f, config->textColor(), "???", 130);
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 }
 
 
 void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_TOUCH) {
 		if (touching(touch, mainButtons[0])) {
-			Gui::setScreen(std::make_unique<GameSelect>());
+			Gui::setScreen(std::make_unique<GameSelect>(), true, true);
 		} else if (touching(touch, mainButtons[1])) {
-			Gui::setScreen(std::make_unique<UISettings>());
+			Gui::setScreen(std::make_unique<UISettings>(), true, true);
 		} else if (touching(touch, mainButtons[2])) {
-			Gui::setScreen(std::make_unique<Credits>());
+			Gui::setScreen(std::make_unique<Credits>(), true, true);
 		} else if (touching(touch, mainButtons[3])) {
 			// ?
 		}
@@ -77,11 +79,11 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (hDown & KEY_A) {
 		if (this->Selection == 0) {
-			Gui::setScreen(std::make_unique<GameSelect>());
+			Gui::setScreen(std::make_unique<GameSelect>(), true, true);
 		} else if (this->Selection == 1) {
-			Gui::setScreen(std::make_unique<UISettings>());
+			Gui::setScreen(std::make_unique<UISettings>(), true, true);
 		} else if (this->Selection == 2) {
-			Gui::setScreen(std::make_unique<Credits>());
+			Gui::setScreen(std::make_unique<Credits>(), true, true);
 		} else if (this->Selection == 3) {
 			// ?
 		}
@@ -89,6 +91,8 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 
 	if (hDown & KEY_START) {
+		fadeout = true;
+		fadecolor = 0;
 		exiting = true;
 	}
 }

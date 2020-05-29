@@ -38,6 +38,7 @@ LangSelection::LangSelection() {
 void LangSelection::Draw(void) const {
 	GFX::DrawTop();
 	Gui::DrawStringCentered(0, 0, 0.7f, config->textColor(), Lang::get("SELECT_LANG"), 400);
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 	GFX::DrawBottom();
 
 	for (int language = 0; language < 2; language++) {
@@ -49,6 +50,7 @@ void LangSelection::Draw(void) const {
 
 	Gui::DrawString(langBlocks[0].x+25, langBlocks[0].y, 0.7f, config->textColor(), "Deutsch", 320);
 	Gui::DrawString(langBlocks[1].x+25, langBlocks[1].y, 0.7f, config->textColor(), "English", 320);
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 }
 
 void LangSelection::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
@@ -78,7 +80,7 @@ void LangSelection::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 	
 	if (hDown & KEY_B) {
-		Gui::screenBack();
+		Gui::screenBack(true);
 		return;
 	}
 }

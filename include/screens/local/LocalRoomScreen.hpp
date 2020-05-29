@@ -33,8 +33,7 @@
 
 #include <vector>
 
-class LocalRoomScreen : public Screen
-{
+class LocalRoomScreen : public Screen {
 public:
 	void Draw(void) const override;
 	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;

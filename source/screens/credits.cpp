@@ -35,18 +35,21 @@ void Credits::Draw(void) const {
 	GFX::DrawTop();
 	Gui::DrawStringCentered(0, 0, 0.9f, config->textColor(), "3DVier - " + Lang::get("CREDITS"), 400);
 	Gui::DrawStringCentered(0, 30, 0.7f, config->textColor(), Lang::get("DEVELOPED_BY"), 390);
-	GFX::DrawSprite(sprites_stackZ_idx, 2, 80);
+	Gui::DrawStringCentered(0, 50, 0.7f, config->textColor(), Lang::get("MAIN_DEV"), 390);
+	GFX::DrawSprite(sprites_stackie_idx, 2, 80);
 	GFX::DrawSprite(sprites_universal_core_idx, 190, 105);
 	std::string currentVersion = Lang::get("CURRENT_VERSION");
 	currentVersion += V_STRING;
 	Gui::DrawString(395-Gui::GetStringWidth(0.70f, currentVersion), 217, 0.70f, config->textColor(), currentVersion, 400);
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 	GFX::DrawBottom();
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 }
 
 
 void Credits::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if(hDown & KEY_B) {
-		Gui::screenBack();
+		Gui::screenBack(true);
 		return;
 	}
 }

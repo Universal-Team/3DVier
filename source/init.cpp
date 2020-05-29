@@ -86,16 +86,18 @@ Result Init::Initialize() {
 	Gui::loadSheet("romfs:/gfx/chars.t3x", characters);
 	Gui::loadSheet("romfs:/gfx/sprites.t3x", sprites);
 	osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users.
-	Gui::setScreen(std::make_unique<MainMenu>());
+	Gui::setScreen(std::make_unique<MainMenu>(), false, true);
 	return 0;
 }
 
 Result Init::MainLoop() {
 	// Initialize everything.
 	Initialize();
+	// Here we set the initial fade effect for fadein.
+	fadealpha = 255;
+	fadein = true;
 	// Loop as long as the status is not exiting.
-	while (aptMainLoop() && !exiting)
-	{
+	while (aptMainLoop()) {
 		// Scan all the Inputs.
 		hidScanInput();
 		hDown = hidKeysDown();
@@ -105,9 +107,17 @@ Result Init::MainLoop() {
 		C2D_TargetClear(Top, BLACK);
 		C2D_TargetClear(Bottom, BLACK);
 		Gui::clearTextBufs();
-		Gui::mainLoop(hDown, hHeld, touch);
+		Gui::DrawScreen(true);
+		Gui::ScreenLogic(hDown, hHeld, touch, true, true);
 		C3D_FrameEnd(0);
+
+		if (exiting) {
+			if (!fadeout)	break;
+		}
+
+		Gui::fadeEffects(16, 16, true);
 	}
+	
 	// Exit all services and exit the app.
 	Exit();
 	return 0;

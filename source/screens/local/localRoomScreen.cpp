@@ -45,8 +45,7 @@ LocalRoomScreen::LocalRoomScreen() {
 
 LocalRoomScreen::~LocalRoomScreen() { Init::exitUDS(); }
 
-LocalRoomScreen::LocalRoomScreen(int playerID, std::shared_ptr<LocalNetwork>& room)
-{
+LocalRoomScreen::LocalRoomScreen(int playerID, std::shared_ptr<LocalNetwork>& room) {
 	this->room = room;
 	this->playerID = playerID;
 	this->ready = false;
@@ -57,39 +56,34 @@ void LocalRoomScreen::Draw(void) const {
 	GFX::DrawTop();
 	Gui::DrawStringCentered(0, 0, 0.8f, config->textColor(), "3DVier - " + Lang::get("WAITING_ROOM"), 400);
 	Gui::DrawStringCentered(0, 215, 0.8f, config->textColor(), Lang::get("TOGGLE_READY"), 400);
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 	GFX::DrawBottom();
 
 	std::vector<std::string> playerNames = this->room->getPlayerNames();
-	if (playerNames.size() == 0)  // If room owner left, there is no one left
-	{
+	if (playerNames.size() == 0) {
 		this->ownerLeft = true;
 	}
 
-	if (this->ownerLeft)
-	{
+	if (this->ownerLeft) {
 		Gui::DrawStringCentered(0, 0, 0.7f, config->textColor(), Lang::get("OWNER_LEFT"));
 		Gui::DrawStringCentered(0, 215, 0.7f, config->textColor(), Lang::get("B_BACK"));
-	}
-	else
-	{
+	} else {
 		float readyX = 180;
-		for(size_t i = 0; i < playerNames.size(); i++)
-		{
+		for(size_t i = 0; i < playerNames.size(); i++) {
 			float y = 40 + i*25;
 			Gui::DrawString(32, y, 0.7f, config->textColor(), playerNames[i], 90);
 			if (this->room->isPlayerReady(i))	Gui::DrawString(readyX, y, 0.7f, config->textColor(), Lang::get("IM_READY"), 90);
 		}
 	}
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 }
 
-void LocalRoomScreen::setReady()
-{
+void LocalRoomScreen::setReady() {
 	this->ready = true;
 	this->room->sendReady(this->playerID, this->ready);
 }
 
-void LocalRoomScreen::setNotReady()
-{
+void LocalRoomScreen::setNotReady() {
 	this->ready = false;
 	this->room->sendReady(this->playerID, this->ready);
 }
@@ -107,12 +101,12 @@ void LocalRoomScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		}
 
 		if (this->room->everyoneReady()) {
-			Gui::setScreen(std::make_unique<LocalMultiPlayScreen>(this->room));
+			Gui::setScreen(std::make_unique<LocalMultiPlayScreen>(this->room), true, true);
 		}
 	}
 
 	if (hDown & KEY_B) {
-		Gui::screenBack();
+		Gui::screenBack(true);
 		return;
 	}
 }

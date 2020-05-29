@@ -114,7 +114,7 @@ void GameScreen::Draw(void) const {
 	}
 	// Draw the temporary chip.
 	GFX::DrawSelectedChip(GamePos[this->dropSelection].X, GamePos[this->dropSelection].Y);
-
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 	GFX::DrawBottom();
 	if (config->darkenScreen())	Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, 210)); // Darken the screen.
 	Gui::DrawStringCentered(0, 0, 0.8f, config->textColor(), Lang::get("WINS_TO_WIN") + " " + std::to_string(this->winAmount), 320);
@@ -126,6 +126,7 @@ void GameScreen::Draw(void) const {
 	GFX::DrawChar(this->getAvatar(2), 170, 35, 1, 1);
 	Gui::DrawString(175, 160, 0.6f, config->textColor(), this->getName(2), 320);
 	Gui::DrawString(175, 180, 0.6f, config->textColor(), Lang::get("WINS") + " " + std::to_string(this->currentGame->getScore(2)), 320);
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 }
 
 // Display drop effect.
@@ -285,7 +286,7 @@ void GameScreen::Refresh() {
 void GameScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_START) {
 		if (Msg::promptMsg(Lang::get("GAME_EXIT"))) {
-			Gui::screenBack();
+			Gui::screenBack(true);
 			return;
 		}
 	}

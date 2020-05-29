@@ -45,6 +45,7 @@ void LocalRoomList::Draw(void) const {
 	GFX::DrawTop();
 	Gui::DrawStringCentered(0, 0, 0.8f, config->textColor(), "3DVier - " + Lang::get("ROOM_LIST"), 400);
 	Gui::DrawStringCentered(0, 215, 0.8f, config->textColor(), Lang::get("REFRESH_ROOMS"), 400);
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 	GFX::DrawBottom();
 
 	for (int i = 0; i < NetworkListRoomsPerScreen; i++) {
@@ -67,6 +68,7 @@ void LocalRoomList::Draw(void) const {
 		snprintf(roomNameAndPlayers, 127, "%s: %d | %d", roomName.c_str(), roomPlayers, 2);
 		Gui::DrawStringCentered(0, y, 0.7f, config->textColor(), roomNameAndPlayers);
 	}
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 }
 
 void LocalRoomList::joinRoom(int i) {
@@ -84,43 +86,36 @@ void LocalRoomList::refreshList() {
 	this->roomsScroll = 0;
 }
 
-void LocalRoomList::joinSelectedRoom()
-{
-	Gui::setScreen(std::make_unique<LocalRoomScreen>(this->rooms[this->selectedRoom]->getPlayerCount(), this->rooms[this->selectedRoom]));
+void LocalRoomList::joinSelectedRoom() {
+	Gui::setScreen(std::make_unique<LocalRoomScreen>(this->rooms[this->selectedRoom]->getPlayerCount(), this->rooms[this->selectedRoom]), true, true);
 	this->rooms[this->selectedRoom]->join();
 }
 
 void LocalRoomList::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
-	if (this->rooms.size() != 0)
-	{
+	if (this->rooms.size() != 0) {
 		int MaxRoom = static_cast<int>(this->rooms.size()-1);
 		int MinRoom = 0;
 		int MaxScroll = this->rooms.size()-NetworkListRoomsPerScreen;
 		int MinScroll = 0;
-		if (hDown & KEY_A)
-		{
+		if (hDown & KEY_A) {
 			this->joinSelectedRoom();
 		}
 
-		if (hDown & KEY_DOWN)
-		{
+		if (hDown & KEY_DOWN) {
 			this->selectedRoom++;
 			if (this->selectedRoom > MaxRoom)	this->selectedRoom = MaxRoom;
 
-			if (this->roomsScroll+this->selectedRoom >= NetworkListRoomsPerScreen && this->selectedRoom == this->roomsScroll+NetworkListRoomsPerScreen)
-			{
+			if (this->roomsScroll+this->selectedRoom >= NetworkListRoomsPerScreen && this->selectedRoom == this->roomsScroll+NetworkListRoomsPerScreen) {
 				this->roomsScroll++;
 				if (this->roomsScroll > MaxScroll)	this->roomsScroll = MaxScroll;
 			}
 		}
 
-		if (hDown & KEY_UP)
-		{
+		if (hDown & KEY_UP) {
 			this->selectedRoom--;
 			if (this->selectedRoom < MinRoom)	this->selectedRoom = MinRoom;
 
-			if (this->roomsScroll > MinScroll && this->selectedRoom == this->roomsScroll-1)
-			{
+			if (this->roomsScroll > MinScroll && this->selectedRoom == this->roomsScroll-1) {
 				this->roomsScroll--;
 				if (this->roomsScroll < MinScroll)	this->roomsScroll = MinScroll;
 			}
@@ -132,7 +127,7 @@ void LocalRoomList::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_B) {
-		Gui::screenBack();
+		Gui::screenBack(true);
 		return;
 	}
 }

@@ -61,11 +61,13 @@ void GameSelect::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 void GameSelect::DrawFirstSelection(void) const {
 	GFX::DrawTop();
 	Gui::DrawStringCentered(0, 0, 0.8f, config->textColor(), Lang::get("GAME_SELECT"), 390);
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 	GFX::DrawBottom();
 	for (int i = 0; i < 2; i++) {
 		GFX::Button(this->mainButtons[i]);
 	}
 	GFX::DrawButtonSelector(mainButtons[this->mainSelection].X, mainButtons[this->mainSelection].Y);
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 }
 
 void GameSelect::firstLogic(u32 hDown, u32 hHeld, touchPosition touch) {
@@ -94,7 +96,7 @@ void GameSelect::firstLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_B) {
-		Gui::screenBack();
+		Gui::screenBack(true);
 		return;
 	}
 }
@@ -102,11 +104,13 @@ void GameSelect::firstLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 void GameSelect::DrawTypeSelection(void) const {
 	GFX::DrawTop();
 	Gui::DrawStringCentered(0, 0, 0.8f, config->textColor(), Lang::get("GAME_TYPE"), 390);
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 	GFX::DrawBottom();
 	for (int i = 0; i < 3; i++) {
 		GFX::Button(this->typeBtn[i]);
 	}
 	GFX::DrawButtonSelector(typeBtn[this->typeSelection].X, typeBtn[this->typeSelection].Y);
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 }
 
 void GameSelect::typeLogic(u32 hDown, u32 hHeld, touchPosition touch) {
@@ -146,11 +150,13 @@ void GameSelect::typeLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 void GameSelect::DrawCreateSelection(void) const {
 	GFX::DrawTop();
 	Gui::DrawStringCentered(0, 0, 0.8f, config->textColor(), Lang::get("GAME_CREATE"), 390);
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 	GFX::DrawBottom();
 	for (int i = 0; i < 2; i++) {
 		GFX::Button(this->createMode[i]);
 	}
 	GFX::DrawButtonSelector(createMode[this->createSelection].X, createMode[this->createSelection].Y);
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 }
 
 void GameSelect::createLogic(u32 hDown, u32 hHeld, touchPosition touch) {
