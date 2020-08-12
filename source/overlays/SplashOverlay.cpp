@@ -24,41 +24,39 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _3DVIER_GFX_HPP
-#define _3DVIER_GFX_HPP
+#include "overlay.hpp"
 
-#include "chars.h"
-#include "colorHelper.hpp"
-#include "sprites.h"
-
-#include <string>
-
-struct ButtonStruct {
-	int X;
-	int Y;
-	float xSize;
-	float ySize;
-	std::string Text;
-};
-
-namespace GFX {
-	// Basic GUI.
-	void DrawTop(bool useBars = true);
-	void DrawBottom(bool useBars = true);
-	void DrawFileBrowseBG(bool isTop = true);
-	int selectList(std::vector<std::string> content, std::string msg, int oldIndex);
-	void DrawSprite(int index, int x, int y, float ScaleX = 1, float ScaleY = 1);
-	// Selectors.
-	void DrawButtonSelector(int x, int y, float ScaleX = 1, float ScaleY = 1, bool useSmall = false);
-	void DrawSelectedChip(int x, int y, float ScaleX = 1, float ScaleY = 1);
-	
-	void DrawChar(int image, int x, int y, float ScaleX = 1, float ScaleY = 1);
-	void DrawChip(int x, int y, float ScaleX = 1, float ScaleY = 1, int player = 1);
-	void DrawRaster(int x, int y);
-	void DrawPlayer(int x, int y, float ScaleX, float ScaleY, int player);
-
-	// Buttons.
-	void Button(const ButtonStruct btn);
+static void Draw(void) {
+	Gui::clearTextBufs();
+	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+	C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
+	C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
+	Gui::ScreenDraw(Top);
+	GFX::DrawSprite(sprites_dev_by_idx, 0, 0);
+	Gui::DrawString(395-Gui::GetStringWidth(0.50, "2020"), 218, 0.50, C2D_Color32(255, 255, 255, 255), "2020");
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
+	Gui::ScreenDraw(Bottom);
+	GFX::DrawSprite(sprites_universal_core_idx, 0, 0);
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
+	C3D_FrameEnd(0);
 }
 
-#endif
+void Overlays::SplashOverlay() {
+	fadein = true;
+	fadealpha = 255;
+	int delay = 200; // The delay for exiting the overlay.
+	bool doOut = false;
+	while(!doOut) {
+		Draw();
+		Gui::fadeEffects(16, 16, false);
+		hidScanInput();
+
+		if (delay > 0) {
+			delay--;
+
+			if (delay == 0) doOut = true;
+		}
+
+		if (hidKeysDown()) doOut = true;
+	}
+}

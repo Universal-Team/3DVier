@@ -24,41 +24,13 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _3DVIER_GFX_HPP
-#define _3DVIER_GFX_HPP
+#ifndef _3DVIER_OVERLAY_HPP
+#define _3DVIER_OVERLAY_HPP
 
-#include "chars.h"
-#include "colorHelper.hpp"
-#include "sprites.h"
+#include "common.hpp"
 
-#include <string>
-
-struct ButtonStruct {
-	int X;
-	int Y;
-	float xSize;
-	float ySize;
-	std::string Text;
-};
-
-namespace GFX {
-	// Basic GUI.
-	void DrawTop(bool useBars = true);
-	void DrawBottom(bool useBars = true);
-	void DrawFileBrowseBG(bool isTop = true);
-	int selectList(std::vector<std::string> content, std::string msg, int oldIndex);
-	void DrawSprite(int index, int x, int y, float ScaleX = 1, float ScaleY = 1);
-	// Selectors.
-	void DrawButtonSelector(int x, int y, float ScaleX = 1, float ScaleY = 1, bool useSmall = false);
-	void DrawSelectedChip(int x, int y, float ScaleX = 1, float ScaleY = 1);
-	
-	void DrawChar(int image, int x, int y, float ScaleX = 1, float ScaleY = 1);
-	void DrawChip(int x, int y, float ScaleX = 1, float ScaleY = 1, int player = 1);
-	void DrawRaster(int x, int y);
-	void DrawPlayer(int x, int y, float ScaleX, float ScaleY, int player);
-
-	// Buttons.
-	void Button(const ButtonStruct btn);
+namespace Overlays {
+	void SplashOverlay();
 }
 
 #endif

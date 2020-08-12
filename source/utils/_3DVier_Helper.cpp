@@ -1,6 +1,6 @@
 /*
 *   This file is part of 3DVier
-*   Copyright (C) 2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -44,8 +44,9 @@ int _3DVier_Helper::selectAvatar(int oldAvatar, const std::string text) {
 		C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
 		GFX::DrawTop();
 		if (config->darkenScreen())	Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 190));
-		Gui::DrawStringCentered(0, 0, 0.8f, config->textColor(), text, 390, 30);
+		Gui::DrawStringCentered(0, -2, 0.8f, config->textColor(), text, 390, 30);
 		Gui::DrawStringCentered(0, 215, 0.6f, config->textColor(), Lang::get("CHAR_SELECT"), 390, 30);
+
 		if (page == 1) {
 			GFX::DrawPlayer(-5, 35, 1, 1, 0);
 			GFX::DrawPlayer(95, 35, 1, 1, 1);
@@ -62,6 +63,7 @@ int _3DVier_Helper::selectAvatar(int oldAvatar, const std::string text) {
 		Gui::Draw_Rect(110, 160, 80, 30, config->buttonColor());
 		Gui::Draw_Rect(210, 160, 80, 30, config->buttonColor());
 		Gui::Draw_Rect(310, 160, 80, 30, config->buttonColor());
+
 		if (page == 1) {
 			GFX::DrawButtonSelector(10 + (selection * 100), 160, 1, 1, true);
 		} else {
@@ -69,7 +71,7 @@ int _3DVier_Helper::selectAvatar(int oldAvatar, const std::string text) {
 		}
 
 		GFX::DrawBottom();
-		if (config->darkenScreen())	Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, 190));
+		if (config->darkenScreen()) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, 190));
 		C3D_FrameEnd(0);
 
 		// The input part.

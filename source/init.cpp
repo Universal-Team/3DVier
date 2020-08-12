@@ -1,6 +1,6 @@
 /*
 *   This file is part of 3DVier
-*   Copyright (C) 2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #include "config.hpp"
 #include "init.hpp"
 #include "mainMenu.hpp"
+#include "overlay.hpp"
 
 #include <3ds.h>
 #include <dirent.h>
@@ -39,8 +40,7 @@ u32 hDown, hHeld;
 std::unique_ptr<Config> config;
 bool hasUDSInitialized = false;
 // Include all spritesheet's.
-C2D_SpriteSheet characters;
-C2D_SpriteSheet sprites;
+C2D_SpriteSheet characters, sprites;
 
 // If button Position pressed -> Do something.
 bool touching(touchPosition touch, Structs::ButtonPos button) {
@@ -62,6 +62,7 @@ void Init::initUDS() {
 		if (res != 0) {
 			return;
 		}
+
 		hasUDSInitialized = true;
 	}
 }
@@ -86,6 +87,7 @@ Result Init::Initialize() {
 	Gui::loadSheet("romfs:/gfx/chars.t3x", characters);
 	Gui::loadSheet("romfs:/gfx/sprites.t3x", sprites);
 	osSetSpeedupEnable(true);	// Enable speed-up for New 3DS users.
+	Overlays::SplashOverlay();
 	Gui::setScreen(std::make_unique<MainMenu>(), false, true);
 	return 0;
 }
@@ -112,7 +114,7 @@ Result Init::MainLoop() {
 		C3D_FrameEnd(0);
 
 		if (exiting) {
-			if (!fadeout)	break;
+			if (!fadeout) break;
 		}
 
 		Gui::fadeEffects(16, 16, true);

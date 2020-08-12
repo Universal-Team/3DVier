@@ -1,6 +1,6 @@
 /*
 *   This file is part of 3DVier
-*   Copyright (C) 2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
 void MainMenu::Draw(void) const {
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, 0, 0.9f, config->textColor(), "3DVier - " + Lang::get("MAINMENU"));
+	Gui::DrawStringCentered(0, -2, 0.8f, config->textColor(), "3DVier - " + Lang::get("MAINMENU"));
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 	GFX::DrawBottom();
 	for (int i = 0; i < 4; i++) {
@@ -68,9 +68,9 @@ void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_UP) {
-		if (this->Selection > 1)	this->Selection -= 2;
+		if (this->Selection > 1) this->Selection -= 2;
 	} else if (hDown & KEY_DOWN) {
-		if (this->Selection < 3 && this->Selection != 2 && this->Selection != 3)	this->Selection += 2;
+		if (this->Selection < 3 && this->Selection != 2 && this->Selection != 3) this->Selection += 2;
 	} else if (hDown & KEY_LEFT) {
 		if (this->Selection%2) this->Selection--;
 	} else if (hDown & KEY_RIGHT) {

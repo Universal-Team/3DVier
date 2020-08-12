@@ -1,6 +1,6 @@
 /*
 *   This file is part of 3DVier
-*   Copyright (C) 2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -51,17 +51,17 @@ private:
 	void typeLogic(u32 hDown, u32 hHeld, touchPosition touch);
 	void createLogic(u32 hDown, u32 hHeld, touchPosition touch);
 
-	std::vector<ButtonStruct> mainButtons = {
+	const std::vector<ButtonStruct> mainButtons = {
 		{90, 60, 140, 40, "SINGLE_PLAYER"},
 		{90, 130, 140, 40, "MULTI_PLAYER"}
 	};
 
-	std::vector<ButtonStruct> createMode = {
+	const std::vector<ButtonStruct> createMode = {
 		{90, 60, 140, 40, "CREATE_ROOM"},
 		{90, 130, 140, 40, "JOIN_ROOM"}
 	};
 
-	std::vector<ButtonStruct> typeBtn = {
+	const std::vector<ButtonStruct> typeBtn = {
 		{90, 40, 140, 40, "SINGLE_CONSOLE"},
 		{90, 100, 140, 40, "LOCAL_CONSOLE"},
 		{90, 160, 140, 40, "ONLINE_CONSOLE"}

@@ -1,6 +1,6 @@
 /*
 *   This file is part of 3DVier
-*   Copyright (C) 2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ LangSelection::LangSelection() {
 
 void LangSelection::Draw(void) const {
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, 0, 0.7f, config->textColor(), Lang::get("SELECT_LANG"), 400);
+	Gui::DrawStringCentered(0, -2, 0.8f, config->textColor(), Lang::get("SELECT_LANG"), 400);
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 	GFX::DrawBottom();
 

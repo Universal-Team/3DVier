@@ -1,6 +1,6 @@
 /*
 *   This file is part of 3DVier
-*   Copyright (C) 2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -32,28 +32,30 @@ extern std::unique_ptr<Config> config;
 void GFX::DrawTop(bool useBars) {
 	Gui::ScreenDraw(Top);
 	if (useBars) {
-		Gui::Draw_Rect(0, 0, 400, 30, config->barColor());
-		Gui::Draw_Rect(0, 30, 400, 180, config->bgColor());
-		Gui::Draw_Rect(0, 210, 400, 30, config->barColor());
+		Gui::Draw_Rect(0, 0, 400, 25, config->barColor());
+		Gui::Draw_Rect(0, 25, 400, 190, config->bgColor());
+		Gui::Draw_Rect(0, 215, 400, 25, config->barColor());
+		GFX::DrawSprite(sprites_top_screen_top_idx, 0, 0);
+		GFX::DrawSprite(sprites_top_screen_bot_idx, 0, 215);
 	} else {
 		Gui::Draw_Rect(0, 0, 400, 240, config->bgColor());
 	}
 }
 
-// False actually only draws 1 bar on the top screen. Special case for the Game screen. xD
 void GFX::DrawBottom(bool useBars) {
 	Gui::ScreenDraw(Bottom);
 	if (useBars) {
-		Gui::Draw_Rect(0, 0, 320, 30, config->barColor());
-		Gui::Draw_Rect(0, 30, 320, 180, config->bgColor());
-		Gui::Draw_Rect(0, 210, 320, 30, config->barColor());
+		Gui::Draw_Rect(0, 0, 320, 25, config->barColor());
+		Gui::Draw_Rect(0, 25, 320, 190, config->bgColor());
+		Gui::Draw_Rect(0, 215, 320, 25, config->barColor());
+		GFX::DrawSprite(sprites_bottom_screen_top_idx, 0, 0);
+		GFX::DrawSprite(sprites_bottom_screen_bot_idx, 0, 215);
 	} else {
 		Gui::Draw_Rect(0, 0, 320, 240, config->bgColor());
 	}
 }
 
-extern C2D_SpriteSheet characters;
-extern C2D_SpriteSheet sprites;
+extern C2D_SpriteSheet characters, sprites;
 
 void GFX::DrawSprite(int index, int x, int y, float ScaleX, float ScaleY) {
 	Gui::DrawSprite(sprites, index, x, y, ScaleX, ScaleY);
@@ -182,8 +184,7 @@ void GFX::DrawSelectedChip(int x, int y, float ScaleX, float ScaleY) {
 	timer += .030;
 }
 
-void GFX::DrawButtonSelector(int x, int y, float ScaleX, float ScaleY, bool useSmall)
-{
+void GFX::DrawButtonSelector(int x, int y, float ScaleX, float ScaleY, bool useSmall) {
 	static float timer			= 0.0f;
 	float highlight_multiplier	= fmax(0.0, fabs(fmod(timer, 1.0) - 0.5) / 0.5);
 	u8 r						= config->selectorColor() & 0xFF;
@@ -195,11 +196,8 @@ void GFX::DrawButtonSelector(int x, int y, float ScaleX, float ScaleY, bool useS
 	C2D_SetImageTint(&tint, C2D_TopRight, color, 1);
 	C2D_SetImageTint(&tint, C2D_BotLeft, color, 1);
 	C2D_SetImageTint(&tint, C2D_BotRight, color, 1);
-	if (useSmall) {
-		C2D_DrawImageAt(C2D_SpriteSheetGetImage(sprites, sprites_btnSelector2_idx), x, y, 0.5f, &tint, ScaleX, ScaleY);
-	} else {
-		C2D_DrawImageAt(C2D_SpriteSheetGetImage(sprites, sprites_btnSelector_idx), x, y, 0.5f, &tint, ScaleX, ScaleY);
-	}
+
+	C2D_DrawImageAt(C2D_SpriteSheetGetImage(sprites, useSmall ? sprites_btnSelector2_idx : sprites_btnSelector_idx), x, y, 0.5f, &tint, ScaleX, ScaleY);
 	timer += .030;
 }
 

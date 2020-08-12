@@ -1,6 +1,6 @@
 /*
 *   This file is part of 3DVier
-*   Copyright (C) 2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
 void UISettings::Draw(void) const {
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, 0, 0.9f, config->textColor(), "3DVier - " + Lang::get("UI_SETTINGS"));
+	Gui::DrawStringCentered(0, -2, 0.8f, config->textColor(), "3DVier - " + Lang::get("UI_SETTINGS"));
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 	GFX::DrawBottom();
 
@@ -60,8 +60,10 @@ void UISettings::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_TOUCH) {
 		if (touching(touch, mainButtons[0])) {
 			Gui::setScreen(std::make_unique<ColorChanger>(), true, true);
+
 		} else if (touching(touch, mainButtons[1])) {
 			Gui::setScreen(std::make_unique<LangSelection>(), true, true);
+
 		} else if (touching(touch, mainButtons[2])) {
 			if (config->darkenScreen()) {
 				if (Msg::promptMsg(Lang::get("DARKEN_MSG"))) {
@@ -72,6 +74,7 @@ void UISettings::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				config->darkenScreen(true);
 				Msg::DisplayWaitMsg(Lang::get("TURNED_ON"));
 			}
+
 		} else if (touching(touch, mainButtons[3])) {
 			if (config->allowDrop()) {
 				config->allowDrop(false);
@@ -80,6 +83,7 @@ void UISettings::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				config->allowDrop(true);
 				Msg::DisplayWaitMsg(Lang::get("TURNED_ON"));
 			}
+
 		} else if (touching(touch, mainButtons[4])) {
 			if (config->allowDrop()) {
 				std::vector<std::string> temp;
@@ -93,23 +97,28 @@ void UISettings::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_UP) {
-		if (this->Selection > 1)	this->Selection -= 2;
+		if (this->Selection > 1) this->Selection -= 2;
 	}
+
 	if (hDown & KEY_DOWN) {
-		if (this->Selection < 4)	this->Selection += 2;
+		if (this->Selection < 4) this->Selection += 2;
 	}
+
 	if (hDown & KEY_LEFT) {
 		if (this->Selection%2) this->Selection--;
 	}
+
 	if (hDown & KEY_RIGHT) {
-		if (!(this->Selection%2))	this->Selection++;
+		if (!(this->Selection%2)) this->Selection++;
 	}
 
 	if (hDown & KEY_A) {
 		if (this->Selection == 0) {
 			Gui::setScreen(std::make_unique<ColorChanger>(), true, true);
+
 		} else if (this->Selection == 1) {
 			Gui::setScreen(std::make_unique<LangSelection>(), true, true);
+
 		} else if (this->Selection == 2) {
 			if (config->darkenScreen()) {
 				if (Msg::promptMsg(Lang::get("DARKEN_MSG"))) {
@@ -120,6 +129,7 @@ void UISettings::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				config->darkenScreen(true);
 				Msg::DisplayWaitMsg(Lang::get("TURNED_ON"));
 			}
+
 		} else if (this->Selection == 3) {
 			if (config->allowDrop()) {
 				config->allowDrop(false);

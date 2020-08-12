@@ -1,6 +1,6 @@
 /*
 *   This file is part of 3DVier
-*   Copyright (C) 2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -33,11 +33,11 @@ extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
 void Credits::Draw(void) const {
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, 0, 0.9f, config->textColor(), "3DVier - " + Lang::get("CREDITS"), 400);
+	Gui::DrawStringCentered(0, -2, 0.8f, config->textColor(), "3DVier - " + Lang::get("CREDITS"), 400);
 	Gui::DrawStringCentered(0, 30, 0.7f, config->textColor(), Lang::get("DEVELOPED_BY"), 390);
 	Gui::DrawStringCentered(0, 50, 0.7f, config->textColor(), Lang::get("MAIN_DEV"), 390);
-	GFX::DrawSprite(sprites_stackie_idx, 2, 80);
-	GFX::DrawSprite(sprites_universal_core_idx, 190, 105);
+	GFX::DrawSprite(sprites_stackZ_idx, 2, 80);
+	GFX::DrawSprite(sprites_u_c_idx, 190, 105);
 	std::string currentVersion = Lang::get("CURRENT_VERSION");
 	currentVersion += V_STRING;
 	Gui::DrawString(395-Gui::GetStringWidth(0.70f, currentVersion), 217, 0.70f, config->textColor(), currentVersion, 400);

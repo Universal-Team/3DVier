@@ -1,6 +1,6 @@
 /*
 *   This file is part of 3DVier
-*   Copyright (C) 2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -53,8 +53,8 @@ void LocalMultiPlayScreen::pullNames() {
 }
 
 std::string LocalMultiPlayScreen::getName(int Player) const {
-	if (Player == 1)	return this->p1Name;
-	else 				return this->p2Name;
+	if (Player == 1) return this->p1Name;
+	else return this->p2Name;
 }
 
 int LocalMultiPlayScreen::getAvatar(int Player) const {
@@ -99,11 +99,13 @@ void LocalMultiPlayScreen::Draw(void) const {
 	GFX::DrawChar(this->getAvatar(2), 170, 35, 1, 1);
 	Gui::DrawString(175, 160, 0.6f, config->textColor(), this->getName(2), 320);
 	Gui::DrawString(175, 180, 0.6f, config->textColor(), Lang::get("WINS") + " " + std::to_string(this->currentGame->getScore(2)), 320);
+
 	if (this->currentGame->currentPlayer() != this->room->getPosition()) {
 		Gui::DrawStringCentered(0, 216, 0.7, config->textColor(), Lang::get("WAITING_FOR") + this->getName(this->currentGame->currentPlayer()) + Lang::get("TURN"));
 	} else {
 		Gui::DrawStringCentered(0, 216, 0.7, config->textColor(), Lang::get("YOUR_TURN"));
 	}
+
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 }
 
@@ -138,6 +140,7 @@ void LocalMultiPlayScreen::Refresh() {
 		this->dropSelection = this->rowSelection + 35;
 		return;
 	}
+
 	// Display indicator on the last position, if row is full.
 	if (this->currentGame->isUsed(rowSelection + 35)) {
 		this->dropSelection = this->rowSelection + 35;
@@ -201,6 +204,7 @@ void LocalMultiPlayScreen::displayAnimation(int dropSel) {
 				this->dropPos = 0;
 				dropped = false;
 			}
+
 			// Mode 1 would be "Smooth".
 		} else if (config->dropMode() == 1) {
 			if (this->dropPos < GamePos[this->dropSelection].Y) {
@@ -320,6 +324,7 @@ void LocalMultiPlayScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 					if (config->allowDrop()) {
 						this->clearField();
 					}
+					
 					char message [100];
 					snprintf(message, sizeof(message), Lang::get("GAME_RESULT").c_str(), this->getName(this->currentGame->currentPlayer()).c_str(),
 					 this->getName(1).c_str(), this->currentGame->getScore(1), this->getName(2).c_str(), this->currentGame->getScore(2));

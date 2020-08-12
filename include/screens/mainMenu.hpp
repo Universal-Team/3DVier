@@ -1,6 +1,6 @@
 /*
 *   This file is part of 3DVier
-*   Copyright (C) 2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ public:
 private:
 	int Selection = 0;
 
-	std::vector<Structs::ButtonPos> mainButtons = {
+	const std::vector<Structs::ButtonPos> mainButtons = {
 		{10, 70, 140, 40}, // New Game.
 		{170, 70, 140, 40}, // UI Settings.
 		{10, 145, 140, 40}, // Credits.

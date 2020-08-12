@@ -1,6 +1,6 @@
 /*
 *   This file is part of 3DVier
-*   Copyright (C) 2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ LocalRoomScreen::LocalRoomScreen(int playerID, std::shared_ptr<LocalNetwork>& ro
 
 void LocalRoomScreen::Draw(void) const {
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, 0, 0.8f, config->textColor(), "3DVier - " + Lang::get("WAITING_ROOM"), 400);
+	Gui::DrawStringCentered(0, -2, 0.8f, config->textColor(), "3DVier - " + Lang::get("WAITING_ROOM"), 400);
 	Gui::DrawStringCentered(0, 215, 0.8f, config->textColor(), Lang::get("TOGGLE_READY"), 400);
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 	GFX::DrawBottom();
@@ -69,12 +69,13 @@ void LocalRoomScreen::Draw(void) const {
 		Gui::DrawStringCentered(0, 215, 0.7f, config->textColor(), Lang::get("B_BACK"));
 	} else {
 		float readyX = 180;
-		for(size_t i = 0; i < playerNames.size(); i++) {
+		for(int i = 0; i < (int)playerNames.size(); i++) {
 			float y = 40 + i*25;
 			Gui::DrawString(32, y, 0.7f, config->textColor(), playerNames[i], 90);
-			if (this->room->isPlayerReady(i))	Gui::DrawString(readyX, y, 0.7f, config->textColor(), Lang::get("IM_READY"), 90);
+			if (this->room->isPlayerReady(i)) Gui::DrawString(readyX, y, 0.7f, config->textColor(), Lang::get("IM_READY"), 90);
 		}
 	}
+
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 }
 

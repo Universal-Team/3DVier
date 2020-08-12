@@ -1,6 +1,6 @@
 /*
 *   This file is part of 3DVier
-*   Copyright (C) 2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -41,11 +41,9 @@ extern touchPosition touch;
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
 // Display a Message, which needs to be confirmed with A/B.
-bool Msg::promptMsg2(std::string promptMsg)
-{
+bool Msg::promptMsg2(std::string promptMsg) {
 	s32 selection = 0;
-	while(1)
-	{
+	while(1) {
 		Gui::clearTextBufs();
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 		C2D_TargetClear(Top, BLACK);
@@ -67,11 +65,14 @@ bool Msg::promptMsg2(std::string promptMsg)
 		hidScanInput();
 		hidTouchRead(&touch);
 
-		if(hidKeysDown() & KEY_LEFT) {
+		if (hidKeysDown() & KEY_LEFT) {
 			selection = 0;
-		} else if(hidKeysDown() & KEY_RIGHT) {
+		}
+		
+		if (hidKeysDown() & KEY_RIGHT) {
 			selection = 1;
 		}
+
 		if (hidKeysDown() & KEY_A) {
 			if (selection == 0) {
 				return true;
@@ -79,9 +80,11 @@ bool Msg::promptMsg2(std::string promptMsg)
 				return false;
 			}
 		}
+
 		if (hidKeysDown() & KEY_TOUCH && touching(touch, promptBtn[0])) {
 			return true;
 		}
+
 		if (hidKeysDown() & KEY_TOUCH && touching(touch, promptBtn[1])) {
 			return false;
 		}
@@ -93,8 +96,7 @@ bool Msg::promptMsg(std::string msg) {
 }
 
 // Displays a Warn Message.
-void Msg::DisplayWarnMsg(std::string Text)
-{
+void Msg::DisplayWarnMsg(std::string Text) {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 	C2D_TargetClear(Top, BLACK);
@@ -110,8 +112,7 @@ void Msg::DisplayWarnMsg(std::string Text)
 }
 
 // Displays a Warn Message. This is mostly be used for things with more text.
-void Msg::DisplayWarnMsg2(std::string Text)
-{
+void Msg::DisplayWarnMsg2(std::string Text) {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 	C2D_TargetClear(Top, BLACK);
@@ -127,8 +128,7 @@ void Msg::DisplayWarnMsg2(std::string Text)
 }
 
 // Display a Message, which can be skipped with A.
-void Msg::DisplayWaitMsg(std::string waitMsg, ...)
-{
+void Msg::DisplayWaitMsg(std::string waitMsg, ...) {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 	C2D_TargetClear(Top, BLACK);
@@ -136,19 +136,17 @@ void Msg::DisplayWaitMsg(std::string waitMsg, ...)
 	GFX::DrawTop();
 	Gui::Draw_Rect(0, 80, 400, 80, config->barColor());
 	Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.8f, waitMsg))/2, 0.8f, config->textColor(), waitMsg, 390, 70);
-	Gui::DrawStringCentered(0, 214, 0.8f, config->textColor(), Lang::get("A_CONTINUE"), 390);
+	Gui::DrawStringCentered(0, 215, 0.8f, config->textColor(), Lang::get("A_CONTINUE"), 390);
 	GFX::DrawBottom();
 	Gui::Draw_Rect(100, 100, 140, 40, config->buttonColor());
 	Gui::DrawStringCentered(-60+70, 105, 0.8f, config->textColor(), Lang::get("OK"), 140);
 	C3D_FrameEnd(0);
 
-	while(1)
-	{
+	while(1) {
 		gspWaitForVBlank();
 		hidScanInput();
 		hidTouchRead(&touch);
-		if((hidKeysDown() & KEY_A) || (hidKeysDown() & KEY_TOUCH && touching(touch, promptBtn[2])))
-			break;
+		if ((hidKeysDown() & KEY_A) || (hidKeysDown() & KEY_TOUCH && touching(touch, promptBtn[2]))) break;
 	}
 }
 
@@ -185,8 +183,7 @@ void Msg::NotImplementedYet(void) {
 }
 
 // Display a Message, which can be skipped with Y.
-void Msg::DisplayMultiPlayMsg(std::string waitMsg, ...)
-{
+void Msg::DisplayMultiPlayMsg(std::string waitMsg, ...) {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 	C2D_TargetClear(Top, BLACK);
@@ -194,18 +191,16 @@ void Msg::DisplayMultiPlayMsg(std::string waitMsg, ...)
 	GFX::DrawTop();
 	Gui::Draw_Rect(0, 80, 400, 80, config->barColor());
 	Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.8f, waitMsg))/2, 0.8f, config->textColor(), waitMsg, 390, 70);
-	Gui::DrawStringCentered(0, 214, 0.8f, config->textColor(), Lang::get("Y_CONTINUE"), 390);
+	Gui::DrawStringCentered(0, 215, 0.8f, config->textColor(), Lang::get("Y_CONTINUE"), 390);
 	GFX::DrawBottom();
 	Gui::Draw_Rect(100, 100, 140, 40, config->buttonColor());
 	Gui::DrawStringCentered(-60+70, 105, 0.8f, config->textColor(), Lang::get("OK"), 140);
 	C3D_FrameEnd(0);
 
-	while(1)
-	{
+	while(1) {
 		gspWaitForVBlank();
 		hidScanInput();
 		hidTouchRead(&touch);
-		if((hidKeysDown() & KEY_Y) || (hidKeysDown() & KEY_TOUCH && touching(touch, promptBtn[2])))
-			break;
+		if ((hidKeysDown() & KEY_Y) || (hidKeysDown() & KEY_TOUCH && touching(touch, promptBtn[2]))) break;
 	}
 }

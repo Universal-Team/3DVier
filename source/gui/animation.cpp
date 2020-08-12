@@ -1,6 +1,6 @@
 /*
 *   This file is part of 3DVier
-*   Copyright (C) 2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -38,45 +38,27 @@ void Animation::DrawSubBG(bool isTop) {
 		if (animated_chipYPos[0] <= -240) animated_chipYPos[0] = 0;
 		if (animated_chipYPos[1] >= +240) animated_chipYPos[1] = 0;
 	}
+
 	animated_chipMoveDelay = !animated_chipMoveDelay;
 
-	if (isTop) {
-		// BG.
-		Gui::ScreenDraw(Top);
-		Gui::Draw_Rect(0, 30, 400, 180, config->bgColor());
-		// First Chips.
-		GFX::DrawChip(20, animated_chipYPos[0], 1, 1,  1);
-		GFX::DrawChip(20, animated_chipYPos[0]+240, 1, 1,  1);
-		// Second Chips.
-		GFX::DrawChip(120, animated_chipYPos[1], 1, 1,  2);
-		GFX::DrawChip(120, animated_chipYPos[1]-240, 1, 1,  2);
-		// Third Chips.
-		GFX::DrawChip(220, animated_chipYPos[0], 1, 1,  1);
-		GFX::DrawChip(220, animated_chipYPos[0]+240, 1, 1,  1);
-		// Fourth Chips.
-		GFX::DrawChip(320, animated_chipYPos[1], 1, 1,  2);
-		GFX::DrawChip(320, animated_chipYPos[1]-240, 1, 1,  2);
-		// Draw Bars with 225 Alpha, so it looks pretty nice.
-		Gui::Draw_Rect(0, 0, 400, 30, config->barColor() - C2D_Color32(0, 0, 0, 30));
-		Gui::Draw_Rect(0, 210, 400, 30, config->barColor() - C2D_Color32(0, 0, 0, 30));
-	} else {
-		// BG.
-		Gui::ScreenDraw(Bottom);
-		Gui::Draw_Rect(0, 30, 320, 180, config->bgColor());
-		// First Chips.
-		GFX::DrawChip(0, animated_chipYPos[0], 1, 1,  1);
-		GFX::DrawChip(0, animated_chipYPos[0]+240, 1, 1,  1);
-		// Second Chips.
-		GFX::DrawChip(100, animated_chipYPos[1], 1, 1,  2);
-		GFX::DrawChip(100, animated_chipYPos[1]-240, 1, 1,  2);
-		// Third Chips.
-		GFX::DrawChip(200, animated_chipYPos[0], 1, 1,  1);
-		GFX::DrawChip(200, animated_chipYPos[0]+240, 1, 1,  1);
-		// Fourth Chips.
-		GFX::DrawChip(300, animated_chipYPos[1], 1, 1,  2);
-		GFX::DrawChip(300, animated_chipYPos[1]-240, 1, 1,  2);
-		// Draw Bars with 225 Alpha, so it looks pretty nice.
-		Gui::Draw_Rect(0, 0, 320, 30, config->barColor() - C2D_Color32(0, 0, 0, 30));
-		Gui::Draw_Rect(0, 210, 320, 30, config->barColor() - C2D_Color32(0, 0, 0, 30));
-	}
+	// BG.
+	isTop ? Gui::ScreenDraw(Top) : Gui::ScreenDraw(Bottom);
+	Gui::Draw_Rect(0, 25, isTop ? 400 : 320, 190, config->bgColor());
+	// First Chips.
+	GFX::DrawChip(20, animated_chipYPos[0], 1, 1,  1);
+	GFX::DrawChip(20, animated_chipYPos[0]+240, 1, 1,  1);
+	// Second Chips.
+	GFX::DrawChip(120, animated_chipYPos[1], 1, 1,  2);
+	GFX::DrawChip(120, animated_chipYPos[1]-240, 1, 1,  2);
+	// Third Chips.
+	GFX::DrawChip(220, animated_chipYPos[0], 1, 1,  1);
+	GFX::DrawChip(220, animated_chipYPos[0]+240, 1, 1,  1);
+	// Fourth Chips.
+	GFX::DrawChip(320, animated_chipYPos[1], 1, 1,  2);
+	GFX::DrawChip(320, animated_chipYPos[1]-240, 1, 1,  2);
+	// Draw Bars with 225 Alpha, so it looks pretty nice.
+	Gui::Draw_Rect(0, 0, isTop ? 400 : 320, 25, config->barColor() - C2D_Color32(0, 0, 0, 30));
+	Gui::Draw_Rect(0, 215, isTop ? 400 : 320, 25, config->barColor() - C2D_Color32(0, 0, 0, 30));
+	GFX::DrawSprite(isTop ? sprites_top_screen_top_idx : sprites_bottom_screen_top_idx, 0, 0);
+	GFX::DrawSprite(isTop ? sprites_top_screen_bot_idx : sprites_bottom_screen_bot_idx, 0, 215);
 }

@@ -1,6 +1,6 @@
 /*
 *   This file is part of 3DVier
-*   Copyright (C) 2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ void ColorChanger::DrawPreview(void) const {
 
 void ColorChanger::Draw(void) const {
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, 0, 0.9f, config->textColor(), "3DVier - " + Lang::get("COLOR_SETTINGS"), 320);
+	Gui::DrawStringCentered(0, -2, 0.8f, config->textColor(), "3DVier - " + Lang::get("COLOR_SETTINGS"), 320);
 	DrawPreview();
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 	GFX::DrawBottom();
@@ -112,12 +112,12 @@ void ColorChanger::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		return;
 	}
 
-	if (hDown & KEY_LEFT) {
-		if (colorMode > 0)	colorMode--;
+	if (hDown & KEY_LEFT || hDown & KEY_L) {
+		if (colorMode > 0) colorMode--;
 	}
 
-	if (hDown & KEY_RIGHT) {
-		if (colorMode < 7)	colorMode++;
+	if (hDown & KEY_RIGHT || hDown & KEY_R) {
+		if (colorMode < 7) colorMode++;
 	}
 
 	if (hDown & KEY_TOUCH) {
@@ -143,6 +143,7 @@ void ColorChanger::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 					config->raster(RGBA8(red, ColorHelper::getColorValue(config->raster(), 1), ColorHelper::getColorValue(config->raster(), 0), 255));
 				}
 			}
+
 		} else if (touching(touch, buttons[1])) {
 			int temp = Keyboard::getUint(255, Lang::get("ENTER_GREEN_RGB"));
 			if(temp != -1) {
@@ -165,6 +166,7 @@ void ColorChanger::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 					config->raster(RGBA8(ColorHelper::getColorValue(config->raster(), 2), green, ColorHelper::getColorValue(config->raster(), 0), 255));
 				}
 			}
+
 		} else if (touching(touch, buttons[2])) {
 			int temp = Keyboard::getUint(255, Lang::get("ENTER_BLUE_RGB"));
 			if(temp != -1) {

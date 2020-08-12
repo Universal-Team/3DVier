@@ -1,6 +1,6 @@
 /*
 *   This file is part of 3DVier
-*   Copyright (C) 2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ LocalRoomList::~LocalRoomList() { Init::exitUDS(); }
 
 void LocalRoomList::Draw(void) const {
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, 0, 0.8f, config->textColor(), "3DVier - " + Lang::get("ROOM_LIST"), 400);
+	Gui::DrawStringCentered(0, -2, 0.8f, config->textColor(), "3DVier - " + Lang::get("ROOM_LIST"), 400);
 	Gui::DrawStringCentered(0, 215, 0.8f, config->textColor(), Lang::get("REFRESH_ROOMS"), 400);
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 	GFX::DrawBottom();
@@ -52,14 +52,13 @@ void LocalRoomList::Draw(void) const {
 		Gui::Draw_Rect(0, 40+(i*57), 320, 45, config->barColor());
 	}
 
-
 	Gui::DrawStringCentered(0, 0, 0.8f, config->textColor(), Lang::get("AVAILABLE_ROOMS") + std::to_string((int)this->rooms.size()));
 
 	for(int i = this->roomsScroll; i < NetworkListRoomsPerScreen && i < (int)this->rooms.size(); i++) {
 		if (this->selectedRoom == this->roomsScroll + i)	Gui::Draw_Rect(0, 40+(i*57), 320, 45, config->selectorColor());
 		if (i >= (int)this->rooms.size())	break;
 
-		int cleanI = i-this->roomsScroll;
+		int cleanI = i - this->roomsScroll;
 		float y = 50 + cleanI * 57;
 
 		std::string roomName = this->rooms[i]->getName();
@@ -68,15 +67,16 @@ void LocalRoomList::Draw(void) const {
 		snprintf(roomNameAndPlayers, 127, "%s: %d | %d", roomName.c_str(), roomPlayers, 2);
 		Gui::DrawStringCentered(0, y, 0.7f, config->textColor(), roomNameAndPlayers);
 	}
+
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 }
 
 void LocalRoomList::joinRoom(int i) {
-	if (static_cast<size_t>(i) >= this->rooms.size())	return;
+	if (static_cast<size_t>(i) >= this->rooms.size()) return;
 
 	int selected = i + this->roomsScroll;
-	if (this->selectedRoom == selected)	this->joinSelectedRoom();
-	else								this->selectedRoom = selected;
+	if (this->selectedRoom == selected) this->joinSelectedRoom();
+	else this->selectedRoom = selected;
 }
 
 void LocalRoomList::refreshList() {
@@ -97,27 +97,28 @@ void LocalRoomList::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		int MinRoom = 0;
 		int MaxScroll = this->rooms.size()-NetworkListRoomsPerScreen;
 		int MinScroll = 0;
+
 		if (hDown & KEY_A) {
 			this->joinSelectedRoom();
 		}
 
 		if (hDown & KEY_DOWN) {
 			this->selectedRoom++;
-			if (this->selectedRoom > MaxRoom)	this->selectedRoom = MaxRoom;
+			if (this->selectedRoom > MaxRoom) this->selectedRoom = MaxRoom;
 
 			if (this->roomsScroll+this->selectedRoom >= NetworkListRoomsPerScreen && this->selectedRoom == this->roomsScroll+NetworkListRoomsPerScreen) {
 				this->roomsScroll++;
-				if (this->roomsScroll > MaxScroll)	this->roomsScroll = MaxScroll;
+				if (this->roomsScroll > MaxScroll) this->roomsScroll = MaxScroll;
 			}
 		}
 
 		if (hDown & KEY_UP) {
 			this->selectedRoom--;
-			if (this->selectedRoom < MinRoom)	this->selectedRoom = MinRoom;
+			if (this->selectedRoom < MinRoom) this->selectedRoom = MinRoom;
 
 			if (this->roomsScroll > MinScroll && this->selectedRoom == this->roomsScroll-1) {
 				this->roomsScroll--;
-				if (this->roomsScroll < MinScroll)	this->roomsScroll = MinScroll;
+				if (this->roomsScroll < MinScroll) this->roomsScroll = MinScroll;
 			}
 		}
 	}

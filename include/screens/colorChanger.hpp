@@ -1,6 +1,6 @@
 /*
 *   This file is part of 3DVier
-*   Copyright (C) 2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ public:
 private:
 	void DrawPreview(void) const;
 	int colorMode = 0;
-	std::vector<Structs::ButtonPos> buttons = {
+	const std::vector<Structs::ButtonPos> buttons = {
 		{10, 85, 95, 41},
 		{115, 85, 95, 41},
 		{220, 85, 95, 41},

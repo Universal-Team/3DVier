@@ -1,6 +1,6 @@
 /*
 *   This file is part of 3DVier
-*   Copyright (C) 2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -60,23 +60,25 @@ void GameSelect::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 void GameSelect::DrawFirstSelection(void) const {
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, 0, 0.8f, config->textColor(), Lang::get("GAME_SELECT"), 390);
+	Gui::DrawStringCentered(0, -2, 0.8f, config->textColor(), Lang::get("GAME_SELECT"), 390);
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 	GFX::DrawBottom();
+
 	for (int i = 0; i < 2; i++) {
 		GFX::Button(this->mainButtons[i]);
 	}
+
 	GFX::DrawButtonSelector(mainButtons[this->mainSelection].X, mainButtons[this->mainSelection].Y);
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 }
 
 void GameSelect::firstLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (hDown & KEY_DOWN) {
-		if (this->mainSelection < (int)this->mainButtons.size()-1)	this->mainSelection++;
+		if (this->mainSelection < (int)this->mainButtons.size()-1) this->mainSelection++;
 	}
 
 	if (hDown & KEY_UP) {
-		if (this->mainSelection > 0)	this->mainSelection--;
+		if (this->mainSelection > 0) this->mainSelection--;
 	}
 
 	if (hDown & KEY_A) {
@@ -103,12 +105,14 @@ void GameSelect::firstLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 void GameSelect::DrawTypeSelection(void) const {
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, 0, 0.8f, config->textColor(), Lang::get("GAME_TYPE"), 390);
+	Gui::DrawStringCentered(0, -2, 0.8f, config->textColor(), Lang::get("GAME_TYPE"), 390);
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 	GFX::DrawBottom();
+
 	for (int i = 0; i < 3; i++) {
 		GFX::Button(this->typeBtn[i]);
 	}
+
 	GFX::DrawButtonSelector(typeBtn[this->typeSelection].X, typeBtn[this->typeSelection].Y);
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 }
@@ -119,12 +123,12 @@ void GameSelect::typeLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 
 	if (hDown & KEY_UP) {
-		if (this->typeSelection > 0)	this->typeSelection--;
+		if (this->typeSelection > 0) this->typeSelection--;
 	}
 
 	if (hDown & KEY_A) {
 		if (this->typeSelection == 0) {
-			Gui::setScreen(std::make_unique<GameScreen>());
+			Gui::setScreen(std::make_unique<GameScreen>(), true, true);
 		} else if (this->typeSelection == 1) {
 			this->Mode = 2;
 		} else if (this->typeSelection == 2) {
@@ -134,7 +138,7 @@ void GameSelect::typeLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (hDown & KEY_TOUCH) {
 		if (btnTouch(touch, typeBtn[0])) {
-			Gui::setScreen(std::make_unique<GameScreen>());
+			Gui::setScreen(std::make_unique<GameScreen>(), true, true);
 		} else if (btnTouch(touch, typeBtn[1])) {
 			this->Mode = 2;
 		} else if (btnTouch(touch, typeBtn[2])) {
@@ -149,12 +153,14 @@ void GameSelect::typeLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 void GameSelect::DrawCreateSelection(void) const {
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, 0, 0.8f, config->textColor(), Lang::get("GAME_CREATE"), 390);
+	Gui::DrawStringCentered(0, -2, 0.8f, config->textColor(), Lang::get("GAME_CREATE"), 390);
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 	GFX::DrawBottom();
+
 	for (int i = 0; i < 2; i++) {
 		GFX::Button(this->createMode[i]);
 	}
+
 	GFX::DrawButtonSelector(createMode[this->createSelection].X, createMode[this->createSelection].Y);
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 }
@@ -170,17 +176,17 @@ void GameSelect::createLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 	if (hDown & KEY_A) {
 		if (this->createSelection == 0) {
-			Gui::setScreen(std::make_unique<LocalRoomScreen>());
+			Gui::setScreen(std::make_unique<LocalRoomScreen>(), true, true);
 		} else if (this->createSelection == 1) {
-			Gui::setScreen(std::make_unique<LocalRoomList>());
+			Gui::setScreen(std::make_unique<LocalRoomList>(), true, true);
 		}
 	}
 
 	if (hDown & KEY_TOUCH) {
 		if (btnTouch(touch, createMode[0])) {
-			Gui::setScreen(std::make_unique<LocalRoomScreen>());
+			Gui::setScreen(std::make_unique<LocalRoomScreen>(), true, true);
 		} else if (btnTouch(touch, createMode[1])) {
-			Gui::setScreen(std::make_unique<LocalRoomList>());
+			Gui::setScreen(std::make_unique<LocalRoomList>(), true, true);
 		}
 	}
 

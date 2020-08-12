@@ -1,6 +1,6 @@
 /*
 *   This file is part of 3DVier
-*   Copyright (C) 2020 DeadPhoenix8091, Epicpkmn11, Flame, RocketRobz, StackZ, TotallyNotGuy
+*   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
 *   it under the terms of the GNU General Public License as published by
@@ -112,6 +112,7 @@ void GameScreen::Draw(void) const {
 			GFX::DrawChip(GamePos[i].X, GamePos[i].Y, 1, 1, this->currentGame->getField()[i]);
 		}
 	}
+
 	// Draw the temporary chip.
 	GFX::DrawSelectedChip(GamePos[this->dropSelection].X, GamePos[this->dropSelection].Y);
 	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
@@ -148,6 +149,7 @@ void GameScreen::displayAnimation() {
 				GFX::DrawChip(GamePos[i].X, GamePos[i].Y, 1, 1, this->currentGame->getField()[i]);
 			}
 		}
+
 		// Draw the temporary chip.
 		GFX::DrawSelectedChip(GamePos[this->dropSelection].X, GamePos[this->dropSelection].Y);
 
@@ -173,6 +175,7 @@ void GameScreen::displayAnimation() {
 				this->dropPos = 0;
 				this->dropped = false;
 			}
+
 			// Mode 1 would be "Smooth".
 		} else if (config->dropMode() == 1) {
 			if (this->dropPos < GamePos[this->dropSelection].Y) {
@@ -204,6 +207,7 @@ void GameScreen::clearField() {
 				GFX::DrawChip(GamePos[i].X, GamePos[i].Y+Pos, 1, 1, this->currentGame->getField()[i]);
 			}
 		}
+		
 		GFX::DrawRaster(114, 5);
 		// Draw current Player and the chip color.
 		GFX::DrawChar(this->getAvatar(this->currentGame->currentPlayer()), -5, 35, 1, 1);
