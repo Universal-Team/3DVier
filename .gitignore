@@ -12,3 +12,5 @@
 build/cards.h
 build/sprites.h
 *.t3x
+3ds/build/chars.h
+3ds/build/sprites.h
