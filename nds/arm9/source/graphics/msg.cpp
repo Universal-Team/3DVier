@@ -1,5 +1,5 @@
 /*
-*   This file is part of 3DVier
+*   This file is part of DSVier
 *   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
@@ -24,33 +24,45 @@
 *         reasonable ways as different from the original version.
 */
 
+#include "colors.hpp"
+#include "gui.hpp"
 #include "lang.hpp"
+#include "msg.hpp"
 
-#include <stdio.h>
+void Msg::DisplayPlayerSwitch(std::string message, bool redraw) {
+	Gui::clearScreen(true, true);
+	Gui::clearScreen(false, true);
 
-nlohmann::json appJson;
+	Gui::DrawTop(true);
+	Gui::DrawBottom(true);
 
-#ifdef _3DS
-	#define LANG_PATH "romfs:/lang/"
+	printTextCentered(message, 0, 80, true, true);
+	printTextCentered(Lang::get("Y_CONTINUE"), 0, 175, true, true);
 
-#elif _NDS
-	#define LANG_PATH "nitro:/lang/"
-	
-#else
-	#define LANG_PATH "/3DVier/lang/"
-#endif
+	while(1) {
+		scanKeys();
+		if (keysDown() & KEY_Y)	break;
+	}
 
-std::string Lang::get(const std::string &key) {
-	if (!appJson.contains(key)) return "";
-
-	return appJson.at(key).get_ref<const std::string&>();
+	/* Redraw screen. */
+	if (redraw) Gui::DrawScreen();
 }
 
-std::string langs[] = {"de", "en"};
+void Msg::DisplayWaitMsg(std::string message, bool redraw) {
+	Gui::clearScreen(true, true);
+	Gui::clearScreen(false, true);
 
-void Lang::load(int lang) {
-	FILE* values;
-	values = fopen((LANG_PATH + langs[lang] + "/app.json").c_str(), "rt");
-	if (values)	appJson = nlohmann::json::parse(values, nullptr, false);
-	fclose(values);
+	Gui::DrawTop(true);
+	Gui::DrawBottom(true);
+
+	printTextCentered(message, 0, 80, true, true);
+	printTextCentered(Lang::get("A_CONTINUE"), 0, 175, true, true);
+
+	while(1) {
+		scanKeys();
+		if (keysDown() & KEY_A)	break;
+	}
+
+	/* Redraw screen. */
+	if (redraw) Gui::DrawScreen();
 }

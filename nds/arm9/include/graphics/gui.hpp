@@ -1,5 +1,5 @@
 /*
-*   This file is part of 3DVier
+*   This file is part of DSVier
 *   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
@@ -24,33 +24,46 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "lang.hpp"
+#ifndef _DSVIER_GUI_HPP
+#define _DSVIER_GUI_HPP
 
-#include <stdio.h>
+#include "graphics.hpp"
+#include "screen.hpp"
 
-nlohmann::json appJson;
+#include <nds.h>
 
-#ifdef _3DS
-	#define LANG_PATH "romfs:/lang/"
+struct ButtonStruct {
+	int x;
+	int y;
+	float xSize;
+	float ySize;
+	std::string Text;
+	u8 colorIndex;
+	bool layer;
+};
 
-#elif _NDS
-	#define LANG_PATH "nitro:/lang/"
-	
-#else
-	#define LANG_PATH "/3DVier/lang/"
+namespace Gui {
+
+	/* Screen stuff. */
+	void DrawScreen(); // Redraw the screen. Needs to be called when screen changes are made.
+	void mainLoop(u16 hDown, touchPosition touch); // Logic MainLoop.
+	void setScreen(std::unique_ptr<Screen> screen); // Set a specific screen.
+	void screenBack(void); // Go a screen back. Needs "return;" at the end.
+
+	/* GUI Stuff. */
+	void DrawTop(bool useBars);
+	void DrawBottom(bool useBars);
+
+	/*
+		Clear a Screen & Layer.
+		bool top is whether to draw on the top or bottom screen.
+		bool layer is whether to draw on layer 3 (false) or layer 2 (true).
+	*/
+	void clearScreen(bool top, bool layer);
+
+	void loadGraphics();
+
+	void DrawButton(ButtonStruct btn, TextColor color = TextColor::gray);
+};
+
 #endif
-
-std::string Lang::get(const std::string &key) {
-	if (!appJson.contains(key)) return "";
-
-	return appJson.at(key).get_ref<const std::string&>();
-}
-
-std::string langs[] = {"de", "en"};
-
-void Lang::load(int lang) {
-	FILE* values;
-	values = fopen((LANG_PATH + langs[lang] + "/app.json").c_str(), "rt");
-	if (values)	appJson = nlohmann::json::parse(values, nullptr, false);
-	fclose(values);
-}

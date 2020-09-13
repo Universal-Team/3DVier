@@ -1,5 +1,5 @@
 /*
-*   This file is part of 3DVier
+*   This file is part of DSVier
 *   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
@@ -24,15 +24,20 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _3DVIER_GAME_SCREEN_HPP
-#define _3DVIER_GAME_SCREEN_HPP
+#ifndef _DSVIER_GAME_SCREEN_HPP
+#define _DSVIER_GAME_SCREEN_HPP
 
-#include "_3DVier_Helper.hpp"
-#include "common.hpp"
 #include "game.hpp"
-#include "structs.hpp"
+#include "gui.hpp"
+#include "screenCommon.hpp"
 
+#include "structs.hpp"
 #include <vector>
+
+struct ChipIcn {
+	float X;
+	float Y;
+};
 
 /* Game Results. */
 enum class GameRes {
@@ -44,91 +49,85 @@ enum class GameRes {
 class GameScreen : public Screen {
 public:
 	void Draw(void) const override;
-	void Logic(u32 hDown, u32 hHeld, touchPosition touch) override;
+	void Logic(u16 hDown, touchPosition touch) override;
 	GameScreen();
 private:
-	/* Sub Mode stuff. */
-	int subSel = 0, subMode = 0;
-	bool isSub = false, dropped = false;
-	void displaySub(void) const;
-	void subLogic(u32 hDown, u32 hHeld, touchPosition touch);
+	std::unique_ptr<Game> currentGame = nullptr;
 
+	std::string player1 = "Player 1", player2 = "Player 2";
+	std::string GetName(int name) const;
+
+	/* Functions. */
+	void clearGame();
+	void destruct();
+	void SetMatchingFour();
+	void updateTexts(void) const;
+	void MoveChip(int chip, int position);
+	void Refresh();
+
+	/* Variables. */
 	GameRes results = GameRes::NotOver; // Game is over or not.
 	ChipMatches matches = {0, 0, 0, 0}; // Matching pos.
-	std::unique_ptr<Game> currentGame; // Our game pointer.
-	int rowSelection = 3; // To select the Row.
-	int dropSelection = 0; // Where to drop.
-	void Refresh(); // Refresh the dropSelection.
-
-	/* Player Names etc. */
-	int avatar1, avatar2, winAmount;
-	std::string p1Name, p2Name;
-	std::string getName(int Player) const;
-	int getAvatar(int Player) const;
-
-	void drop();
-	void clearField();
-	
-	const std::vector<Structs::ButtonPos> subBtn = {
-		{90, 40, 140, 40},
-		{90, 100, 140, 40},
-		{90, 160, 140, 40}
-	};
+	int indexes[42] = {0}; // Indexes for the sprites.
+	int selectorChip[2] = {0}; // Selectors.
+	int matchingFour[4] = {0}; // For highlighting the matching fours.
+	int rowSelection = 3; // Row selection.
+	int dropSelection = 3; // Drop Selection for previewing the positions.
 
 	const std::vector<ChipIcn> GamePos = {
 		/* First Row -> 0-6. */
-		{79, 186},
-		{113, 186},
-		{147, 186},
-		{181, 186},
-		{215, 186},
-		{249, 186},
-		{283, 186},
+		{26, 153.5},
+		{55, 153.5},
+		{84, 153.5},
+		{113, 153.5},
+		{142, 153.5},
+		{171, 153.5},
+		{200, 153.5},
 
 		/* Second Row -> 7-13. */
-		{79, 152},
-		{113, 152},
-		{147, 152},
-		{181, 152},
-		{215, 152},
-		{249, 152},
-		{283, 152},
+		{26, 124.5},
+		{55, 124.5},
+		{84, 124.5},
+		{113, 124.5},
+		{142, 124.5},
+		{171, 124.5},
+		{200, 124.5},
 
 		/* Third Row -> 14-20. */
-		{79, 118},
-		{113, 118},
-		{147, 118},
-		{181, 118},
-		{215, 118},
-		{249, 118},
-		{283, 118},
+		{26, 95.5},
+		{55, 95.5},
+		{84, 95.5},
+		{113, 95.5},
+		{142, 95.5},
+		{171, 95.5},
+		{200, 95.5},
 
 		/* Fourth Row -> 21-27. */
-		{79, 84},
-		{113, 84},
-		{147, 84},
-		{181, 84},
-		{215, 84},
-		{249, 84},
-		{283, 84},
+		{26, 66.5},
+		{55, 66.5},
+		{84, 66.5},
+		{113, 66.5},
+		{142, 66.5},
+		{171, 66.5},
+		{200, 66.5},
 
 		/* Fifth Row -> 28-35. */
-		{79, 50},
-		{113, 50},
-		{147, 50},
-		{181, 50},
-		{215, 50},
-		{249, 50},
-		{283, 50},
+		{26, 37.5},
+		{55, 37.5},
+		{84, 37.5},
+		{113, 37.5},
+		{142, 37.5},
+		{171, 37.5},
+		{200, 37.5},
 
 		/* Sixth Row -> 36-42. */
-		{79, 16},
-		{113, 16},
-		{147, 16},
-		{181, 16},
-		{215, 16},
-		{249, 16},
-		{283, 16}
+		{26, 8.5},
+		{55, 8.5},
+		{84, 8.5},
+		{113, 8.5},
+		{142, 8.5},
+		{171, 8.5},
+		{200, 8.5}
 	};
 };
 

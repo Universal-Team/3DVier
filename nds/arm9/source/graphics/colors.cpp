@@ -1,5 +1,5 @@
 /*
-*   This file is part of 3DVier
+*   This file is part of DSVier
 *   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
@@ -24,33 +24,25 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "lang.hpp"
+#include "colors.hpp"
+#include "graphics.hpp"
+#include "tonccpy.h"
 
-#include <stdio.h>
+#include <nds.h>
 
-nlohmann::json appJson;
+const u16 defaultPalette[] = {
+	0x0000, 0xFBDE, 0xE739, 0xCA52, 0xBDEF, 0x98C6, 0x94A5, 0x8842, 0x8000, // Grays.
+	0x801E, 0x800F, 0xF800, 0xBC00, 0x8260, 0x8320, 0x83E0, // Colors.
+	0x0000, 0xFBDE, 0xBDEF, 0xA108, // WHITE_TEXT.
+	0x0000, 0x8C63, 0xA94A, 0xCA52, // GRAY_TEXT.
+	0x0000, 0x801E, 0x800F, 0x801A, // RED_TEXT.
+	0x0000, 0xF800, 0xBC00, 0xE800, // BLUE_TEXT.
+};
 
-#ifdef _3DS
-	#define LANG_PATH "romfs:/lang/"
+void Colors::load(void) {
+	u16 palette[sizeof(defaultPalette)];
+	tonccpy(palette, defaultPalette, sizeof(palette));
 
-#elif _NDS
-	#define LANG_PATH "nitro:/lang/"
-	
-#else
-	#define LANG_PATH "/3DVier/lang/"
-#endif
-
-std::string Lang::get(const std::string &key) {
-	if (!appJson.contains(key)) return "";
-
-	return appJson.at(key).get_ref<const std::string&>();
-}
-
-std::string langs[] = {"de", "en"};
-
-void Lang::load(int lang) {
-	FILE* values;
-	values = fopen((LANG_PATH + langs[lang] + "/app.json").c_str(), "rt");
-	if (values)	appJson = nlohmann::json::parse(values, nullptr, false);
-	fclose(values);
+	tonccpy(BG_PALETTE, palette, sizeof(palette));
+	tonccpy(BG_PALETTE_SUB, palette, sizeof(palette));
 }

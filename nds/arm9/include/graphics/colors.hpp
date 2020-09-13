@@ -1,5 +1,5 @@
 /*
-*   This file is part of 3DVier
+*   This file is part of DSVier
 *   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
@@ -24,33 +24,39 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "lang.hpp"
+#ifndef _DSVIER_COLORS_HPP
+#define _DSVIER_COLORS_HPP
 
-#include <stdio.h>
+#include <nds/ndstypes.h>
 
-nlohmann::json appJson;
+#define CLEAR			0x0
+#define WHITE			0x1
+#define LIGHT_GRAY		0x2
+#define GRAY			0x3
+#define DARKISH_GRAY	0x4
+#define DARK_GRAY		0x5
+#define DARKER_GRAY		0x6
+#define DARKERER_GRAY	0x7
+#define BLACK			0x8
+#define RED				0x9
+#define DARK_RED		0xA
+#define BLUE			0xB
+#define DARK_BLUE		0xC
+#define DARK_GREEN		0xD
+#define GREEN			0xE
+#define LIGHT_GREEN		0xF
 
-#ifdef _3DS
-	#define LANG_PATH "romfs:/lang/"
+/* Text. */
+enum TextColor {
+	white = 4,
+	gray  = 5,
+	red   = 6,
+	blue  = 7,
+	green = 8,
+};
 
-#elif _NDS
-	#define LANG_PATH "nitro:/lang/"
-	
-#else
-	#define LANG_PATH "/3DVier/lang/"
+namespace Colors {
+	void load(void);
+}
+
 #endif
-
-std::string Lang::get(const std::string &key) {
-	if (!appJson.contains(key)) return "";
-
-	return appJson.at(key).get_ref<const std::string&>();
-}
-
-std::string langs[] = {"de", "en"};
-
-void Lang::load(int lang) {
-	FILE* values;
-	values = fopen((LANG_PATH + langs[lang] + "/app.json").c_str(), "rt");
-	if (values)	appJson = nlohmann::json::parse(values, nullptr, false);
-	fclose(values);
-}

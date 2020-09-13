@@ -1,5 +1,5 @@
 /*
-*   This file is part of 3DVier
+*   This file is part of DSVier
 *   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
@@ -24,33 +24,52 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "lang.hpp"
-
+#include <fat.h>
+#include <nds.h>
 #include <stdio.h>
+#include <sys/stat.h>
 
-nlohmann::json appJson;
+static bool sdAccessed = false;
+static bool sdRead = false;
 
-#ifdef _3DS
-	#define LANG_PATH "romfs:/lang/"
+static bool flashcardAccessed = false;
+static bool flashcardRead = false;
 
-#elif _NDS
-	#define LANG_PATH "nitro:/lang/"
-	
-#else
-	#define LANG_PATH "/3DVier/lang/"
-#endif
+bool sdFound(void) {
+	if (!sdAccessed) {
+		if (access("sd:/", F_OK) == 0) {
+			sdRead = true;
 
-std::string Lang::get(const std::string &key) {
-	if (!appJson.contains(key)) return "";
+		} else {
+			sdRead = false;
+		}
 
-	return appJson.at(key).get_ref<const std::string&>();
+		sdAccessed = true;
+	}
+
+	return sdRead;
 }
 
-std::string langs[] = {"de", "en"};
+bool flashcardFound(void) {
+	if (!flashcardAccessed) {
+		if (access("fat:/", F_OK) == 0) {
+			flashcardRead = true;
 
-void Lang::load(int lang) {
-	FILE* values;
-	values = fopen((LANG_PATH + langs[lang] + "/app.json").c_str(), "rt");
-	if (values)	appJson = nlohmann::json::parse(values, nullptr, false);
-	fclose(values);
+		} else {
+			flashcardRead = false;
+		}
+
+		flashcardAccessed = true;
+	}
+	
+	return flashcardRead;
+}
+
+bool bothSDandFlashcard(void) {
+	if (sdFound() && flashcardFound()) {
+		return true;
+		
+	} else {
+		return false;
+	}
 }

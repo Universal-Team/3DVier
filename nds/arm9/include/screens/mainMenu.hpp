@@ -1,5 +1,5 @@
 /*
-*   This file is part of 3DVier
+*   This file is part of DSVier
 *   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
@@ -24,33 +24,29 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "lang.hpp"
+#ifndef _DSVIER_MAINMENU_HPP
+#define _DSVIER_MAINMENU_HPP
 
-#include <stdio.h>
+#include "gui.hpp"
+#include "screenCommon.hpp"
 
-nlohmann::json appJson;
+#include "structs.hpp"
+#include <vector>
 
-#ifdef _3DS
-	#define LANG_PATH "romfs:/lang/"
+class MainMenu : public Screen {
+public:
+	void Draw(void) const override;
+	void Logic(u16 hDown, touchPosition touch) override;
+	MainMenu();
+private:
+	int indexes[42] = {0};
+	int selection = 0;
 
-#elif _NDS
-	#define LANG_PATH "nitro:/lang/"
-	
-#else
-	#define LANG_PATH "/3DVier/lang/"
+	const std::vector<ButtonStruct> buttonPos = {
+		{80, 30, 88, 32, "NEW_GAME", GRAY, true}, // New Game.
+		{80, 80, 88, 32, "SETTINGS", GRAY, true}, // Settings.
+		{80, 130, 88, 32, "CREDITS", GRAY, true} // Credits.
+	};
+};
+
 #endif
-
-std::string Lang::get(const std::string &key) {
-	if (!appJson.contains(key)) return "";
-
-	return appJson.at(key).get_ref<const std::string&>();
-}
-
-std::string langs[] = {"de", "en"};
-
-void Lang::load(int lang) {
-	FILE* values;
-	values = fopen((LANG_PATH + langs[lang] + "/app.json").c_str(), "rt");
-	if (values)	appJson = nlohmann::json::parse(values, nullptr, false);
-	fclose(values);
-}

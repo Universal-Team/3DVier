@@ -1,5 +1,5 @@
 /*
-*   This file is part of 3DVier
+*   This file is part of DSVier
 *   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
@@ -24,33 +24,60 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "lang.hpp"
+#include "gameScreen.hpp"
+#include "mainMenu.hpp"
+#include "selector.hpp"
 
-#include <stdio.h>
+extern bool exiting;
+extern std::unique_ptr<Selector> selector;
+extern bool Buttontouching(ButtonStruct button);
 
-nlohmann::json appJson;
+MainMenu::MainMenu() { }
 
-#ifdef _3DS
-	#define LANG_PATH "romfs:/lang/"
 
-#elif _NDS
-	#define LANG_PATH "nitro:/lang/"
-	
-#else
-	#define LANG_PATH "/3DVier/lang/"
-#endif
+void MainMenu::Draw(void) const {
+	Gui::DrawTop(true);
+	printTextCentered("DSVier - " + Lang::get("MAINMENU"), 0, 1, true, true);
 
-std::string Lang::get(const std::string &key) {
-	if (!appJson.contains(key)) return "";
+	Gui::DrawBottom(true);
 
-	return appJson.at(key).get_ref<const std::string&>();
+	for (int i = 0; i < 3; i++) {
+		Gui::DrawButton(this->buttonPos[i]);
+	}
 }
 
-std::string langs[] = {"de", "en"};
+void MainMenu::Logic(u16 hDown, touchPosition touch) {
+	if (doUpdate) {
+		selector->move(this->buttonPos[this->selection].x, this->buttonPos[this->selection].y);
+		selector->update();
+	}
 
-void Lang::load(int lang) {
-	FILE* values;
-	values = fopen((LANG_PATH + langs[lang] + "/app.json").c_str(), "rt");
-	if (values)	appJson = nlohmann::json::parse(values, nullptr, false);
-	fclose(values);
+	if (hDown & KEY_A) {
+		switch(this->selection) {
+			case 0:
+				Gui::setScreen(std::make_unique<GameScreen>());
+				Gui::DrawScreen();
+				selector->hide();
+				updateOam();
+				break;
+		}
+	}
+
+	if (hDown & KEY_START) {
+		exiting = true;
+	}
+
+	if (hDown & KEY_DOWN) {
+		if (this->selection < 2) {
+			this->selection++;
+			doUpdate = true;
+		}
+	}
+
+	if (hDown & KEY_UP) {
+		if (this->selection > 0) {
+			this->selection--;
+			doUpdate = true;
+		}
+	}
 }

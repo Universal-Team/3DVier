@@ -24,6 +24,10 @@
 *         reasonable ways as different from the original version.
 */
 
+#ifdef _NDS
+	#include "flashcard.hpp"
+#endif
+
 #include "json.hpp"
 #include "settings.hpp"
 #include <unistd.h>
@@ -35,10 +39,10 @@ static bool configChanged = false;
 	#define SETTINGS_FILE "sdmc:/3ds/3DVier/Settings.json"
 
 #elif _NDS
-	#define SETTINGS_FILE "sd:/_nds/DSVier/Settings.json"
+	#define SETTINGS_FILE sdFound() ? "sd:/_nds/DSVier/Settings.json" : "fat:/_nds/DSVier/Settings.json"
 	
 #else
-	#define SETTINGS_FILE "3DVier/Settings.json"
+	#define SETTINGS_FILE "/3DVier/Settings.json"
 #endif
 
 /* Language. */

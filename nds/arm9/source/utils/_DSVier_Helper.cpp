@@ -1,5 +1,5 @@
 /*
-*   This file is part of 3DVier
+*   This file is part of DSVier
 *   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
@@ -24,33 +24,18 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "lang.hpp"
+#include "_DSVier_Helper.hpp"
 
-#include <stdio.h>
+#include <nds.h>
 
-nlohmann::json appJson;
+extern Image BG, Field, Chip[2], ChipSelector[2];
 
-#ifdef _3DS
-	#define LANG_PATH "romfs:/lang/"
-
-#elif _NDS
-	#define LANG_PATH "nitro:/lang/"
-	
-#else
-	#define LANG_PATH "/3DVier/lang/"
-#endif
-
-std::string Lang::get(const std::string &key) {
-	if (!appJson.contains(key)) return "";
-
-	return appJson.at(key).get_ref<const std::string&>();
+Image _DSVier_Helper::GetChipImage(int player) {
+	if (player == 1) return Chip[0];
+	else return Chip[1];
 }
 
-std::string langs[] = {"de", "en"};
-
-void Lang::load(int lang) {
-	FILE* values;
-	values = fopen((LANG_PATH + langs[lang] + "/app.json").c_str(), "rt");
-	if (values)	appJson = nlohmann::json::parse(values, nullptr, false);
-	fclose(values);
+Image _DSVier_Helper::GetChipSelector(int player) {
+	if (player == 1) return ChipSelector[0];
+	else return ChipSelector[1];
 }

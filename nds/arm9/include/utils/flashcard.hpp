@@ -1,5 +1,5 @@
 /*
-*   This file is part of 3DVier
+*   This file is part of DSVier
 *   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
@@ -24,33 +24,11 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "lang.hpp"
+#ifndef _DSVIER_FLASHCARD_HPP
+#define _DSVIER_FLASHCARD_HPP
 
-#include <stdio.h>
+bool sdFound(void);
+bool flashcardFound(void);
+bool bothSDandFlashcard(void);
 
-nlohmann::json appJson;
-
-#ifdef _3DS
-	#define LANG_PATH "romfs:/lang/"
-
-#elif _NDS
-	#define LANG_PATH "nitro:/lang/"
-	
-#else
-	#define LANG_PATH "/3DVier/lang/"
 #endif
-
-std::string Lang::get(const std::string &key) {
-	if (!appJson.contains(key)) return "";
-
-	return appJson.at(key).get_ref<const std::string&>();
-}
-
-std::string langs[] = {"de", "en"};
-
-void Lang::load(int lang) {
-	FILE* values;
-	values = fopen((LANG_PATH + langs[lang] + "/app.json").c_str(), "rt");
-	if (values)	appJson = nlohmann::json::parse(values, nullptr, false);
-	fclose(values);
-}

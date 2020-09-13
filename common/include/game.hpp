@@ -33,6 +33,10 @@
 #include <string>
 #include <vector>
 
+#ifdef _NDS
+	#include "flashcard.hpp"
+#endif
+
 #ifdef _3DS
 	const std::array<std::string, 3> Slots = {{
 		"sdmc:/3ds/3DVier/slot1.slot",
@@ -42,16 +46,16 @@
 
 #elif _NDS
 	const std::array<std::string, 3> Slots = {{
-		"sd:/_nds/DSVier/slot1.slot",
-		"sd:/_nds/DSVier/slot2.slot",
-		"sd:/_nds/DSVier/slot3.slot"
+		sdFound() ? "sd:/_nds/DSVier/slot1.slot" : "fat:/_nds/DSVier/slot1.slot",
+		sdFound() ? "sd:/_nds/DSVier/slot2.slot" : "fat:/_nds/DSVier/slot2.slot",
+		sdFound() ? "sd:/_nds/DSVier/slot3.slot" : "fat:/_nds/DSVier/slot3.slot"
 	}};
 
 #else
 	const std::array<std::string, 3> Slots = {{
-		"3DVier/slot1.slot",
-		"3DVier/slot2.slot",
-		"3DVier/slot3.slot"
+		"/3DVier/slot1.slot",
+		"/3DVier/slot2.slot",
+		"/3DVier/slot3.slot"
 	}};
 #endif
 

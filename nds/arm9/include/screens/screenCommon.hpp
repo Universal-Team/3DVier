@@ -1,5 +1,5 @@
 /*
-*   This file is part of 3DVier
+*   This file is part of DSVier
 *   Copyright (C) 2020 Universal-Team
 *
 *   This program is free software: you can redistribute it and/or modify
@@ -24,33 +24,19 @@
 *         reasonable ways as different from the original version.
 */
 
+#ifndef _DSVIER_SCREEN_COMMON_HPP
+#define _DSVIER_SCREEN_COMMON_HPP
+
+#include "colors.hpp"
+#include "graphics.hpp"
+#include "gui.hpp"
 #include "lang.hpp"
+#include "msg.hpp"
+#include "screen.hpp"
+#include "settings.hpp"
 
-#include <stdio.h>
+extern bool selected;
+extern bool changes;
+extern bool doUpdate;
 
-nlohmann::json appJson;
-
-#ifdef _3DS
-	#define LANG_PATH "romfs:/lang/"
-
-#elif _NDS
-	#define LANG_PATH "nitro:/lang/"
-	
-#else
-	#define LANG_PATH "/3DVier/lang/"
 #endif
-
-std::string Lang::get(const std::string &key) {
-	if (!appJson.contains(key)) return "";
-
-	return appJson.at(key).get_ref<const std::string&>();
-}
-
-std::string langs[] = {"de", "en"};
-
-void Lang::load(int lang) {
-	FILE* values;
-	values = fopen((LANG_PATH + langs[lang] + "/app.json").c_str(), "rt");
-	if (values)	appJson = nlohmann::json::parse(values, nullptr, false);
-	fclose(values);
-}

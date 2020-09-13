@@ -27,7 +27,6 @@
 #ifndef _3DVIER_SETTINGS_HPP
 #define _3DVIER_SETTINGS_HPP
 
-#include <3ds.h>
 #include <string>
 
 namespace Settings {
