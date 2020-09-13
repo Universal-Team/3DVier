@@ -55,6 +55,7 @@ VERSION_STRING := "$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_MICRO)"
 #---------------------------------------------------------------------------------
 TARGET		:=	3DVier
 BUILD		:=	build
+EXECUTABLES	:= ../builds
 UNIVCORE	:= 	Universal-Core
 CMN_SRC 	:=  ../common/source
 CMN_INC		:=  ../common/include
@@ -181,7 +182,7 @@ else
 endif
 
 ifeq ($(strip $(NO_SMDH)),)
-	export _3DSXFLAGS += --smdh=$(CURDIR)/$(TARGET).smdh
+	export _3DSXFLAGS += --smdh=../$(EXECUTABLES)/$(TARGET).smdh
 endif
 
 ifneq ($(ROMFS),)
@@ -191,16 +192,16 @@ endif
 .PHONY: all clean
 
 #---------------------------------------------------------------------------------
-all: $(BUILD) $(GFXBUILD) $(DEPSDIR) $(ROMFS_T3XFILES) $(T3XHFILES)
+all: $(BUILD) $(EXECUTABLES) $(GFXBUILD) $(DEPSDIR) $(ROMFS_T3XFILES) $(T3XHFILES)
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 
 #------------------------------------------------------------------------------
 clean:
 	@echo clean ...
 	@rm -fr $(BUILD) $(TARGET).elf
-	@rm -fr $(BUILD) $(TARGET).cia
-	@rm -fr $(BUILD) $(TARGET).3dsx
-	@rm -fr $(BUILD) $(TARGET).smdh
+	@rm -fr $(BUILD) $(EXECUTABLES)/$(TARGET).cia
+	@rm -fr $(BUILD) $(EXECUTABLES)/$(TARGET).3dsx
+	@rm -fr $(BUILD) $(EXECUTABLES)/$(TARGET).smdh
 	@rm -fr $(OUTDIR)
 
 
@@ -222,22 +223,26 @@ $(GFXBUILD)/%.t3x	$(BUILD)/%.h	:	%.t3s
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
 
+# Our executables (3DSX & CIA) are at ../builds folder.
+$(EXECUTABLES):
+	@[ -d $@ ] || mkdir -p $@
+
 #---------------------------------------------------------------------------------
 else
 
 #---------------------------------------------------------------------------------
 # main targets
 #---------------------------------------------------------------------------------
-all: $(OUTPUT).cia $(OUTPUT).elf $(OUTPUT).3dsx
+all: $(OUTPUT).cia $(OUTPUT).elf ../$(EXECUTABLES)/$(TARGET).3dsx
 
 $(OUTPUT).elf	:	$(OFILES)
 
-$(OUTPUT).cia	:	$(OUTPUT).elf $(OUTPUT).smdh
+$(OUTPUT).cia	:	$(OUTPUT).elf ../$(EXECUTABLES)/$(TARGET).smdh
 	$(BANNERTOOL) makebanner -i "../app/banner.png" -a "../app/BannerAudio.wav" -o "../app/banner.bin"
 
 	$(BANNERTOOL) makesmdh -i "../app/icon.png" -s "$(TARGET)" -l "$(APP_DESCRIPTION)" -p "$(APP_AUTHOR)" -o "../app/icon.bin"
 
-	$(MAKEROM) -f cia -target t -exefslogo -o "../3DVier.cia" -elf "../3DVier.elf" -rsf "../app/build-cia.rsf" -banner "../app/banner.bin" -icon "../app/icon.bin" -logo "../app/logo.bcma.lz" -DAPP_ROMFS="$(TOPDIR)/$(ROMFS)" -major $(VERSION_MAJOR) -minor $(VERSION_MINOR) -micro $(VERSION_MICRO) -DAPP_VERSION_MAJOR="$(VERSION_MAJOR)"
+	$(MAKEROM) -f cia -target t -exefslogo -o "../$(EXECUTABLES)/$(TARGET).cia" -elf "../$(TARGET).elf" -rsf "../app/build-cia.rsf" -banner "../app/banner.bin" -icon "../app/icon.bin" -logo "../app/logo.bcma.lz" -DAPP_ROMFS="$(TOPDIR)/$(ROMFS)" -major $(VERSION_MAJOR) -minor $(VERSION_MINOR) -micro $(VERSION_MICRO) -DAPP_VERSION_MAJOR="$(VERSION_MAJOR)"
 
 #---------------------------------------------------------------------------------
 # you need a rule like this for each extension you use as binary data
