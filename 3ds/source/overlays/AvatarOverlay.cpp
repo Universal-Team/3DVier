@@ -74,25 +74,24 @@ int Overlays::AvatarOverlay(int oldAvatar, const std::string text) {
 
 		/* The input part. */
 		hidScanInput();
-		touchPosition touch;
-		hidTouchRead(&touch);
+		u32 hRepeat = hidKeysDownRepeat();
 
 		/* Page Switches. */
-		if (hidKeysDown() & KEY_R) {
+		if (hRepeat & KEY_R) {
 			if (page == 1) {
 				page = 2;
 				selection += 4;
 			}
 		}
 
-		if (hidKeysDown() & KEY_L) {
+		if (hRepeat & KEY_L) {
 			if (page == 2) {
 				page = 1;
 				selection -= 4;
 			}
 		}
 
-		if (hidKeysDown() & KEY_RIGHT) {
+		if (hRepeat & KEY_RIGHT) {
 			if (page == 1) {
 				if (selection > 2) {
 					selection++;
@@ -109,7 +108,7 @@ int Overlays::AvatarOverlay(int oldAvatar, const std::string text) {
 			}
 		}
 
-		if (hidKeysDown() & KEY_LEFT) {
+		if (hRepeat & KEY_LEFT) {
 			if (page == 1) {
 				if (selection > 0) {
 					selection--;

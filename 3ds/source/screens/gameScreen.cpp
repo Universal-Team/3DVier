@@ -64,6 +64,7 @@ void GameScreen::displaySub(void) const {
 	}
 
 	_3DVier_Helper::DrawField(79, 16);
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 
 	GFX::DrawBottom(true);
 
@@ -92,6 +93,8 @@ void GameScreen::displaySub(void) const {
 			Gui::DrawStringCentered(0, subBtn[2].y + 10, 0.6f, TEXT_COLOR, Lang::get("SAVE_SLOT") + " " + std::to_string(3));
 			break;
 	}
+
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 }
 
 /* Draw Main Screen. */
@@ -121,7 +124,7 @@ void GameScreen::Draw(void) const {
 			_3DVier_Helper::SelectedChip(GamePos[this->matches.Pos4].X, GamePos[this->matches.Pos4].Y, this->currentGame->GetChip(this->matches.Pos4), .010f);
 		}
 
-		if (this->results == GameRes::NotOver) _3DVier_Helper::SelectedChip(GamePos[this->dropSelection].X, GamePos[this->dropSelection].Y, this->currentGame->GetCurrentPlayer());
+		if (this->results == GameRes::NotOver) _3DVier_Helper::SelectedChip(GamePos[this->dropSelection].X, GamePos[this->dropSelection].Y, this->currentGame->GetCurrentPlayer(), .015f);
 
 		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
 
@@ -168,8 +171,8 @@ void GameScreen::Draw(void) const {
 /* Animated chip drop. */
 void GameScreen::drop() {
 	this->dropped = true;
-	// Down speed.
-	int downSpeed = Settings::dropSpeed(), dropPos = 5;
+	int downSpeed = Settings::dropSpeed(), dropPos = 2, frameCount = 0, frameDrops = 0;
+	int speedPlus = Settings::speedPlus();
 
 	while(this->dropped) {
 		Gui::clearTextBufs();
@@ -180,7 +183,9 @@ void GameScreen::drop() {
 		GFX::DrawSprite(sprites_bg_idx, 79, 16);
 
 		/* Drawing the drop chip. */
-		_3DVier_Helper::DrawChip(GamePos[this->rowSelection].X + 4, dropPos, this->currentGame->GetCurrentPlayer());
+		if (dropPos < GamePos[this->dropSelection].Y + 4) {
+			_3DVier_Helper::DrawChip(GamePos[this->rowSelection].X + 4, dropPos, this->currentGame->GetCurrentPlayer());
+		}
 
 		for (int i = 0; i < 42; i++) {
 			if (this->currentGame->GetChip(i) != 0) {
@@ -192,8 +197,15 @@ void GameScreen::drop() {
 		C3D_FrameEnd(0);
 
 		if (dropPos < GamePos[this->dropSelection].Y + 4) {
-			downSpeed = downSpeed * Settings::speedMultiplier();
-			dropPos = dropPos + downSpeed;
+			frameCount++;
+
+			if (frameCount == 5) {
+				frameDrops += speedPlus;
+				frameCount = 0;
+			}
+
+			dropPos = dropPos + downSpeed + frameDrops;
+			gspWaitForVBlank();
 
 		} else {
 			this->dropped = false;
@@ -205,10 +217,10 @@ void GameScreen::drop() {
 /* Clear's the field by dropping the chips. */
 void GameScreen::clearField() {
 	bool hasWon = true;
-	int Pos = 0;
-	int max = 0;
+	int Pos = 0, frameCount = 0, frameDrops = 0, max = 0;
 
 	int downSpeed = Settings::clearSpeed();
+	int speedPlus = Settings::speedPlus();
 
 	/* Get the highest chip pos. */
 	for (int i = 0; i < 42; i++) {
@@ -237,8 +249,15 @@ void GameScreen::clearField() {
 		C3D_FrameEnd(0);
 
 		if (GamePos[max].Y + Pos < 240) {
-			downSpeed = downSpeed * Settings::speedMultiplier();
-			Pos = Pos + downSpeed;
+			frameCount++;
+
+			if (frameCount == 5) {
+				frameDrops += speedPlus;
+				frameCount = 0;
+			}
+
+			Pos = Pos + downSpeed + frameDrops;
+			gspWaitForVBlank();
 
 		} else {
 			/* Clear Gamefield etc and make ready for next round. */
@@ -295,11 +314,13 @@ void GameScreen::Refresh() {
 
 /* Sub Menu Logic. */
 void GameScreen::subLogic(u32 hDown, u32 hHeld, touchPosition touch) {
-	if (hDown & KEY_DOWN) {
+	u32 hRepeat = hidKeysDownRepeat();
+
+	if (hRepeat & KEY_DOWN) {
 		if (this->subSel < 2) this->subSel++;
 	}
 
-	if (hDown & KEY_UP) {
+	if (hRepeat & KEY_UP) {
 		if (this->subSel > 0) this->subSel--;
 	}
 
@@ -403,6 +424,7 @@ void GameScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 		this->subLogic(hDown, hHeld, touch);
 
 	} else {
+		u32 hRepeat = hidKeysDownRepeat();
 
 		/* In case the game is *not* over. */
 		if (this->results == GameRes::NotOver) {
@@ -440,26 +462,26 @@ void GameScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 				}
 			}
 
-			if (hDown & KEY_RIGHT) {
+			if (hRepeat & KEY_RIGHT) {
 				if (this->rowSelection < 6) {
 					this->rowSelection++;
 					this->Refresh();
 				}
 			}
 
-			if (hDown & KEY_LEFT) {
+			if (hRepeat & KEY_LEFT) {
 				if (this->rowSelection > 0) {
 					this->rowSelection--;
 					this->Refresh();
 				}
 			}
 
-			if (hDown & KEY_R) {
+			if (hRepeat & KEY_R) {
 				this->rowSelection = 6;
 				this->Refresh();
 			}
 
-			if (hDown & KEY_L) {
+			if (hRepeat & KEY_L) {
 				this->rowSelection = 0;
 				this->Refresh();
 			}

@@ -36,7 +36,7 @@
 #include "settings.hpp"
 
 extern bool selected;
-extern bool changes;
 extern bool doUpdate;
+extern bool hasSD;
 
 #endif

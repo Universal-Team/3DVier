@@ -37,6 +37,7 @@
 std::unique_ptr<Selector> selector;
 touchPosition touch;
 bool exiting = false;
+bool hasSD = true;
 
 /* If button Position pressed -> Do something. */
 bool touching(touchPosition touch, Structs::ButtonPos button) {
@@ -59,16 +60,13 @@ int main(int argc, char **argv) {
 	drawRectangle(0, 0, 256, 192, DARKERER_GRAY, DARKER_GRAY, false, false);
 
 	/* Init filesystem. */
-	if (!fatInitDefault()) {
-		/* Prints error if fatInitDefault() fails. */
-		consoleDemoInit();
-		printf("fatInitDefault() failed...");
-		while(1) swiWaitForVBlank();
-	}
+	hasSD = fatInitDefault();
 
-	/* Make directories, if not exist. */
-	mkdir(sdFound() ? "sd:/_nds" : "fat:/_nds", 0777);
-	mkdir(sdFound() ? "sd:/_nds/DSVier" : "fat:/_nds/DSVier", 0777);
+	if (hasSD) {
+		/* Make directories, if not exist. */
+		mkdir(sdFound() ? "sd:/_nds" : "fat:/_nds", 0777);
+		mkdir(sdFound() ? "sd:/_nds/DSVier" : "fat:/_nds/DSVier", 0777);
+	}
 
 	/* Try to init NitroFS from argv provided to the game when it was launched. */
 	if (!nitroFSInit(argv[0])) {
@@ -91,7 +89,7 @@ int main(int argc, char **argv) {
 	}
 
 	selector = std::make_unique<Selector>(88, 32);
-	Settings::Read();
+	if (hasSD) Settings::Read();
 	Lang::load(1);
 
 	loadFont();

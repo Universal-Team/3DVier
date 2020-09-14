@@ -47,6 +47,8 @@ void MainMenu::Draw(void) const {
 }
 
 void MainMenu::Logic(u16 hDown, touchPosition touch) {
+	u16 hRepeat = keysDownRepeat();
+
 	if (doUpdate) {
 		selector->move(this->buttonPos[this->selection].x, this->buttonPos[this->selection].y);
 		selector->update();
@@ -67,14 +69,14 @@ void MainMenu::Logic(u16 hDown, touchPosition touch) {
 		exiting = true;
 	}
 
-	if (hDown & KEY_DOWN) {
+	if (hRepeat & KEY_DOWN) {
 		if (this->selection < 2) {
 			this->selection++;
 			doUpdate = true;
 		}
 	}
 
-	if (hDown & KEY_UP) {
+	if (hRepeat & KEY_UP) {
 		if (this->selection > 0) {
 			this->selection--;
 			doUpdate = true;

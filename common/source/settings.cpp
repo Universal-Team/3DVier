@@ -34,54 +34,81 @@
 
 static nlohmann::json config;
 static bool configChanged = false;
+static bool configLoaded = false;
 
+/* Change these definitions, when needed for defaults. */
 #ifdef _3DS
 	#define SETTINGS_FILE "sdmc:/3ds/3DVier/Settings.json"
+	#define SPEED_PLUS 4
+	#define DROP_SPEED 3
+	#define CLEAR_SPEED 2
 
 #elif _NDS
 	#define SETTINGS_FILE sdFound() ? "sd:/_nds/DSVier/Settings.json" : "fat:/_nds/DSVier/Settings.json"
-	
+	#define SPEED_PLUS 1
+	#define DROP_SPEED 3
+	#define CLEAR_SPEED 2
+
 #else
 	#define SETTINGS_FILE "/3DVier/Settings.json"
+	#define SPEED_PLUS 2
+	#define DROP_SPEED 3
+	#define CLEAR_SPEED 2
 #endif
 
 /* Language. */
 int Settings::language() {
+	if (!configLoaded) return 1;
+
 	if (config.contains("Language")) return config["Language"];
 	else return 1; // English.
 }
 void Settings::language(int lang) {
+	if (!configLoaded) return;
+
 	config["Language"] = lang;
 	if (!configChanged) configChanged = true;
 }
 
 /* Dropspeed. */
 int Settings::dropSpeed() {
+	if (!configLoaded) return DROP_SPEED;
+
 	if (config.contains("DropSpeed")) return config["DropSpeed"];
-	else return 3;
+	else return DROP_SPEED;
 }
 void Settings::dropSpeed(int speed) {
+	if (!configLoaded) return;
+
 	config["DropSpeed"] = speed;
 	if (!configChanged) configChanged = true;
 }
 
 /* Clear speed. */
 int Settings::clearSpeed() {
+	if (!configLoaded) return CLEAR_SPEED;
+	
 	if (config.contains("ClearSpeed")) return config["ClearSpeed"];
-	else return 2;
+	else return CLEAR_SPEED;
 }
 void Settings::clearSpeed(int speed) {
+	if (!configLoaded) return;
+
 	config["ClearSpeed"] = speed;
 	if (!configChanged) configChanged = true;
 }
 
-/* Speed Multiplier. */
-float Settings::speedMultiplier() {
-	if (config.contains("SpeedMultiplier")) return config["SpeedMultiplier"];
-	else return 1.4;
+/* Speed Plus. */
+int Settings::speedPlus() {
+	if (!configLoaded) return SPEED_PLUS;
+
+	if (config.contains("SpeedPlus")) return config["SpeedPlus"];
+	else return SPEED_PLUS;
 }
-void Settings::speedMultiplier(float multi) {
-	config["SpeedMultiplier"] = multi;
+void Settings::speedPlus(int speed) {
+	if (!configLoaded) return;
+
+	config["SpeedPlus"] = speed;
 	if (!configChanged) configChanged = true;
 }
 
@@ -91,9 +118,9 @@ void Settings::Read() {
 		FILE *file = fopen(SETTINGS_FILE, "w");
 
 		config["Language"] = 1;
-		config["DropSpeed"] = 3;
-		config["ClearSpeed"] = 2;
-		config["SpeedMultiplier"] = 1.4;
+		config["DropSpeed"] = DROP_SPEED;
+		config["ClearSpeed"] = CLEAR_SPEED;
+		config["SpeedPlus"] = SPEED_PLUS;
 
 		const std::string dump = config.dump(1, '\t');
 		fwrite(dump.c_str(), 1, config.dump(1, '\t').size(), file);
@@ -102,11 +129,14 @@ void Settings::Read() {
 
 	FILE* file = fopen(SETTINGS_FILE, "r");
 	config = nlohmann::json::parse(file, nullptr, false);
+	configLoaded = true;
 	fclose(file);
 }
 
 /* Save Config. */
 void Settings::Save() {
+	if (!configLoaded) return;
+
 	if (configChanged) {
 		FILE *file = fopen(SETTINGS_FILE, "wb");
 		const std::string dump = config.dump(1, '\t');

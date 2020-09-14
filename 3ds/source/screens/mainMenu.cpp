@@ -52,11 +52,13 @@ void MainMenu::Draw(void) const {
 
 
 void MainMenu::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
-	if (hDown & KEY_UP) {
+	u32 hRepeat = hidKeysDownRepeat();
+
+	if (hRepeat & KEY_UP) {
 		if (this->Selection > 0) this->Selection--;
 	}
 	
-	if (hDown & KEY_DOWN) {
+	if (hRepeat & KEY_DOWN) {
 		if (this->Selection < 2) this->Selection++;
 	}
 

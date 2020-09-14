@@ -38,8 +38,8 @@ namespace Settings {
 	int dropSpeed(); void dropSpeed(int speed);
 	/* Drop speed, when clearing the field. */
 	int clearSpeed(); void clearSpeed(int speed);
-	/* Speed Multiplier, for speed * multiplier. */
-	float speedMultiplier(); void speedMultiplier(float multi);
+	/* Speed addition for each fifth frame. */
+	int speedPlus(); void speedPlus(int speed);
 }
 
 #endif

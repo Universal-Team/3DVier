@@ -29,6 +29,7 @@
 #include "selector.hpp"
 
 extern bool Buttontouching(ButtonStruct button);
+extern bool touching(touchPosition touch, Structs::ButtonPos button);
 extern std::unique_ptr<Selector> selector;
 extern Image BG, Field, Chip[2], ChipSelector[2];
 
@@ -36,25 +37,16 @@ extern Image BG, Field, Chip[2], ChipSelector[2];
 GameScreen::GameScreen() {
 	this->currentGame = std::make_unique<Game>();
 
-	for (int i = 0; i < 21; i++) {
+	for (int i = 0; i < 42; i++) {
 		this->indexes[i] = maxSpriteMain + i;
-		this->indexes[i] = initSprite(true, SpriteSize_32x32);
+		initSprite(true, SpriteSize_32x32, this->indexes[i]);
 		prepareSprite(this->indexes[i], true, GamePos[i].X - 1, GamePos[i].Y - 1, 0);
 		setSpriteVisibility(this->indexes[i], true, false);
-		fillSpriteImage(this->indexes[i], true, 32, 0, 0, Chip[0]);
-	}
-
-	for (int i = 0; i < 21; i++) {
-		this->indexes[21 + i] = maxSpriteMain + i;
-		this->indexes[21 + i] = initSprite(true, SpriteSize_32x32);
-		prepareSprite(this->indexes[21 + i], true, GamePos[21 + i].X - 1, GamePos[21 + i].Y - 1, 0);
-		setSpriteVisibility(this->indexes[21 + i], true, false);
-		fillSpriteImage(this->indexes[21 + i], true, 32, 0, 0, Chip[1]);
 	}
 
 	for (int i = 0; i < 2; i++) {
-		this->selectorChip[i] = maxSpriteMain + i;
-		this->selectorChip[i] = initSprite(true, SpriteSize_32x32);
+		this->selectorChip[i] = maxSpriteMain + 42 + i;
+		initSprite(true, SpriteSize_32x32, this->selectorChip[i]);
 		prepareSprite(this->selectorChip[i], true, 5, 5, 0);
 		setSpriteVisibility(this->selectorChip[i], true, false);
 
@@ -62,16 +54,33 @@ GameScreen::GameScreen() {
 	}
 
 	for (int i = 0; i < 4; i++) {
-		this->matchingFour[i] = maxSpriteMain + i;
-		this->matchingFour[i] = initSprite(true, SpriteSize_32x32);
+		this->matchingFour[i] = maxSpriteMain + 44 + i;
+		initSprite(true, SpriteSize_32x32, this->matchingFour[i]);
 		prepareSprite(this->matchingFour[i], true, 5, 5, 0);
 		setSpriteVisibility(this->matchingFour[i], true, false);
 	}
+
+	this->dropChip = maxSpriteMain + 48;
+	initSprite(true, SpriteSize_32x32, this->dropChip);
+	prepareSprite(this->dropChip, true, 0, 0, 0);
+	setSpriteVisibility(this->dropChip, true, false);
 
 
 	setSpriteVisibility(this->selectorChip[0], true, true);
 	this->Refresh();
 }
+
+void GameScreen::updateField() {
+	for (int i = 0; i < 42; i++) {
+		if (this->currentGame->GetChip(i) != 0) {
+			fillSpriteImage(this->indexes[i], true, 32, 0, 0, _DSVier_Helper::GetChipImage(this->currentGame->GetChip(i)));
+			setSpriteVisibility(this->indexes[i], true, true);
+		}
+	}
+
+	oamUpdate(&oamMain);
+}
+
 
 void GameScreen::destruct() {
 	/* Free allocated Chips. */
@@ -79,7 +88,6 @@ void GameScreen::destruct() {
 		if (spritesMain[this->indexes[i]].gfx) {
 			oamFreeGfx(&oamMain, spritesMain[this->indexes[i]].gfx);
 			setSpriteVisibility(this->indexes[i], true, false);
-			maxSpriteMain--;
 		}
 	}
 
@@ -88,7 +96,6 @@ void GameScreen::destruct() {
 		if (spritesMain[this->selectorChip[i]].gfx) {
 			oamFreeGfx(&oamMain, spritesMain[this->selectorChip[i]].gfx);
 			setSpriteVisibility(this->selectorChip[i], true, false);
-			maxSpriteMain--;
 		}
 	}
 
@@ -97,11 +104,28 @@ void GameScreen::destruct() {
 		if (spritesMain[this->matchingFour[i]].gfx) {
 			oamFreeGfx(&oamMain, spritesMain[this->matchingFour[i]].gfx);
 			setSpriteVisibility(this->matchingFour[i], true, false);
-			maxSpriteMain--;
 		}
 	}
 
+	if (spritesMain[this->dropChip].gfx) {
+		oamFreeGfx(&oamMain, spritesMain[this->dropChip].gfx);
+		setSpriteVisibility(this->dropChip, true, false);
+	}
+
 	updateOam();
+}
+
+/* Hide the gamefield. */
+void GameScreen::hideField() {
+	for (int i = 0; i < 42; i++) {
+		setSpriteVisibility(this->indexes[i], true, false);
+	}
+
+	for (int i = 0; i < 2; i++) {
+		setSpriteVisibility(this->selectorChip[i], true, false);
+	}
+
+	oamUpdate(&oamMain);
 }
 
 /* Return Player names. */
@@ -142,35 +166,112 @@ void GameScreen::updateTexts(void) const {
 	if (this->results != GameRes::NotOver) printTextCentered(Lang::get("A_CONTINUE"), 0, 178, false, true);
 
 	/* Drawing Text. */
-	printTextTinted(std::to_string(this->currentGame->GetAvailableChips(1)), TextColor::gray, 10, 34, false, true);
-	printTextTinted(std::to_string(this->currentGame->GetWins(1)), TextColor::gray, 10, 155, false, true);
+	printTextCenteredTinted(std::to_string(this->currentGame->GetAvailableChips(1)), TextColor::gray, 3 - 128 + (28 / 2), 28, false, true);
+	printTextCenteredTinted(std::to_string(this->currentGame->GetWins(1)), TextColor::gray, 3 - 128 + (28 / 2), 148, false, true);
 
-	printTextTinted(std::to_string(this->currentGame->GetAvailableChips(2)), TextColor::gray, 236, 34, false, true);
-	printTextTinted(std::to_string(this->currentGame->GetWins(2)), TextColor::gray, 239, 155, false, true);
+	printTextCenteredTinted(std::to_string(this->currentGame->GetAvailableChips(2)), TextColor::gray, 227 - 128 + (28 / 2), 28, false, true);
+	printTextCenteredTinted(std::to_string(this->currentGame->GetWins(2)), TextColor::gray, 227 - 128 + (28 / 2), 148, false, true);
 }
 
-/* For now just set the chip to the right position. TODO; Animation? */
-void GameScreen::MoveChip(int chip, int position) {
-	if (this->currentGame->GetCurrentPlayer() == 1) {
-		setSpritePosition(this->indexes[chip], true, GamePos[position].X-1, GamePos[position].Y-1);
-		setSpriteVisibility(this->indexes[chip], true, true);
-		oamUpdate(&oamMain);
+/* Move the chip into the slot. */
+void GameScreen::MoveChip() {
+	this->dropped = true;
+	int dropPos = 2, downSpeed = Settings::dropSpeed(), frameCount = 0, frameDrops = 0;
+	int speedPlus = Settings::speedPlus();
 
-	} else {
-		setSpritePosition(this->indexes[21 + chip], true, GamePos[position].X-1, GamePos[position].Y-1);
-		setSpriteVisibility(this->indexes[21 + chip], true, true);
-		oamUpdate(&oamMain);
+	fillSpriteImage(this->dropChip, true, 32, 0, 0, _DSVier_Helper::GetChipImage(this->currentGame->GetCurrentPlayer()));
+	setSpriteVisibility(this->dropChip, true, true);
+	setSpritePosition(this->dropChip, true, GamePos[this->rowSelection].X-1, dropPos);
+	oamUpdate(&oamMain);
+
+	while(this->dropped) {
+		if (dropPos < GamePos[this->dropSelection].Y) {
+			frameCount++;
+
+			if (frameCount == 5) {
+				frameDrops += speedPlus;
+				frameCount = 0;
+			}
+
+			dropPos = dropPos + downSpeed + frameDrops;
+			
+			setSpritePosition(this->dropChip, true, GamePos[this->rowSelection].X-1, dropPos);
+			oamUpdate(&oamMain);
+			swiWaitForVBlank();
+
+		} else {
+			setSpriteVisibility(this->dropChip, true, false);
+			oamUpdate(&oamMain);
+			this->dropped = false;
+		}
 	}
+
+	this->currentGame->Play(this->rowSelection, this->currentGame->GetCurrentPlayer());
+	this->updateField();
 }
 
+/* Clear a game. */
 void GameScreen::clearGame() {
+	bool hasWon = true;
+	int Pos = 0, frameCount = 0, frameDrops = 0, max = 0;
+
+	int downSpeed = Settings::clearSpeed();
+	int speedPlus = Settings::speedPlus();
+
+	/* Hide matching four. */
+	for (int i = 0; i < 4; i++) {
+		setSpriteVisibility(this->matchingFour[i], true, false);
+	}
+
+	oamUpdate(&oamMain);
+
+	/* Get the highest chip pos. */
+	for (int i = 0; i < 42; i++) {
+		if (this->currentGame->GetChip(i) != 0) {
+			/* Here we get the highest pos. */
+			if (i > max) max = i;
+		}
+	}
+
+	while(hasWon) {
+		if (GamePos[max].Y + Pos < 192) {
+			frameCount++;
+
+			if (frameCount == 5) {
+				frameDrops += speedPlus;
+				frameCount = 0;
+			}
+
+			Pos = Pos + downSpeed + frameDrops;
+
+			for (int i = 0; i < 42; i++) {
+				if (getSpriteInfo(this->indexes[i], true).y + Pos > 192) {
+					setSpriteVisibility(this->indexes[i], true, false);
+
+				} else {
+					setSpritePosition(this->indexes[i], true, GamePos[i].X-1, GamePos[i].Y-1 + Pos);
+				}
+			}
+
+			oamUpdate(&oamMain);
+			swiWaitForVBlank();
+
+		} else {
+			hasWon = false;
+
+			for (int i = 0; i < 42; i++) {
+				setSpritePosition(this->indexes[i], true, GamePos[i].X-1, GamePos[i].Y-1);
+				setSpriteVisibility(this->indexes[i], true, false);
+			}
+
+			oamUpdate(&oamMain);
+
+		}
+	}
+
 	/* Clear Gamefield etc and make ready for next round. */
 	for (int i = 0; i < 42; i++) {
 		setSpriteVisibility(this->indexes[i], true, false);
-	}
-
-	for (int i = 0; i < 4; i++) {
-		setSpriteVisibility(this->matchingFour[i], true, false);
 	}
 
 	this->results = GameRes::NotOver;
@@ -190,6 +291,247 @@ void GameScreen::clearGame() {
 	this->rowSelection = 3;
 	this->Refresh();
 	this->updateTexts();
+}
+
+void GameScreen::displaySub(void) const {
+	Gui::clearScreen(false, true);
+	Gui::DrawBottom(true);
+
+	for (int i = 0; i < 3; i++) {
+		drawRectangle(subPosMain[i].x, subPosMain[i].y, subPosMain[i].w, subPosMain[i].h, GRAY, false, true);
+	}
+
+	switch(this->subMode) {
+		case 0:
+			printTextCenteredTintedMaxW(Lang::get("LOAD_SLOT") + "...", subPosMain[0].w-5, 1, TextColor::gray, subPosMain[0].x - 128 + (subPosMain[0].w/2), subPosMain[0].y + (subPosMain[0].h/2) - 10, false, true);
+			printTextCenteredTintedMaxW(Lang::get("SAVE_SLOT") + "...", subPosMain[1].w-5, 1, TextColor::gray, subPosMain[1].x - 128 + (subPosMain[1].w/2), subPosMain[1].y + (subPosMain[1].h/2) - 10, false, true);
+			printTextCenteredTintedMaxW(Lang::get("EXIT_GAME") + "...", subPosMain[2].w-5, 1, TextColor::gray, subPosMain[2].x - 128 + (subPosMain[2].w/2), subPosMain[2].y + (subPosMain[2].h/2) - 10, false, true);
+			break;
+		
+		case 1:
+			printTextCenteredTintedMaxW(Lang::get("LOAD_SLOT") + " " + std::to_string(1), subPosMain[0].w-5, 1, TextColor::gray, subPosMain[0].x - 128 + (subPosMain[0].w/2), subPosMain[0].y + (subPosMain[0].h/2) - 10, false, true);
+			printTextCenteredTintedMaxW(Lang::get("LOAD_SLOT") + " " + std::to_string(2), subPosMain[1].w-5, 1, TextColor::gray, subPosMain[1].x - 128 + (subPosMain[1].w/2), subPosMain[1].y + (subPosMain[1].h/2) - 10, false, true);
+			printTextCenteredTintedMaxW(Lang::get("LOAD_SLOT") + " " + std::to_string(3), subPosMain[2].w-5, 1, TextColor::gray, subPosMain[2].x - 128 + (subPosMain[2].w/2), subPosMain[2].y + (subPosMain[2].h/2) - 10, false, true);
+			break;
+
+		case 2:
+			printTextCenteredTintedMaxW(Lang::get("SAVE_SLOT") + " " + std::to_string(1), subPosMain[0].w-5, 1, TextColor::gray, subPosMain[0].x - 128 + (subPosMain[0].w/2), subPosMain[0].y + (subPosMain[0].h/2) - 10, false, true);
+			printTextCenteredTintedMaxW(Lang::get("SAVE_SLOT") + " " + std::to_string(2), subPosMain[1].w-5, 1, TextColor::gray, subPosMain[1].x - 128 + (subPosMain[1].w/2), subPosMain[1].y + (subPosMain[1].h/2) - 10, false, true);
+			printTextCenteredTintedMaxW(Lang::get("SAVE_SLOT") + " " + std::to_string(3), subPosMain[2].w-5, 1, TextColor::gray, subPosMain[2].x - 128 + (subPosMain[2].w/2), subPosMain[2].y + (subPosMain[2].h/2) - 10, false, true);
+			break;
+	}
+}
+
+void GameScreen::subLogic(u16 hDown, touchPosition touch) {
+	if (doUpdate) {
+		selector->move(this->subPosMain[this->subSel].x, this->subPosMain[this->subSel].y);
+		selector->update();
+	}
+
+	u16 hRepeat = keysDownRepeat();
+
+	if (hRepeat & KEY_DOWN) {
+		if (this->subSel < 2) {
+			this->subSel++;
+			doUpdate = true;
+		}
+	}
+
+	if (hRepeat & KEY_UP) {
+		if (this->subSel > 0) {
+			this->subSel--;
+			doUpdate = true;
+		}
+	}
+
+	/* Main Mode. */
+	if (this->subMode == 0) {
+		if (hDown & KEY_B) {
+			selector->hide();
+			oamUpdate(&oamSub);
+			this->isSub = false;
+			this->Draw();
+		}
+
+		if (hDown & KEY_A) {
+			switch(this->subSel) {
+				case 0:
+					/* Only allow, if has SD. */
+					if (hasSD) {
+						this->subSel = 0;
+						this->subMode = 1;
+						doUpdate = true;
+						this->displaySub();
+					}
+					break;
+
+				case 1:
+					/* Only allow, if has SD. */
+					if (hasSD) {
+						this->subSel = 0;
+						this->subMode = 2;
+						doUpdate = true;
+						this->displaySub();
+					}
+					break;
+
+				case 2:
+					this->destruct();
+					Gui::screenBack();
+					Gui::DrawScreen();
+					doUpdate = true;
+					return;
+			}
+		}
+
+		if (hDown & KEY_TOUCH) {
+			if (touching(touch, subPosMain[0])) {
+				/* Only allow, if has SD. */
+				if (hasSD) {
+					this->subSel = 0;
+					this->subMode = 1;
+					doUpdate = true;
+					this->displaySub();
+				}
+
+			} else if (touching(touch, subPosMain[1])) {
+				/* Only allow, if has SD. */
+				if (hasSD) {
+					this->subSel = 0;
+					this->subMode = 2;
+					doUpdate = true;
+					this->displaySub();
+				}
+
+			} else if (touching(touch, subPosMain[2])) {
+				this->destruct();
+				Gui::screenBack();
+				Gui::DrawScreen();
+				doUpdate = true;
+				return;
+			}
+		}
+
+		/* Loading a slot mode. */
+	} else if (this->subMode == 1) {
+		if (hDown & KEY_B) {
+			this->subSel = 0;
+			this->subMode = 0;
+			doUpdate = true;
+			this->displaySub();
+		}
+
+		if (hDown & KEY_A) {
+			/* Hide field and selector. */
+			this->hideField();
+			selector->hide();
+			oamUpdate(&oamSub);
+
+			if (this->currentGame->LoadSlot(this->subSel)) Msg::DisplayWaitMsg(Lang::get("LOADED_SLOT_SCFLY"));
+			else Msg::DisplayWaitMsg(Lang::get("LOADING_SLOT_ERROR"));
+
+			this->Refresh();
+			this->displaySub();
+			this->updateField();
+
+			if (this->currentGame->GetCurrentPlayer() == 1) {
+				setSpriteVisibility(this->selectorChip[0], true, true);
+
+			} else {
+				setSpriteVisibility(this->selectorChip[1], true, true);
+			}
+
+			selector->show();
+			updateOam();
+		}
+
+		if (hDown & KEY_TOUCH) {
+			for (int i = 0; i < 3; i++) {
+				if (touching(touch, subPosMain[i])) {
+					/* Hide field and selector. */
+					this->hideField();
+					selector->hide();
+					oamUpdate(&oamSub);
+
+					if (this->currentGame->LoadSlot(i)) Msg::DisplayWaitMsg(Lang::get("LOADED_SLOT_SCFLY"));
+					else Msg::DisplayWaitMsg(Lang::get("LOADING_SLOT_ERROR"));
+
+					this->Refresh();
+					this->displaySub();
+					this->updateField();
+
+					if (this->currentGame->GetCurrentPlayer() == 1) {
+						setSpriteVisibility(this->selectorChip[0], true, true);
+
+					} else {
+						setSpriteVisibility(this->selectorChip[1], true, true);
+					}
+					
+					selector->show();
+					updateOam();
+				}
+			}
+		}
+
+		/* Saving a slot mode. */
+	} else if (this->subMode == 2) {
+		if (hDown & KEY_B) {
+			this->subSel = 0;
+			this->subMode = 0;
+			doUpdate = true;
+			this->displaySub();
+		}
+
+		if (hDown & KEY_A) {
+			this->currentGame->SaveSlot(this->subSel);
+
+			/* Hide field and selector. */
+			selector->hide();
+			oamUpdate(&oamSub);
+			this->hideField();
+
+			Msg::DisplayWaitMsg(Lang::get("SAVED_SLOT_SCFLY"));
+			this->displaySub();
+			this->updateField();
+
+			if (this->currentGame->GetCurrentPlayer() == 1) {
+				setSpriteVisibility(this->selectorChip[0], true, true);
+
+			} else {
+				setSpriteVisibility(this->selectorChip[1], true, true);
+			}
+
+			selector->show();
+			updateOam();
+		}
+
+		if (hDown & KEY_TOUCH) {
+			for (int i = 0; i < 3; i++) {
+				if (touching(touch, subPosMain[i])) {
+					this->currentGame->SaveSlot(i);
+
+					/* Hide field and selector. */
+					selector->hide();
+					oamUpdate(&oamSub);
+					this->hideField();
+
+					Msg::DisplayWaitMsg(Lang::get("SAVED_SLOT_SCFLY"));
+					this->displaySub();
+					this->updateField();
+
+					if (this->currentGame->GetCurrentPlayer() == 1) {
+						setSpriteVisibility(this->selectorChip[0], true, true);
+
+					} else {
+						setSpriteVisibility(this->selectorChip[1], true, true);
+					}
+
+					selector->show();
+					updateOam();
+				}
+			}
+		}
+	}
 }
 
 
@@ -261,99 +603,110 @@ void GameScreen::SetMatchingFour() {
 
 /* Game's Logic. */
 void GameScreen::Logic(u16 hDown, touchPosition touch) {
-	/* In case the game is *not* over. */
-	if (this->results == GameRes::NotOver) {
-		if (hDown & KEY_A) {
-			/* Check if playable. */
-			if (this->currentGame->Playable(this->rowSelection, this->currentGame->GetCurrentPlayer()).first == GameResult::Good) {
-
-				/* Because playable, Play! */
-				this->currentGame->Play(this->rowSelection, this->currentGame->GetCurrentPlayer());
-
-				std::pair<bool, ChipMatches> tempMatch;
-				tempMatch = this->currentGame->CheckMatches(this->currentGame->GetCurrentPlayer());
-
-				/* Move the chip to the position. */
-				this->MoveChip(20 - (this->currentGame->GetAvailableChips(this->currentGame->GetCurrentPlayer())), this->dropSelection);
-
-				/* In case we have 4 matches. */
-				if (tempMatch.first) {
-					this->matches = tempMatch.second;
-					this->results = GameRes::Over;
-					this->SetMatchingFour();
-					this->updateTexts();
-					return;
-
-				/* if not, we're switching the Players & Selectors. */
-				} else {
-					if (this->currentGame->GetCurrentPlayer() == 1) {
-						setSpriteVisibility(this->selectorChip[0], true, false);
-						this->currentGame->SetCurrentPlayer(2);
-						setSpriteVisibility(this->selectorChip[1], true, true);
-
-					} else {
-						setSpriteVisibility(this->selectorChip[1], true, false);
-						this->currentGame->SetCurrentPlayer(1);
-						setSpriteVisibility(this->selectorChip[0], true, true);
-					}
-				}
-
-				this->rowSelection = 3;
-				this->Refresh();
-				this->updateTexts();
-
-				/* Oh no.. game over. */
-				if (this->currentGame->IsOver()) {
-					this->results = GameRes::AllUsed;
-					this->updateTexts();
-					return;
-				}
-			}
-		}
-
-
-		if (hDown & KEY_RIGHT) {
-			if (this->rowSelection < 6) {
-				this->rowSelection++;
-				this->Refresh();
-			}
-		}
-
-		if (hDown & KEY_LEFT) {
-			if (this->rowSelection > 0) {
-				this->rowSelection--;
-				this->Refresh();
-			}
-		}
-
-		if (hDown & KEY_R) {
-			this->rowSelection = 6;
-			this->Refresh();
-		}
-
-		if (hDown & KEY_L) {
-			this->rowSelection = 0;
-			this->Refresh();
-		}
+	if (this->isSub) {
+		this->subLogic(hDown, touch);
 
 	} else {
-		/* Logic if a game is won. */
-		if (hDown & KEY_A) {
-			if (this->currentGame->GetWins(this->currentGame->GetCurrentPlayer()) < this->currentGame->GetWinAmount()) {
-				this->clearGame();
+		u16 hRepeat = keysDownRepeat();
 
-			} else {
-				this->destruct();
-				char message [100];
-				snprintf(message, sizeof(message), Lang::get("GAME_RESULT").c_str(), this->GetName(this->currentGame->GetCurrentPlayer()).c_str(),
-				 this->GetName(1).c_str(), this->currentGame->GetWins(1), this->GetName(2).c_str(), this->currentGame->GetWins(2));
-				Msg::DisplayWaitMsg(message, false); // Do not redraw this screen.
-
+		/* In case the game is *not* over. */
+		if (this->results == GameRes::NotOver) {
+			/* Go to sub menu. */
+			if (hDown & KEY_START) {
+				this->isSub = true;
 				selector->show();
-				updateOam();
-				Gui::screenBack();
-				Gui::DrawScreen();
-				return;
+				doUpdate = true;
+				this->displaySub();
+			}
+
+			if (hDown & KEY_A) {
+				/* Check if playable. */
+				if (this->currentGame->Playable(this->rowSelection, this->currentGame->GetCurrentPlayer()).first == GameResult::Good) {
+					/* Move the chip to the position. */
+					this->MoveChip();
+
+					std::pair<bool, ChipMatches> tempMatch;
+					tempMatch = this->currentGame->CheckMatches(this->currentGame->GetCurrentPlayer());
+
+					/* In case we have 4 matches. */
+					if (tempMatch.first) {
+						this->matches = tempMatch.second;
+						this->results = GameRes::Over;
+						this->SetMatchingFour();
+						this->updateTexts();
+						return;
+
+					/* if not, we're switching the Players & Selectors. */
+					} else {
+						if (this->currentGame->GetCurrentPlayer() == 1) {
+							setSpriteVisibility(this->selectorChip[0], true, false);
+							this->currentGame->SetCurrentPlayer(2);
+							setSpriteVisibility(this->selectorChip[1], true, true);
+
+						} else {
+							setSpriteVisibility(this->selectorChip[1], true, false);
+							this->currentGame->SetCurrentPlayer(1);
+							setSpriteVisibility(this->selectorChip[0], true, true);
+						}
+					}
+
+					this->rowSelection = 3;
+					this->Refresh();
+					this->updateTexts();
+
+					/* Oh no.. game over. */
+					if (this->currentGame->IsOver()) {
+						this->results = GameRes::AllUsed;
+						this->updateTexts();
+						return;
+					}
+				}
+			}
+
+
+			if (hRepeat & KEY_RIGHT) {
+				if (this->rowSelection < 6) {
+					this->rowSelection++;
+					this->Refresh();
+				}
+			}
+
+			if (hRepeat & KEY_LEFT) {
+				if (this->rowSelection > 0) {
+					this->rowSelection--;
+					this->Refresh();
+				}
+			}
+
+			if (hRepeat & KEY_R) {
+				this->rowSelection = 6;
+				this->Refresh();
+			}
+
+			if (hRepeat & KEY_L) {
+				this->rowSelection = 0;
+				this->Refresh();
+			}
+
+		} else {
+			/* Logic if a game is won. */
+			if (hDown & KEY_A) {
+				if (this->currentGame->GetWins(this->currentGame->GetCurrentPlayer()) < this->currentGame->GetWinAmount()) {
+					this->clearGame();
+
+				} else {
+					this->destruct();
+					char message [100];
+					snprintf(message, sizeof(message), Lang::get("GAME_RESULT").c_str(), this->GetName(this->currentGame->GetCurrentPlayer()).c_str(),
+					 this->GetName(1).c_str(), this->currentGame->GetWins(1), this->GetName(2).c_str(), this->currentGame->GetWins(2));
+					Msg::DisplayWaitMsg(message, false); // Do not redraw this screen.
+
+					selector->show();
+					updateOam();
+					Gui::screenBack();
+					Gui::DrawScreen();
+					return;
+				}
 			}
 		}
 	}

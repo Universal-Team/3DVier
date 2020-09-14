@@ -83,8 +83,10 @@ static const std::vector<ChipIcn> FieldPos = {
 	{283, 16}
 };
 
-static void DrawAnimDrop(int &dropPos) {
+static void DrawAnimDrop(int &dropPos, int &frameCount, int &frameDrops, int &mode) {
 	int downSpeed = Settings::dropSpeed();
+	int speedPlus = Settings::speedPlus();
+	
 
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
@@ -95,7 +97,10 @@ static void DrawAnimDrop(int &dropPos) {
 	Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 210)); // Darken the screen.
 
 	GFX::DrawSprite(sprites_bg_idx, 79, 16);
-	_3DVier_Helper::DrawChip(FieldPos[3].X + 4, dropPos, 1);
+
+	if (dropPos < FieldPos[3].Y + 4) {
+		_3DVier_Helper::DrawChip(FieldPos[3].X + 4, dropPos, 1);
+	}
 
 	_3DVier_Helper::DrawField(79, 16);
 
@@ -104,36 +109,73 @@ static void DrawAnimDrop(int &dropPos) {
 	/* Drop Anim speed. */
 	Gui::DrawStringCentered(0, 30, 0.6, TEXT_COLOR, Lang::get("DROP_SPEED"));
 	for (int i = 0; i < 9; i++) {
-		if (i + 1 == Settings::dropSpeed()) Gui::drawAnimatedSelector(20 + 30 * i, 70, 30, 30, .030, SELECTED_BUTTON_COLOR, BUTTON_COLOR);
-		else Gui::Draw_Rect(20 + 30 * i, 70, 30, 30, BUTTON_COLOR);
+		if (mode == 0) {
+			if (i + 1 == Settings::dropSpeed()) Gui::drawAnimatedSelector(20 + 30 * i, 50, 30, 30, .030, SELECTED_BUTTON_COLOR, BUTTON_COLOR);
+			else Gui::Draw_Rect(20 + 30 * i, 50, 30, 30, BUTTON_COLOR);
 
-		Gui::DrawString(30 + i * 30, 74, 0.6, TEXT_COLOR, std::to_string(1 + i));
+		} else {
+			Gui::Draw_Rect(20 + 30 * i, 50, 30, 30, BUTTON_COLOR);
+		}
+		
+		Gui::DrawString(30 + i * 30, 55, 0.6, TEXT_COLOR, std::to_string(1 + i));
+	}
+
+	/* Per each 5 frame speed. */
+	Gui::DrawStringCentered(0, 80, 0.6, TEXT_COLOR, Lang::get("SPEED_PLUS"));
+	for (int i = 0; i < 9; i++) {
+		/* If mode == 1, we'd display the selector here. */
+		if (mode == 1) {
+			if (i + 1 == Settings::speedPlus()) Gui::drawAnimatedSelector(20 + 30 * i, 100, 30, 30, .030, SELECTED_BUTTON_COLOR, BUTTON_COLOR);
+			else Gui::Draw_Rect(20 + 30 * i, 100, 30, 30, BUTTON_COLOR);
+
+		} else {
+			Gui::Draw_Rect(20 + 30 * i, 100, 30, 30, BUTTON_COLOR);
+		}
+
+		Gui::DrawString(30 + i * 30, 105, 0.6, TEXT_COLOR, std::to_string(1 + i));
 	}
 
 	/* Clear Anim speed. */
 	Gui::DrawStringCentered(0, 130, 0.6, TEXT_COLOR, Lang::get("CLEAR_SPEED"));
 	for (int i = 0; i < 9; i++) {
-		if (i + 1 == Settings::clearSpeed()) Gui::drawAnimatedSelector(20 + 30 * i, 170, 30, 30, .030, SELECTED_BUTTON_COLOR, BUTTON_COLOR);
-		else Gui::Draw_Rect(20 + 30 * i, 170, 30, 30, BUTTON_COLOR);
+		/* If mode == 2, we'd display the selector here. */
+		if (mode == 2) {
+			if (i + 1 == Settings::clearSpeed()) Gui::drawAnimatedSelector(20 + 30 * i, 150, 30, 30, .030, SELECTED_BUTTON_COLOR, BUTTON_COLOR);
+			else Gui::Draw_Rect(20 + 30 * i, 150, 30, 30, BUTTON_COLOR);
 
-		Gui::DrawString(30 + i * 30, 174, 0.6, TEXT_COLOR, std::to_string(1 + i));
+		} else {
+			Gui::Draw_Rect(20 + 30 * i, 150, 30, 30, BUTTON_COLOR);
+		}
+
+		Gui::DrawString(30 + i * 30, 155, 0.6, TEXT_COLOR, std::to_string(1 + i));
 	}
 
 	C3D_FrameEnd(0);
 
 	/* Logic for drop. */
 	if (dropPos < FieldPos[3].Y + 4) {
-		downSpeed = downSpeed * Settings::speedMultiplier();
-		dropPos = dropPos + downSpeed;
+		frameCount++;
+
+		if (frameCount == 5) {
+			frameDrops += speedPlus;
+			frameCount = 0;
+		}
+
+		dropPos = dropPos + downSpeed + frameDrops;
+		gspWaitForVBlank();
 
 	} else {
-		dropPos = 5;
 		downSpeed = Settings::dropSpeed();
+		speedPlus = Settings::speedPlus();
+		frameDrops = 0;
+		frameCount = 0;
+		dropPos = 2;
 	}
 }
 
-static void DrawClearAnim(int &pos) {
+static void DrawClearAnim(int &pos, int &frameCount, int &frameDrops, int &mode) {
 	int downSpeed = Settings::clearSpeed();
+	int speedPlus = Settings::speedPlus();
 
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
@@ -156,31 +198,68 @@ static void DrawClearAnim(int &pos) {
 	/* Drop Anim speed. */
 	Gui::DrawStringCentered(0, 30, 0.6, TEXT_COLOR, Lang::get("DROP_SPEED"));
 	for (int i = 0; i < 9; i++) {
-		if (i + 1 == Settings::dropSpeed()) Gui::drawAnimatedSelector(20 + 30 * i, 70, 30, 30, .030, SELECTED_BUTTON_COLOR, BUTTON_COLOR);
-		else Gui::Draw_Rect(20 + 30 * i, 70, 30, 30, BUTTON_COLOR);
+		/* If mode == 0, we'd display the selector here. */
+		if (mode == 0) {
+			if (i + 1 == Settings::dropSpeed()) Gui::drawAnimatedSelector(20 + 30 * i, 50, 30, 30, .030, SELECTED_BUTTON_COLOR, BUTTON_COLOR);
+			else Gui::Draw_Rect(20 + 30 * i, 50, 30, 30, BUTTON_COLOR);
 
-		Gui::DrawString(30 + i * 30, 74, 0.6, TEXT_COLOR, std::to_string(1 + i));
+		} else {
+			Gui::Draw_Rect(20 + 30 * i, 50, 30, 30, BUTTON_COLOR);
+		}
+
+		Gui::DrawString(30 + i * 30, 55, 0.6, TEXT_COLOR, std::to_string(1 + i));
 	}
-	
+
+	/* Per each 5 frame speed. */
+	Gui::DrawStringCentered(0, 80, 0.6, TEXT_COLOR, Lang::get("SPEED_PLUS"));
+	for (int i = 0; i < 9; i++) {
+		/* If mode == 1, we'd display the selector here. */
+		if (mode == 1) {
+			if (i + 1 == Settings::speedPlus()) Gui::drawAnimatedSelector(20 + 30 * i, 100, 30, 30, .030, SELECTED_BUTTON_COLOR, BUTTON_COLOR);
+			else Gui::Draw_Rect(20 + 30 * i, 100, 30, 30, BUTTON_COLOR);
+
+		} else {
+			Gui::Draw_Rect(20 + 30 * i, 100, 30, 30, BUTTON_COLOR);
+		}
+
+		Gui::DrawString(30 + i * 30, 105, 0.6, TEXT_COLOR, std::to_string(1 + i));
+	}
+
 	/* Clear Anim speed. */
 	Gui::DrawStringCentered(0, 130, 0.6, TEXT_COLOR, Lang::get("CLEAR_SPEED"));
 	for (int i = 0; i < 9; i++) {
-		if (i + 1 == Settings::clearSpeed()) Gui::drawAnimatedSelector(20 + 30 * i, 170, 30, 30, .030, SELECTED_BUTTON_COLOR, BUTTON_COLOR);
-		else Gui::Draw_Rect(20 + 30 * i, 170, 30, 30, BUTTON_COLOR);
+		/* If mode == 2, we'd display the selector here. */
+		if (mode == 2) {
+			if (i + 1 == Settings::clearSpeed()) Gui::drawAnimatedSelector(20 + 30 * i, 150, 30, 30, .030, SELECTED_BUTTON_COLOR, BUTTON_COLOR);
+			else Gui::Draw_Rect(20 + 30 * i, 150, 30, 30, BUTTON_COLOR);
 
-		Gui::DrawString(30 + i * 30, 174, 0.6, TEXT_COLOR, std::to_string(1 + i));
+		} else {
+			Gui::Draw_Rect(20 + 30 * i, 150, 30, 30, BUTTON_COLOR);
+		}
+
+		Gui::DrawString(30 + i * 30, 155, 0.6, TEXT_COLOR, std::to_string(1 + i));
 	}
 
 	C3D_FrameEnd(0);
 
 	/* Logic for clear. */
 	if (FieldPos[42].Y + pos < 240) {
-		downSpeed = downSpeed * Settings::speedMultiplier();
-		pos = pos + downSpeed;
+		frameCount++;
+
+		if (frameCount == 5) {
+			frameDrops += speedPlus;
+			frameCount = 0;
+		}
+
+		pos = pos + downSpeed + frameDrops;
+		gspWaitForVBlank();
 
 	} else {
-		pos = 0;
 		downSpeed = Settings::clearSpeed();
+		speedPlus = Settings::speedPlus();
+		frameDrops = 0;
+		frameCount = 0;
+		pos = 0;
 	}
 }
 
@@ -188,45 +267,54 @@ void Overlays::SpeedOverlay() {
 	bool doOut = false;
 	int mode = 0, slMode = 0;
 	int pos = 5;
+	int frameCount = 0, frameDrops = 0;
 
 	while(!doOut) {
-		if (mode == 0) DrawAnimDrop(pos);
-		else DrawClearAnim(pos);
+		if (mode == 0) DrawAnimDrop(pos, frameCount, frameDrops, slMode);
+		else DrawClearAnim(pos, frameCount, frameDrops, slMode);
 
 		u32 hDown = hidKeysDown();
+		u32 hRepeat = hidKeysDownRepeat();
 		hidScanInput();
 
 		if (hDown & KEY_B) doOut = true;
 
-		if (hDown & KEY_RIGHT) {
+		if (hRepeat & KEY_RIGHT) {
 			if (slMode == 0) {
 				if (Settings::dropSpeed() < 9) Settings::dropSpeed(Settings::dropSpeed() + 1);
+
+			} else if (slMode == 1) {
+				if (Settings::speedPlus() < 9) Settings::speedPlus(Settings::speedPlus() + 1);
 
 			} else {
 				if (Settings::clearSpeed() < 9) Settings::clearSpeed(Settings::clearSpeed() + 1);
 			}
 		}
 
-		if (hDown & KEY_LEFT) {
+		if (hRepeat & KEY_LEFT) {
 			if (slMode == 0) {
 				if (Settings::dropSpeed() > 0) Settings::dropSpeed(Settings::dropSpeed() - 1);
+
+			} else if (slMode == 1) {
+				if (Settings::speedPlus() > 0) Settings::speedPlus(Settings::speedPlus() - 1);
 
 			} else {
 				if (Settings::clearSpeed() > 0) Settings::clearSpeed(Settings::clearSpeed() - 1);
 			}
 		}
 
-		if (hDown & KEY_UP) {
-			if (slMode == 1) {
-				slMode = 0;
-				mode = 0;
+		if (hRepeat & KEY_UP) {
+			if (slMode > 0) {
+				slMode--;
+				if (slMode == 0) mode = 0;
 			}
 		}
 
-		if (hDown & KEY_DOWN) {
-			if (slMode == 0) {
-				slMode = 1;
-				mode = 1;
+		if (hRepeat & KEY_DOWN) {
+			if (slMode < 2) {
+				slMode++;
+
+				if (slMode == 2) mode = 1;
 			}
 		}
 	}

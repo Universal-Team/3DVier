@@ -57,13 +57,21 @@ private:
 	std::string player1 = "Player 1", player2 = "Player 2";
 	std::string GetName(int name) const;
 
+	/* Sub Mode stuff. */
+	int subSel = 0, subMode = 0;
+	bool isSub = false, dropped = false;
+	void displaySub(void) const;
+	void subLogic(u16 hDown, touchPosition touch);
+
 	/* Functions. */
 	void clearGame();
 	void destruct();
 	void SetMatchingFour();
 	void updateTexts(void) const;
-	void MoveChip(int chip, int position);
+	void MoveChip();
 	void Refresh();
+	void updateField();
+	void hideField();
 
 	/* Variables. */
 	GameRes results = GameRes::NotOver; // Game is over or not.
@@ -71,8 +79,15 @@ private:
 	int indexes[42] = {0}; // Indexes for the sprites.
 	int selectorChip[2] = {0}; // Selectors.
 	int matchingFour[4] = {0}; // For highlighting the matching fours.
+	int dropChip = 0;
 	int rowSelection = 3; // Row selection.
 	int dropSelection = 3; // Drop Selection for previewing the positions.
+
+	const std::vector<Structs::ButtonPos> subPosMain = {
+		{80, 30, 88, 32, -1}, // Load a slot.
+		{80, 80, 88, 32, -1}, // Save a slot.
+		{80, 130, 88, 32, -1} // Exit game.
+	};
 
 	const std::vector<ChipIcn> GamePos = {
 		/* First Row -> 0-6. */

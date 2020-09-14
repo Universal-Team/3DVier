@@ -69,9 +69,10 @@ Result Init::MainLoop() {
 
 	fadealpha = 255;
 	fadein = true;
+	hidSetRepeatParameters(10, 10);
 
 	/* Loop as long as the status is not exiting. */
-	while (aptMainLoop() && !exiting) {
+	while(aptMainLoop() && !exiting) {
 		/* Scan all the Inputs. */
 		hidScanInput();
 		hDown = hidKeysDown();
