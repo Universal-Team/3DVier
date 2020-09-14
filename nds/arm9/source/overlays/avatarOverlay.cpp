@@ -24,69 +24,67 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "gameScreen.hpp"
-#include "mainMenu.hpp"
+#include "overlay.hpp"
 #include "selector.hpp"
 
-extern bool exiting;
 extern std::unique_ptr<Selector> selector;
-extern bool Buttontouching(ButtonStruct button);
+extern Image characters[8];
 
-MainMenu::MainMenu() { }
-
-
-void MainMenu::Draw(void) const {
+static void Draw(std::string message) {
+	Gui::clearScreen(true, true);
+	Gui::clearScreen(false, true);
 	Gui::DrawTop(true);
-	printTextCentered("DSVier - " + Lang::get("MAINMENU"), 0, 1, true, true);
-
+	printTextCentered(message, 0, 1, true, false);
 	Gui::DrawBottom(true);
-
-	for (int i = 0; i < 3; i++) {
-		Gui::DrawButton(this->buttonPos[i]);
-	}
 }
 
-void MainMenu::Logic(u16 hDown, touchPosition touch) {
-	u16 hRepeat = keysDownRepeat();
+static void AvatarUpdate(int selection) {
+	Gui::clearScreen(true, true);
 
-	if (doUpdate) {
-		selector->move(this->buttonPos[this->selection].x, this->buttonPos[this->selection].y);
-		selector->update();
-	}
+	drawImage(60, 52, characters[selection], true, true);
+}
 
-	if (hDown & KEY_A) {
-		switch(this->selection) {
-			case 0:
-				Gui::setScreen(std::make_unique<GameScreen>());
-				Gui::DrawScreen();
-				selector->hide();
-				updateOam();
-				break;
+int Overlays::AvatarOverlay(std::string message, int temp) {
+	int selection = 0;
+	bool selectedAvatar = false, tempSelect = true;
 
-			case 1:
-				break; // Settings: TODO.
+	selector->hide();
+	doUpdate = true;
+	selector->update();
 
-			case 2:
-				Overlays::CreditsOverlay();
-				break;
+	Draw(message);
+	AvatarUpdate(selection);
+
+	swiWaitForVBlank();
+	while(!selectedAvatar) {
+		swiWaitForVBlank();
+		
+		scanKeys();
+		u16 hRepeat = keysDownRepeat();
+
+		if (hRepeat & KEY_R || hRepeat & KEY_RIGHT) {
+			if (selection < 7) {
+				selection++;
+				AvatarUpdate(selection);
+			}
 		}
-	}
 
-	if (hDown & KEY_START) {
-		exiting = true;
-	}
-
-	if (hRepeat & KEY_DOWN) {
-		if (this->selection < 2) {
-			this->selection++;
-			doUpdate = true;
+		if (hRepeat & KEY_L || hRepeat & KEY_LEFT) {
+			if (selection > 0) {
+				selection--;
+				AvatarUpdate(selection);
+			}
 		}
+
+		if (keysDown() & KEY_A) {
+			tempSelect = false;
+			selectedAvatar = true;
+		}
+
+		if (keysDown() & KEY_B) selectedAvatar = true;
+
 	}
 
-	if (hRepeat & KEY_UP) {
-		if (this->selection > 0) {
-			this->selection--;
-			doUpdate = true;
-		}
-	}
+	Gui::clearScreen(true, false);
+	return tempSelect ? temp : selection;
 }

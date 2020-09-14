@@ -24,20 +24,56 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _DSVIER_SCREEN_COMMON_HPP
-#define _DSVIER_SCREEN_COMMON_HPP
-
-#include "colors.hpp"
-#include "graphics.hpp"
-#include "gui.hpp"
-#include "lang.hpp"
-#include "msg.hpp"
 #include "overlay.hpp"
-#include "screen.hpp"
-#include "settings.hpp"
+#include "selector.hpp"
 
-extern bool selected;
-extern bool doUpdate;
-extern bool hasSD;
+extern std::unique_ptr<Selector> selector;
+extern Image StackZ, UT;
 
-#endif
+static void Draw() {
+	Gui::clearScreen(true, true);
+	Gui::clearScreen(false, true);
+
+	Gui::DrawTop(true);
+	printTextCentered("DSVier - " + Lang::get("CREDITS"), 0, 1, true, true);
+
+	printTextCentered(Lang::get("DEVELOPED_BY"), 0, 23, true, true);
+	printTextCentered(Lang::get("MAIN_DEV"), 0, 35, true, true);
+	drawImage(15, 52, StackZ, true, true);
+
+	drawImage(190, 110, UT, true, true);
+
+	printTextCentered(Lang::get("CURRENT_VERSION") + VER_NUMBER, 0, 173, true, true);
+
+	Gui::DrawBottom(true);
+
+	printTextCentered("devkitPro", 0, 30, false, true);
+	printTextCentered(Lang::get("DEVKITPRO"), 0, 45, false, true);
+
+	printTextCentered("SuperSaiyajinStackZ", 0, 80, false, true);
+	printTextCentered(Lang::get("DEVELOPING_APP"), 0, 95, false, true);
+}
+
+void Overlays::CreditsOverlay() {
+	selector->hide();
+	doUpdate = true;
+	selector->update();
+
+	bool isOut = false;
+
+	Draw();
+
+	swiWaitForVBlank();
+	while(!isOut) {
+		scanKeys();
+		u16 hDown = keysDown();
+
+		if (hDown) isOut = true;
+
+	}
+
+	Gui::DrawScreen();
+	selector->show();
+	doUpdate = true;
+	selector->update();
+}

@@ -54,6 +54,7 @@ public:
 private:
 	std::unique_ptr<Game> currentGame = nullptr;
 
+	int avatar1 = 0, avatar2 = 0;
 	std::string player1 = "Player 1", player2 = "Player 2";
 	std::string GetName(int name) const;
 

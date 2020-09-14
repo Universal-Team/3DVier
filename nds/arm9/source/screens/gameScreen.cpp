@@ -25,16 +25,23 @@
 */
 
 #include "_DSVier_Helper.hpp"
+#include "input.hpp"
 #include "gameScreen.hpp"
 #include "selector.hpp"
 
 extern bool Buttontouching(ButtonStruct button);
 extern bool touching(touchPosition touch, Structs::ButtonPos button);
 extern std::unique_ptr<Selector> selector;
-extern Image BG, Field, Chip[2], ChipSelector[2];
+extern Image BG, Field, Chip[2], ChipSelector[2], characters[8];
 
 /* Constructor. */
 GameScreen::GameScreen() {
+	this->avatar1 = Overlays::AvatarOverlay(Lang::get("PLAYER1_CHAR"));
+	this->avatar2 = Overlays::AvatarOverlay(Lang::get("PLAYER2_CHAR"));
+
+	this->player1 = Input::getLine(Lang::get("PLAYER1_NAME"), 10, Lang::get("PLAYER") + " " + std::to_string(1), false, false);
+	this->player2 = Input::getLine(Lang::get("PLAYER2_NAME"), 10, Lang::get("PLAYER") + " " + std::to_string(2), false, true);
+
 	this->currentGame = std::make_unique<Game>();
 
 	for (int i = 0; i < 42; i++) {
@@ -147,6 +154,13 @@ void GameScreen::Draw(void) const {
 	drawImage(224, 20, Chip[1], false, false);
 	drawImage(224, 140, Chip[1], false, false);
 
+	/* Draw Characters. */
+	drawImage(16, 22, characters[this->avatar1], false, false);
+	drawImage(129, 22, characters[this->avatar2], false, false, 0x10);
+
+	printText(this->player1, 35, 140, false, false);
+	printText(this->player2, 140, 140, false, false);
+
 	this->updateTexts();
 }
 
@@ -163,7 +177,7 @@ void GameScreen::updateTexts(void) const {
 		printTextCentered(Lang::get("ALL_SLOTS_USED"), 0, 1, false, true);
 	}
 
-	if (this->results != GameRes::NotOver) printTextCentered(Lang::get("A_CONTINUE"), 0, 178, false, true);
+	if (this->results != GameRes::NotOver) printTextCentered(Lang::get("A_CONTINUE"), 0, 174, false, true);
 
 	/* Drawing Text. */
 	printTextCenteredTinted(std::to_string(this->currentGame->GetAvailableChips(1)), TextColor::gray, 3 - 128 + (28 / 2), 28, false, true);

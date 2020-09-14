@@ -10,7 +10,7 @@ else
 BMP2DS 	?= bmp2ds
 endif
 
-GRAPHICS	:=	ui .
+GRAPHICS	:=	chars ui .
 
 OUT			:=	../nitrofiles/graphics
 

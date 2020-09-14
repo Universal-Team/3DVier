@@ -21,6 +21,8 @@
 	"OK": "OK",
 	"PLAYER": "Player",
 	"PLAYER_WON_ROUND": "%s won this round!",
+	"PLAYER1_CHAR": "Player 1: Select your avatar!",
+	"PLAYER2_CHAR": "Player 2: Select your avatar!",
 	"PLAYER1_NAME": "Player 1: Enter your name!",
 	"PLAYER2_NAME": "Player 2: Enter your name!",
 	"SAVE_SLOT": "Save Slot",

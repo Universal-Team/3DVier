@@ -24,20 +24,17 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifndef _DSVIER_SCREEN_COMMON_HPP
-#define _DSVIER_SCREEN_COMMON_HPP
+#ifndef _DSVIER_OVERLAY_HPP
+#define _DSVIER_OVERLAY_HPP
 
-#include "colors.hpp"
-#include "graphics.hpp"
-#include "gui.hpp"
-#include "lang.hpp"
-#include "msg.hpp"
-#include "overlay.hpp"
-#include "screen.hpp"
-#include "settings.hpp"
+#include "screenCommon.hpp"
 
-extern bool selected;
-extern bool doUpdate;
-extern bool hasSD;
+#include <nds.h>
+
+namespace Overlays {
+	void CreditsOverlay();
+
+	int AvatarOverlay(std::string message, int temp = 0);
+}
 
 #endif

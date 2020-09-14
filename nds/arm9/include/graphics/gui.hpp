@@ -61,6 +61,8 @@ namespace Gui {
 	*/
 	void clearScreen(bool top, bool layer);
 
+	extern int keyboardSpriteID;
+	
 	void loadGraphics();
 
 	void DrawButton(ButtonStruct btn, TextColor color = TextColor::gray);

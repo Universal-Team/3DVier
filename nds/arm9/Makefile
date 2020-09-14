@@ -29,12 +29,14 @@ COMMONINC	:= ../../common/include
 SOURCES		:=	$(COMMONSRC) \
 				source \
 				source/graphics \
+				source/overlays \
 				source/screens \
 				source/utils
 
 INCLUDES	:=	$(COMMONINC) \
 				include \
 				include/graphics \
+				include/overlays \
 				include/screens \
 				include/utils
 				

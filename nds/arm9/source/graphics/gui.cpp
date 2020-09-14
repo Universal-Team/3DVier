@@ -33,7 +33,7 @@
 
 std::stack<std::unique_ptr<Screen>> screens;
 std::array<int, 4> selectorspr;
-Image BG, Field, Chip[2], ChipSelector[2];
+Image BG, Field, Chip[2], ChipSelector[2], characters[8], StackZ, UT;
 
 void Gui::DrawScreen() {
 	clearScreen(false, true);
@@ -74,6 +74,8 @@ void Gui::clearScreen(bool top, bool layer) {
 	drawRectangle(0, 0, 256, 192, CLEAR, top, layer);
 }
 
+int Gui::keyboardSpriteID;
+
 void Gui::loadGraphics() {
 	Image selector = loadImage("/graphics/corner.gfx");
 
@@ -84,6 +86,14 @@ void Gui::loadGraphics() {
 	Chip[1] = loadImage("/graphics/ui/chip_p2.gfx");
 	ChipSelector[0] = loadImage("/graphics/ui/selector_p1.gfx");
 	ChipSelector[1] = loadImage("/graphics/ui/selector_p2.gfx");
+
+	StackZ = loadImage("/graphics/ui/stackZ.gfx");
+	UT = loadImage("/graphics/ui/ut.gfx");
+
+	/* Load characters. */
+	for (int i = 0; i < 8; i++) {
+		characters[i] = loadImage("/graphics/chars/char" + std::to_string(i + 1) + ".gfx");
+	}
 
 	/* Init selector. */
 	for (int i = 0; i < (int)selectorspr.size();i++) {
