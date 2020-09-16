@@ -63,17 +63,21 @@ private:
 	bool isSub = false, dropped = false;
 	void displaySub(void) const;
 	void subLogic(u16 hDown, touchPosition touch);
-	void AILogic();
+	
+
+	/* Animation and AI stuff. */
+	void drop(); // Drop a chip.
+	void AILogic(); // Logic of the AI.
+	void clearGame(); // Clear the gamefield & start a new round.
+	void Refresh(); // Refresh the drop selection pos.
 
 	/* Functions. */
-	void clearGame();
-	void destruct();
-	void SetMatchingFour();
-	void updateTexts(void) const;
-	void MoveChip();
-	void Refresh();
-	void updateField();
-	void hideField();
+	void destruct(); // Destroy the allocated chip buffers.
+	void SetMatchingFour(); // Set the matching four chips.
+	void updateTexts(void) const; // Update all Texts, such as amount of available chips, wins, Winner Text etc.
+	
+	void updateField(); // Update the complete gamefield, featuring displaying all played chips.
+	void hideField(); // Hide the field for the messages.
 
 	/* Variables. */
 	GameRes results = GameRes::NotOver; // Game is over or not.

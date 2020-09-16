@@ -58,17 +58,18 @@ private:
 	std::unique_ptr<Game> currentGame; // Our game pointer.
 	int rowSelection = 3; // To select the Row.
 	int dropSelection = 0; // Where to drop.
-	void Refresh(); // Refresh the dropSelection.
-
+	
 	/* Player Names etc. */
 	int avatar1, avatar2, winAmount;
 	std::string p1Name, p2Name;
 	std::string getName(int Player) const;
 	int getAvatar(int Player) const;
 
+	/* Animation and AI stuff. */
 	void drop();
 	void AILogic();
-	void clearField();
+	void clearGame();
+	void Refresh(); // Refresh the dropSelection.
 	
 	const std::vector<Structs::ButtonPos> subBtn = {
 		{90, 40, 140, 40},

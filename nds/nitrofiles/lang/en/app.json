@@ -1,5 +1,6 @@
 {
 	"A_CONTINUE": "Press A to continue.",
+	"AI_NOT_PLAYABLE": "Oh no, the AI can't play!\nStarting a new round...",
 	"ALL_SLOTS_USED": "All slots used...",
 	"CREDITS": "Credits",
 	"CURRENT_VERSION": "Current Version: ",

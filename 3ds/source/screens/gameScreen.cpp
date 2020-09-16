@@ -177,6 +177,7 @@ void GameScreen::drop() {
 	while(this->dropped) {
 		Gui::clearTextBufs();
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+		C2D_TargetClear(Top, TRANSPARENT);
 
 		GFX::DrawTop(false);
 		Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 210)); // Darken the screen.
@@ -196,7 +197,7 @@ void GameScreen::drop() {
 		_3DVier_Helper::DrawField(79, 16);
 		C3D_FrameEnd(0);
 
-		if (dropPos < GamePos[this->dropSelection].Y) {
+		if (dropPos < GamePos[this->dropSelection].Y + 4) {
 			frameCount++;
 
 			if (frameCount == 5) {
@@ -215,7 +216,7 @@ void GameScreen::drop() {
 }
 
 /* Clear's the field by dropping the chips. */
-void GameScreen::clearField() {
+void GameScreen::clearGame() {
 	bool hasWon = true;
 	int Pos = 0, frameCount = 0, frameDrops = 0, max = 0;
 
@@ -223,7 +224,7 @@ void GameScreen::clearField() {
 	int speedPlus = Settings::speedPlus();
 
 	/* Get the highest chip pos. */
-	for (int i = 41; i > 0; i--) {
+	for (int i = 41; i >= 0; i--) {
 		if (this->currentGame->GetChip(i) != 0) {
 
 			/* Here we get the highest pos. */
@@ -234,6 +235,7 @@ void GameScreen::clearField() {
 	while(hasWon) {
 		Gui::clearTextBufs();
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+		C2D_TargetClear(Top, TRANSPARENT);
 
 		GFX::DrawTop(false);
 		Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 210)); // Darken the screen.
@@ -274,40 +276,15 @@ void GameScreen::clearField() {
 
 /* Refresh drop selection. */
 void GameScreen::Refresh() {
+	this->dropSelection = this->rowSelection; // Set it to the above row, just in case it would fail on the for loop.
+
 	/* Here we set the "dropSelection". */
-	if (!this->currentGame->GetChipPos(5, this->rowSelection)) {
-		this->dropSelection = this->rowSelection + 35;
-		return;
+	for (int i = HEIGHT - 1; i >= 0; i--) {
+		if (!this->currentGame->GetChipPos(i, this->rowSelection)) {
+			this->dropSelection = this->rowSelection + (i * 7);
+			break;
+		}
 	}
-
-	if (!this->currentGame->GetChipPos(4, this->rowSelection)) {
-		this->dropSelection = this->rowSelection + 28;
-		return;
-	}
-
-	if (!this->currentGame->GetChipPos(3, this->rowSelection)) {
-		this->dropSelection = this->rowSelection + 21;
-		return;
-	}
-
-	if (!this->currentGame->GetChipPos(2, this->rowSelection)) {
-		this->dropSelection = this->rowSelection + 14;
-		return;
-	}
-
-	if (!this->currentGame->GetChipPos(1, this->rowSelection)) {
-		this->dropSelection = this->rowSelection + 7;
-		return;
-	}
-
-	if (!this->currentGame->GetChipPos(0, this->rowSelection)) {
-		this->dropSelection = this->rowSelection;
-		return;
-	}
-
-	/* Display indicator on the last position, if row is full. */
-	this->dropSelection = this->rowSelection;
-	return;
 }
 
 /* Sub Menu Logic. */
@@ -418,7 +395,67 @@ void GameScreen::subLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 }
 
 void GameScreen::AILogic() {
-	int index = this->currentGame->AIPlay();
+	bool hasPlayed = false;
+	int index = -1;
+
+	u8 slots[42] = {0};
+	for (int i = 0; i < 42; i++) {
+		slots[i] = this->currentGame->GetChip(i);
+	}
+
+
+	while(!hasPlayed) {
+		Gui::clearTextBufs();
+		C2D_TargetClear(Top, TRANSPARENT);
+		C2D_TargetClear(Bottom, TRANSPARENT);
+		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+
+		GFX::DrawTop(false);
+		Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 210)); // Darken the screen.
+
+		/* Display BG image. */
+		GFX::DrawSprite(sprites_bg_idx, 79, 16);
+
+		for (int i = 0; i < 42; i++) {
+			if (slots[i] != 0) {
+				_3DVier_Helper::DrawChip(GamePos[i].X + 4, GamePos[i].Y + 4, slots[i]);
+			}
+		}
+
+		_3DVier_Helper::DrawField(79, 16);
+
+		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
+
+		GFX::DrawBottom();
+		Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, 210)); // Darken the screen.
+
+		/* Display avatars. */
+		GFX::DrawChar(this->getAvatar(1), 40, 45);
+		Gui::DrawStringCentered(40 - 160 + (120 / 2), 173, 0.6f, TEXT_COLOR, this->getName(1));
+
+		GFX::DrawChar(this->getAvatar(2), 150, 45);
+		Gui::DrawStringCentered(150 - 160 + (120 / 2), 173, 0.6f, TEXT_COLOR, this->getName(2));
+
+		/* Display available chips. */
+		_3DVier_Helper::DrawChip(5, 30, 1);
+		Gui::DrawStringCentered(5 - 160 + (30 / 2), 35, 0.6f, C2D_Color32(0, 0, 0, 255), std::to_string(this->currentGame->GetAvailableChips(1)));
+
+		_3DVier_Helper::DrawChip(285, 30, 2);
+		Gui::DrawStringCentered(285 - 160 + (30 / 2), 35, 0.6f, C2D_Color32(0, 0, 0, 255), std::to_string(this->currentGame->GetAvailableChips(2)));
+
+		/* Display Player Wins. */
+		_3DVier_Helper::DrawChip(5, 180, 1);
+		Gui::DrawStringCentered(5 - 160 + (30 / 2), 185, 0.6f, C2D_Color32(0, 0, 0, 255), std::to_string(this->currentGame->GetWins(1)));
+
+		_3DVier_Helper::DrawChip(285, 180, 2);
+		Gui::DrawStringCentered(285 - 160 + (30 / 2), 185, 0.6f, C2D_Color32(0, 0, 0, 255), std::to_string(this->currentGame->GetWins(2)));
+
+		if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha));
+		C3D_FrameEnd(0);
+
+		index = this->currentGame->AIPlay();
+		hasPlayed = true;
+	}
 
 	if (index != -1) {
 		this->rowSelection = index;
@@ -453,7 +490,8 @@ void GameScreen::AILogic() {
 		}
 
 	} else {
-		Msg::DisplayWaitMsg("Oh no, not playable!");
+		Msg::DisplayWaitMsg(Lang::get("AI_NOT_PLAYABLE"));
+		this->clearGame();
 	}
 }
 
@@ -534,7 +572,7 @@ void GameScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			/* Logic if a game is won. */
 			if (hDown & KEY_A) {
 				if (this->currentGame->GetWins(this->currentGame->GetCurrentPlayer()) < this->currentGame->GetWinAmount()) {
-					this->clearField();
+					this->clearGame();
 
 					return;
 
