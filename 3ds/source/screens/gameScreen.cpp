@@ -196,7 +196,7 @@ void GameScreen::drop() {
 		_3DVier_Helper::DrawField(79, 16);
 		C3D_FrameEnd(0);
 
-		if (dropPos < GamePos[this->dropSelection].Y + 4) {
+		if (dropPos < GamePos[this->dropSelection].Y) {
 			frameCount++;
 
 			if (frameCount == 5) {
@@ -223,11 +223,11 @@ void GameScreen::clearField() {
 	int speedPlus = Settings::speedPlus();
 
 	/* Get the highest chip pos. */
-	for (int i = 0; i < 42; i++) {
+	for (int i = 41; i > 0; i--) {
 		if (this->currentGame->GetChip(i) != 0) {
 
 			/* Here we get the highest pos. */
-			if (i > max) max = i;
+			if (i < max) max = i;
 		}
 	}
 
@@ -275,41 +275,39 @@ void GameScreen::clearField() {
 /* Refresh drop selection. */
 void GameScreen::Refresh() {
 	/* Here we set the "dropSelection". */
-	if (!this->currentGame->GetChip(this->rowSelection)) {
-		this->dropSelection = this->rowSelection;
+	if (!this->currentGame->GetChipPos(5, this->rowSelection)) {
+		this->dropSelection = this->rowSelection + 35;
 		return;
 	}
 
-	if (!this->currentGame->GetChip(this->rowSelection + 7)) {
-		this->dropSelection = this->rowSelection + 7;
-		return;
-	}
-
-	if (!this->currentGame->GetChip(this->rowSelection + 14)) {
-		this->dropSelection = this->rowSelection + 14;
-		return;
-	}
-
-	if (!this->currentGame->GetChip(this->rowSelection + 21)) {
-		this->dropSelection = this->rowSelection + 21;
-		return;
-	}
-
-	if (!this->currentGame->GetChip(this->rowSelection + 28)) {
+	if (!this->currentGame->GetChipPos(4, this->rowSelection)) {
 		this->dropSelection = this->rowSelection + 28;
 		return;
 	}
 
-	if (!this->currentGame->GetChip(this->rowSelection + 35)) {
-		this->dropSelection = this->rowSelection + 35;
+	if (!this->currentGame->GetChipPos(3, this->rowSelection)) {
+		this->dropSelection = this->rowSelection + 21;
+		return;
+	}
+
+	if (!this->currentGame->GetChipPos(2, this->rowSelection)) {
+		this->dropSelection = this->rowSelection + 14;
+		return;
+	}
+
+	if (!this->currentGame->GetChipPos(1, this->rowSelection)) {
+		this->dropSelection = this->rowSelection + 7;
+		return;
+	}
+
+	if (!this->currentGame->GetChipPos(0, this->rowSelection)) {
+		this->dropSelection = this->rowSelection;
 		return;
 	}
 
 	/* Display indicator on the last position, if row is full. */
-	if (this->currentGame->GetChip(this->rowSelection + 35)) {
-		this->dropSelection = this->rowSelection + 35;
-		return;
-	}
+	this->dropSelection = this->rowSelection;
+	return;
 }
 
 /* Sub Menu Logic. */
@@ -419,6 +417,46 @@ void GameScreen::subLogic(u32 hDown, u32 hHeld, touchPosition touch) {
 	}
 }
 
+void GameScreen::AILogic() {
+	int index = this->currentGame->AIPlay();
+
+	if (index != -1) {
+		this->rowSelection = index;
+		this->Refresh();
+
+		if (this->currentGame->Playable(this->rowSelection, this->currentGame->GetCurrentPlayer()).first == GameResult::Good) {
+			this->drop();
+			std::pair<bool, ChipMatches> tempMatch;
+			tempMatch = this->currentGame->CheckMatches(this->currentGame->GetCurrentPlayer());
+
+			if (tempMatch.first) {
+				this->matches = tempMatch.second;
+				this->results = GameRes::Over;
+				return;
+
+			} else {
+				if (this->currentGame->GetCurrentPlayer() == 1) {
+					this->currentGame->SetCurrentPlayer(2);
+
+				} else {
+					this->currentGame->SetCurrentPlayer(1);
+				}
+			}
+
+			this->rowSelection = 3;
+			this->Refresh();
+
+			if (this->currentGame->IsOver()) {
+				this->results = GameRes::AllUsed;
+				return;
+			}
+		}
+
+	} else {
+		Msg::DisplayWaitMsg("Oh no, not playable!");
+	}
+}
+
 void GameScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 	if (this->isSub) {
 		this->subLogic(hDown, hHeld, touch);
@@ -428,62 +466,67 @@ void GameScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 		/* In case the game is *not* over. */
 		if (this->results == GameRes::NotOver) {
-			if (hDown & KEY_START) {
-				this->isSub = true;
-			}
+			if (this->currentGame->GetCurrentPlayer() == 2) {
+				this->AILogic();
 
-			if (hDown & KEY_A) {
-				if (this->currentGame->Playable(this->rowSelection, this->currentGame->GetCurrentPlayer()).first == GameResult::Good) {
-					this->drop();
-					std::pair<bool, ChipMatches> tempMatch;
-					tempMatch = this->currentGame->CheckMatches(this->currentGame->GetCurrentPlayer());
+			} else {
+				if (hDown & KEY_START) {
+					this->isSub = true;
+				}
 
-					if (tempMatch.first) {
-						this->matches = tempMatch.second;
-						this->results = GameRes::Over;
-						return;
+				if (hDown & KEY_A) {
+					if (this->currentGame->Playable(this->rowSelection, this->currentGame->GetCurrentPlayer()).first == GameResult::Good) {
+						this->drop();
+						std::pair<bool, ChipMatches> tempMatch;
+						tempMatch = this->currentGame->CheckMatches(this->currentGame->GetCurrentPlayer());
 
-					} else {
-						if (this->currentGame->GetCurrentPlayer() == 1) {
-							this->currentGame->SetCurrentPlayer(2);
+						this->rowSelection = 3;
+						this->Refresh();
+
+						if (tempMatch.first) {
+							this->matches = tempMatch.second;
+							this->results = GameRes::Over;
+							return;
 
 						} else {
-							this->currentGame->SetCurrentPlayer(1);
+							if (this->currentGame->GetCurrentPlayer() == 1) {
+								this->currentGame->SetCurrentPlayer(2);
+
+							} else {
+								this->currentGame->SetCurrentPlayer(1);
+							}
+						}
+
+						if (this->currentGame->IsOver()) {
+							this->results = GameRes::AllUsed;
+							return;
 						}
 					}
+				}
 
-					this->rowSelection = 3;
-					this->Refresh();
-
-					if (this->currentGame->IsOver()) {
-						this->results = GameRes::AllUsed;
-						return;
+				if (hRepeat & KEY_RIGHT) {
+					if (this->rowSelection < 6) {
+						this->rowSelection++;
+						this->Refresh();
 					}
 				}
-			}
 
-			if (hRepeat & KEY_RIGHT) {
-				if (this->rowSelection < 6) {
-					this->rowSelection++;
+				if (hRepeat & KEY_LEFT) {
+					if (this->rowSelection > 0) {
+						this->rowSelection--;
+						this->Refresh();
+					}
+				}
+
+				if (hRepeat & KEY_R) {
+					this->rowSelection = 6;
 					this->Refresh();
 				}
-			}
 
-			if (hRepeat & KEY_LEFT) {
-				if (this->rowSelection > 0) {
-					this->rowSelection--;
+				if (hRepeat & KEY_L) {
+					this->rowSelection = 0;
 					this->Refresh();
 				}
-			}
-
-			if (hRepeat & KEY_R) {
-				this->rowSelection = 6;
-				this->Refresh();
-			}
-
-			if (hRepeat & KEY_L) {
-				this->rowSelection = 0;
-				this->Refresh();
 			}
 
 			/* In case a game is over. */
@@ -492,7 +535,7 @@ void GameScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 			if (hDown & KEY_A) {
 				if (this->currentGame->GetWins(this->currentGame->GetCurrentPlayer()) < this->currentGame->GetWinAmount()) {
 					this->clearField();
-					
+
 					return;
 
 				} else {

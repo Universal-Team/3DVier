@@ -240,10 +240,10 @@ void GameScreen::clearGame() {
 	oamUpdate(&oamMain);
 
 	/* Get the highest chip pos. */
-	for (int i = 0; i < 42; i++) {
+	for (int i = 41; i > 0; i--) {
 		if (this->currentGame->GetChip(i) != 0) {
 			/* Here we get the highest pos. */
-			if (i > max) max = i;
+			if (i < max) max = i;
 		}
 	}
 
@@ -552,41 +552,38 @@ void GameScreen::subLogic(u16 hDown, touchPosition touch) {
 /* Refresh drop selection. */
 void GameScreen::Refresh() {
 	/* Here we set the "dropSelection". */
-	if (!this->currentGame->GetChip(this->rowSelection)) {
-		this->dropSelection = this->rowSelection;
+	if (!this->currentGame->GetChipPos(5, this->rowSelection)) {
+		this->dropSelection = this->rowSelection + 35;
 		goto refresh;
 	}
 
-	if (!this->currentGame->GetChip(this->rowSelection + 7)) {
-		this->dropSelection = this->rowSelection + 7;
-		goto refresh;
-	}
-
-	if (!this->currentGame->GetChip(this->rowSelection + 14)) {
-		this->dropSelection = this->rowSelection + 14;
-		goto refresh;
-	}
-
-	if (!this->currentGame->GetChip(this->rowSelection + 21)) {
-		this->dropSelection = this->rowSelection + 21;
-		goto refresh;
-	}
-
-	if (!this->currentGame->GetChip(this->rowSelection + 28)) {
+	if (!this->currentGame->GetChipPos(4, this->rowSelection)) {
 		this->dropSelection = this->rowSelection + 28;
 		goto refresh;
 	}
 
-	if (!this->currentGame->GetChip(this->rowSelection + 35)) {
-		this->dropSelection = this->rowSelection + 35;
+	if (!this->currentGame->GetChipPos(3, this->rowSelection)) {
+		this->dropSelection = this->rowSelection + 21;
 		goto refresh;
 	}
 
-	/* Display indicator on the last position, if row is full. */
-	if (this->currentGame->GetChip(this->rowSelection + 35)) {
-		this->dropSelection = this->rowSelection + 35;
+	if (!this->currentGame->GetChipPos(2, this->rowSelection)) {
+		this->dropSelection = this->rowSelection + 14;
 		goto refresh;
 	}
+
+	if (!this->currentGame->GetChipPos(1, this->rowSelection)) {
+		this->dropSelection = this->rowSelection + 7;
+		goto refresh;
+	}
+
+	if (!this->currentGame->GetChipPos(0, this->rowSelection)) {
+		this->dropSelection = this->rowSelection;
+		goto refresh;
+	}
+
+	this->dropSelection = this->rowSelection;
+	goto refresh;
 
 	refresh:
 		if (this->currentGame->GetCurrentPlayer() == 1) {
@@ -614,6 +611,53 @@ void GameScreen::SetMatchingFour() {
 	oamUpdate(&oamMain);
 }
 
+void GameScreen::AILogic() {
+	int index = this->currentGame->AIPlay();
+
+	if (index != -1) {
+		this->rowSelection = index;
+		this->Refresh();
+
+		if (this->currentGame->Playable(this->rowSelection, this->currentGame->GetCurrentPlayer()).first == GameResult::Good) {
+			this->MoveChip();
+
+			std::pair<bool, ChipMatches> tempMatch;
+			tempMatch = this->currentGame->CheckMatches(this->currentGame->GetCurrentPlayer());
+
+			if (tempMatch.first) {
+				this->matches = tempMatch.second;
+				this->results = GameRes::Over;
+				this->SetMatchingFour();
+				this->updateTexts();
+				return;
+
+			} else {
+				if (this->currentGame->GetCurrentPlayer() == 1) {
+					setSpriteVisibility(this->selectorChip[0], true, false);
+					this->currentGame->SetCurrentPlayer(2);
+					setSpriteVisibility(this->selectorChip[1], true, true);
+
+				} else {
+					setSpriteVisibility(this->selectorChip[1], true, false);
+					this->currentGame->SetCurrentPlayer(1);
+					setSpriteVisibility(this->selectorChip[0], true, true);
+				}
+			}
+
+			this->rowSelection = 3;
+			this->Refresh();
+			this->updateTexts();
+
+			if (this->currentGame->IsOver()) {
+				this->results = GameRes::AllUsed;
+				return;
+			}
+		}
+
+	} else {
+		Msg::DisplayWaitMsg("Oh no, not playable!");
+	}
+}
 
 /* Game's Logic. */
 void GameScreen::Logic(u16 hDown, touchPosition touch) {
@@ -625,81 +669,88 @@ void GameScreen::Logic(u16 hDown, touchPosition touch) {
 
 		/* In case the game is *not* over. */
 		if (this->results == GameRes::NotOver) {
-			/* Go to sub menu. */
-			if (hDown & KEY_START) {
-				this->isSub = true;
-				selector->show();
-				doUpdate = true;
-				this->displaySub();
-			}
+			
+			/* Do AI's Logic if second player. */
+			if (this->currentGame->GetCurrentPlayer() == 2) {
+				this->AILogic();
 
-			if (hDown & KEY_A) {
-				/* Check if playable. */
-				if (this->currentGame->Playable(this->rowSelection, this->currentGame->GetCurrentPlayer()).first == GameResult::Good) {
-					/* Move the chip to the position. */
-					this->MoveChip();
+			} else {
+				/* Go to sub menu. */
+				if (hDown & KEY_START) {
+					this->isSub = true;
+					selector->show();
+					doUpdate = true;
+					this->displaySub();
+				}
 
-					std::pair<bool, ChipMatches> tempMatch;
-					tempMatch = this->currentGame->CheckMatches(this->currentGame->GetCurrentPlayer());
+				if (hDown & KEY_A) {
+					/* Check if playable. */
+					if (this->currentGame->Playable(this->rowSelection, this->currentGame->GetCurrentPlayer()).first == GameResult::Good) {
+						/* Move the chip to the position. */
+						this->MoveChip();
 
-					/* In case we have 4 matches. */
-					if (tempMatch.first) {
-						this->matches = tempMatch.second;
-						this->results = GameRes::Over;
-						this->SetMatchingFour();
-						this->updateTexts();
-						return;
+						std::pair<bool, ChipMatches> tempMatch;
+						tempMatch = this->currentGame->CheckMatches(this->currentGame->GetCurrentPlayer());
 
-					/* if not, we're switching the Players & Selectors. */
-					} else {
-						if (this->currentGame->GetCurrentPlayer() == 1) {
-							setSpriteVisibility(this->selectorChip[0], true, false);
-							this->currentGame->SetCurrentPlayer(2);
-							setSpriteVisibility(this->selectorChip[1], true, true);
+						/* In case we have 4 matches. */
+						if (tempMatch.first) {
+							this->matches = tempMatch.second;
+							this->results = GameRes::Over;
+							this->SetMatchingFour();
+							this->updateTexts();
+							return;
 
+						/* if not, we're switching the Players & Selectors. */
 						} else {
-							setSpriteVisibility(this->selectorChip[1], true, false);
-							this->currentGame->SetCurrentPlayer(1);
-							setSpriteVisibility(this->selectorChip[0], true, true);
+							if (this->currentGame->GetCurrentPlayer() == 1) {
+								setSpriteVisibility(this->selectorChip[0], true, false);
+								this->currentGame->SetCurrentPlayer(2);
+								setSpriteVisibility(this->selectorChip[1], true, true);
+
+							} else {
+								setSpriteVisibility(this->selectorChip[1], true, false);
+								this->currentGame->SetCurrentPlayer(1);
+								setSpriteVisibility(this->selectorChip[0], true, true);
+							}
+						}
+
+						this->rowSelection = 3;
+						this->Refresh();
+						this->updateTexts();
+
+						/* Oh no.. game over. */
+						if (this->currentGame->IsOver()) {
+							this->results = GameRes::AllUsed;
+							this->updateTexts();
+							return;
 						}
 					}
+				}
 
-					this->rowSelection = 3;
-					this->Refresh();
-					this->updateTexts();
 
-					/* Oh no.. game over. */
-					if (this->currentGame->IsOver()) {
-						this->results = GameRes::AllUsed;
-						this->updateTexts();
-						return;
+				if (hRepeat & KEY_RIGHT) {
+					if (this->rowSelection < 6) {
+						this->rowSelection++;
+						this->Refresh();
 					}
 				}
-			}
 
+				if (hRepeat & KEY_LEFT) {
+					if (this->rowSelection > 0) {
+						this->rowSelection--;
+						this->Refresh();
+					}
+				}
 
-			if (hRepeat & KEY_RIGHT) {
-				if (this->rowSelection < 6) {
-					this->rowSelection++;
+				if (hRepeat & KEY_R) {
+					this->rowSelection = 6;
 					this->Refresh();
 				}
-			}
 
-			if (hRepeat & KEY_LEFT) {
-				if (this->rowSelection > 0) {
-					this->rowSelection--;
+				if (hRepeat & KEY_L) {
+					this->rowSelection = 0;
 					this->Refresh();
 				}
-			}
-
-			if (hRepeat & KEY_R) {
-				this->rowSelection = 6;
-				this->Refresh();
-			}
-
-			if (hRepeat & KEY_L) {
-				this->rowSelection = 0;
-				this->Refresh();
 			}
 
 		} else {

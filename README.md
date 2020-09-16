@@ -7,3 +7,6 @@ You need support for 3DVier | DSVier? Then don't be shy to join the Universal-Se
 For more about the NDS version, look [here](https://github.com/Universal-Team/3DVier/blob/master/nds/README.md).
 
 For more about the 3DS version, look [here](https://github.com/Universal-Team/3DVier/blob/master/3ds/README.md).
+
+## Credits
+- The AI, or better said: (`abMiniMax`, `MiniMax`, `NegaMax` and `abNegaMax`) implementation is based from [here](https://github.com/hanneshoettinger/connect-four) and [here](https://github.com/ttsiodras/Score4).
