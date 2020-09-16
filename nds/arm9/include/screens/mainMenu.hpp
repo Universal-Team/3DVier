@@ -43,9 +43,9 @@ private:
 	int selection = 0;
 
 	const std::vector<ButtonStruct> buttonPos = {
-		{80, 30, 88, 32, "NEW_GAME", GRAY, true}, // New Game.
-		{80, 80, 88, 32, "SETTINGS", GRAY, true}, // Settings.
-		{80, 130, 88, 32, "CREDITS", GRAY, true} // Credits.
+		{80, 30, 88, 32, "NEW_GAME", BUTTON_COLOR, true}, // New Game.
+		{80, 80, 88, 32, "SETTINGS", BUTTON_COLOR, true}, // Settings.
+		{80, 130, 88, 32, "CREDITS", BUTTON_COLOR, true} // Credits.
 	};
 };
 

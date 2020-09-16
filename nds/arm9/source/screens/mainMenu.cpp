@@ -34,7 +34,6 @@ extern bool Buttontouching(ButtonStruct button);
 
 MainMenu::MainMenu() { }
 
-
 void MainMenu::Draw(void) const {
 	Gui::DrawTop(true);
 	printTextCentered("DSVier - " + Lang::get("MAINMENU"), 0, 1, true, true);
@@ -74,6 +73,21 @@ void MainMenu::Logic(u16 hDown, touchPosition touch) {
 
 	if (hDown & KEY_START) {
 		exiting = true;
+	}
+
+	if (hDown & KEY_TOUCH) {
+		if (Buttontouching(this->buttonPos[0])) {
+			Gui::setScreen(std::make_unique<GameScreen>());
+			Gui::DrawScreen();
+			selector->hide();
+			updateOam();
+
+		} else if (Buttontouching(this->buttonPos[1])) {
+			/* Settings: TODO. */
+
+		} else if (Buttontouching(this->buttonPos[2])) {
+			Overlays::CreditsOverlay();
+		}
 	}
 
 	if (hRepeat & KEY_DOWN) {

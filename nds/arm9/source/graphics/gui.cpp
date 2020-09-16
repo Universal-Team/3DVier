@@ -50,23 +50,23 @@ void Gui::screenBack() { screens.pop(); }
 /* Basic GUI Stuff. */
 void Gui::DrawTop(bool useBars) {
 	if (useBars) {
-		drawRectangle(0, 0, 256, 20, DARKERER_GRAY, true, false);
-		drawRectangle(0, 20, 256, 152, DARKER_GRAY, true, false);
-		drawRectangle(0, 172, 256, 20, DARKERER_GRAY, true, false);
+		drawRectangle(0, 0, 256, 20, BAR_COLOR, true, false);
+		drawRectangle(0, 20, 256, 152, BG_COLOR, true, false);
+		drawRectangle(0, 172, 256, 20, BAR_COLOR, true, false);
 
 	} else {
-		drawRectangle(0, 0, 256, 192, DARKER_GRAY, true, false);
+		drawRectangle(0, 0, 256, 192, BG_COLOR, true, false);
 	}
 }
 
 void Gui::DrawBottom(bool useBars) {
 	if (useBars) {
-		drawRectangle(0, 0, 256, 20, DARKERER_GRAY, false, false);
-		drawRectangle(0, 20, 256, 152, DARKER_GRAY, false, false);
-		drawRectangle(0, 172, 256, 20, DARKERER_GRAY, false, false);
+		drawRectangle(0, 0, 256, 20, BAR_COLOR, false, false);
+		drawRectangle(0, 20, 256, 152, BG_COLOR, false, false);
+		drawRectangle(0, 172, 256, 20, BAR_COLOR, false, false);
 
 	} else {
-		drawRectangle(0, 0, 256, 192, DARKER_GRAY, false, false);
+		drawRectangle(0, 0, 256, 192, BG_COLOR, false, false);
 	}
 }
 
@@ -105,5 +105,5 @@ void Gui::loadGraphics() {
 
 void Gui::DrawButton(ButtonStruct btn, TextColor color) {
 	drawRectangle(btn.x, btn.y, btn.xSize, btn.ySize, btn.colorIndex, false, btn.layer);
-	printTextCenteredTintedMaxW(Lang::get(btn.Text), btn.xSize-5, 1, color, btn.x - 128 + (btn.xSize/2), btn.y + (btn.ySize/2) - 10, false, true);
+	printTextCenteredTintedMaxW(Lang::get(btn.Text), btn.xSize - 5, 1, color, btn.x - 128 + (btn.xSize / 2), btn.y + (btn.ySize / 2) - 10, false, true);
 }

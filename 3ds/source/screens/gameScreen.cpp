@@ -34,6 +34,7 @@ GameScreen::GameScreen() {
 	this->avatar2 = Overlays::AvatarOverlay(0, Lang::get("PLAYER2_CHAR"));
 	this->p1Name = Keyboard::setString(12, Lang::get("PLAYER") + " " + std::to_string(1), Lang::get("PLAYER1_NAME"));
 	this->p2Name = Keyboard::setString(12, Lang::get("PLAYER") + " " + std::to_string(2), Lang::get("PLAYER2_NAME"));
+	this->againstAI = Msg::promptMsg(Lang::get("PLAY_AGAINST_AI"));
 
 	this->currentGame = std::make_unique<Game>(); // Start a new game.
 	this->Refresh();
@@ -504,7 +505,7 @@ void GameScreen::Logic(u32 hDown, u32 hHeld, touchPosition touch) {
 
 		/* In case the game is *not* over. */
 		if (this->results == GameRes::NotOver) {
-			if (this->currentGame->GetCurrentPlayer() == 2) {
+			if (this->currentGame->GetCurrentPlayer() == 2 && this->againstAI) {
 				this->AILogic();
 
 			} else {

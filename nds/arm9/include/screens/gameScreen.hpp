@@ -60,7 +60,7 @@ private:
 
 	/* Sub Mode stuff. */
 	int subSel = 0, subMode = 0;
-	bool isSub = false, dropped = false;
+	bool isSub = false, dropped = false, againstAI = true;
 	void displaySub(void) const;
 	void subLogic(u16 hDown, touchPosition touch);
 	

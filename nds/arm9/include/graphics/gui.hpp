@@ -65,7 +65,7 @@ namespace Gui {
 	
 	void loadGraphics();
 
-	void DrawButton(ButtonStruct btn, TextColor color = TextColor::gray);
+	void DrawButton(ButtonStruct btn, TextColor color = TextColor::white);
 };
 
 #endif

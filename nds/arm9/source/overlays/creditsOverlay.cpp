@@ -37,8 +37,8 @@ static void Draw() {
 	Gui::DrawTop(true);
 	printTextCentered("DSVier - " + Lang::get("CREDITS"), 0, 1, true, true);
 
-	printTextCentered(Lang::get("DEVELOPED_BY"), 0, 23, true, true);
-	printTextCentered(Lang::get("MAIN_DEV"), 0, 35, true, true);
+	printTextCenteredTinted(Lang::get("DEVELOPED_BY"), TextColor::gray, 0, 23, true, true);
+	printTextCenteredTinted(Lang::get("MAIN_DEV"), TextColor::gray, 0, 35, true, true);
 	drawImage(15, 52, StackZ, true, true);
 
 	drawImage(190, 110, UT, true, true);
@@ -47,11 +47,11 @@ static void Draw() {
 
 	Gui::DrawBottom(true);
 
-	printTextCentered("devkitPro", 0, 30, false, true);
-	printTextCentered(Lang::get("DEVKITPRO"), 0, 45, false, true);
+	printTextCenteredTinted("devkitPro", TextColor::gray, 0, 30, false, true);
+	printTextCenteredTinted(Lang::get("DEVKITPRO"), TextColor::gray, 0, 45, false, true);
 
-	printTextCentered("SuperSaiyajinStackZ", 0, 80, false, true);
-	printTextCentered(Lang::get("DEVELOPING_APP"), 0, 95, false, true);
+	printTextCenteredTinted("SuperSaiyajinStackZ", TextColor::gray, 0, 80, false, true);
+	printTextCenteredTinted(Lang::get("DEVELOPING_APP"), TextColor::gray, 0, 95, false, true);
 }
 
 void Overlays::CreditsOverlay() {

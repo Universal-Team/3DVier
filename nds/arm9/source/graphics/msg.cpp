@@ -28,6 +28,10 @@
 #include "gui.hpp"
 #include "lang.hpp"
 #include "msg.hpp"
+#include "screenCommon.hpp"
+#include "selector.hpp"
+
+extern std::unique_ptr<Selector> selector;
 
 void Msg::DisplayPlayerSwitch(std::string message, bool redraw) {
 	Gui::clearScreen(true, true);
@@ -36,7 +40,7 @@ void Msg::DisplayPlayerSwitch(std::string message, bool redraw) {
 	Gui::DrawTop(true);
 	Gui::DrawBottom(true);
 
-	printTextCentered(message, 0, 80, true, true);
+	printTextCenteredTinted(message, TextColor::gray, 0, 80, true, true);
 	printTextCentered(Lang::get("Y_CONTINUE"), 0, 175, true, true);
 
 	while(1) {
@@ -55,7 +59,7 @@ void Msg::DisplayWaitMsg(std::string message, bool redraw) {
 	Gui::DrawTop(true);
 	Gui::DrawBottom(true);
 
-	printTextCentered(message, 0, 80, true, true);
+	printTextCenteredTinted(message, TextColor::gray, 0, 80, true, true);
 	printTextCentered(Lang::get("A_CONTINUE"), 0, 175, true, true);
 
 	while(1) {
@@ -65,4 +69,87 @@ void Msg::DisplayWaitMsg(std::string message, bool redraw) {
 
 	/* Redraw screen. */
 	if (redraw) Gui::DrawScreen();
+}
+
+const std::vector<ButtonStruct> promptBtns = {
+	{20, 80, 88, 32, "YES", BUTTON_COLOR, true}, // Yep.
+	{130, 80, 88, 32, "NO", BUTTON_COLOR, true} // Nope.
+};
+
+extern bool Buttontouching(ButtonStruct button);
+
+bool Msg::promptMsg(std::string message, bool hideSelector, bool redraw) {
+	int selection = 0;
+	bool updateSelector = true;
+
+	if (updateSelector) {
+		selector->move(promptBtns[selection].x, promptBtns[selection].y);
+		selector->show();
+		doUpdate = true;
+		selector->update();
+	}
+
+	Gui::clearScreen(true, true);
+	Gui::clearScreen(false, true);
+
+	Gui::DrawTop(true);
+	printTextCenteredTinted(message, TextColor::gray, 0, 80, true, true);
+
+	Gui::DrawBottom(true);
+
+	for (int i = 0; i < 2; i++) {
+		Gui::DrawButton(promptBtns[i]);
+	}
+
+	while(1) {
+		if (updateSelector) {
+			selector->move(promptBtns[selection].x, promptBtns[selection].y);
+			doUpdate = true;
+			selector->update();
+		}
+
+		scanKeys();
+		u16 hDown = keysDown();
+
+		if (hDown & KEY_RIGHT) {
+			if (selection == 0) {
+				selection = 1;
+				updateSelector = true;
+			}
+		}
+
+		if (hDown & KEY_TOUCH) {
+			if (Buttontouching(promptBtns[0])) {
+				selection = 0;
+				break;
+
+			} else if (Buttontouching(promptBtns[1])) {
+				selection = 1;
+				break;
+			}
+		}
+
+
+		if (hDown & KEY_LEFT) {
+			if (selection == 1) {
+				selection = 0;
+				updateSelector = true;
+			}
+		}
+
+		if (hDown & KEY_A) {
+			break;
+		}
+	}
+
+	/* Redraw screen. */
+	if (redraw) Gui::DrawScreen();
+
+	if (hideSelector) {
+		selector->hide();
+		doUpdate = true;
+		selector->update();
+	}
+
+	return selection ? false : true;
 }

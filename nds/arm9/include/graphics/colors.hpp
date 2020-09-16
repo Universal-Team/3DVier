@@ -38,9 +38,9 @@
 #define DARKER_GRAY		0x6
 #define DARKERER_GRAY	0x7
 #define BLACK			0x8
-#define RED				0x9
-#define DARK_RED		0xA
-#define BLUE			0xB
+#define BAR_COLOR		0x9
+#define BG_COLOR		0xA
+#define BUTTON_COLOR	0xB
 #define DARK_BLUE		0xC
 #define DARK_GREEN		0xD
 #define GREEN			0xE
@@ -50,9 +50,7 @@
 enum TextColor {
 	white = 4,
 	gray  = 5,
-	red   = 6,
-	blue  = 7,
-	green = 8,
+	black = 8
 };
 
 namespace Colors {

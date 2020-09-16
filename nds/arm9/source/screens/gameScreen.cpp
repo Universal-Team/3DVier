@@ -38,9 +38,9 @@ extern Image BG, Field, Chip[2], ChipSelector[2], characters[8];
 GameScreen::GameScreen() {
 	this->avatar1 = Overlays::AvatarOverlay(Lang::get("PLAYER1_CHAR"));
 	this->avatar2 = Overlays::AvatarOverlay(Lang::get("PLAYER2_CHAR"));
-
 	this->player1 = Input::getLine(Lang::get("PLAYER1_NAME"), 10, Lang::get("PLAYER") + " " + std::to_string(1), false, false);
 	this->player2 = Input::getLine(Lang::get("PLAYER2_NAME"), 10, Lang::get("PLAYER") + " " + std::to_string(2), false, true);
+	this->againstAI = Msg::promptMsg(Lang::get("PLAY_AGAINST_AI"));
 
 	this->currentGame = std::make_unique<Game>();
 
@@ -167,8 +167,8 @@ void GameScreen::Draw(void) const {
 	drawImage(129, 22, characters[this->avatar2], false, false, 0x10);
 
 	/* Draw Player names. */
-	printText(this->player1, 35, 140, false, false);
-	printText(this->player2, 140, 140, false, false);
+	printTextTinted(this->player1, TextColor::gray, 35, 140, false, false);
+	printTextTinted(this->player2, TextColor::gray, 140, 140, false, false);
 
 	this->updateTexts(); // Update the texts.
 }
@@ -599,6 +599,12 @@ void GameScreen::SetMatchingFour() {
 }
 
 void GameScreen::AILogic() {
+	for (int i = 0; i < 2; i++) {
+		setSpriteVisibility(this->selectorChip[i], true, false);
+	}
+
+	oamUpdate(&oamMain);
+
 	int index = this->currentGame->AIPlay();
 
 	if (index != -1) {
@@ -619,16 +625,9 @@ void GameScreen::AILogic() {
 				return;
 
 			} else {
-				if (this->currentGame->GetCurrentPlayer() == 1) {
-					setSpriteVisibility(this->selectorChip[0], true, false);
-					this->currentGame->SetCurrentPlayer(2);
-					setSpriteVisibility(this->selectorChip[1], true, true);
-
-				} else {
-					setSpriteVisibility(this->selectorChip[1], true, false);
-					this->currentGame->SetCurrentPlayer(1);
-					setSpriteVisibility(this->selectorChip[0], true, true);
-				}
+				setSpriteVisibility(this->selectorChip[1], true, false);
+				this->currentGame->SetCurrentPlayer(1);
+				setSpriteVisibility(this->selectorChip[0], true, true);
 			}
 
 			this->rowSelection = 3;
@@ -671,7 +670,7 @@ void GameScreen::Logic(u16 hDown, touchPosition touch) {
 		if (this->results == GameRes::NotOver) {
 
 			/* Do AI's Logic if second player. */
-			if (this->currentGame->GetCurrentPlayer() == 2) {
+			if (this->currentGame->GetCurrentPlayer() == 2 && this->againstAI) {
 				this->AILogic();
 
 			} else {

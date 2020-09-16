@@ -1218,6 +1218,9 @@ std::string Input::getLine(std::string Text, unsigned maxLength, std::string cur
 	clearVars();
 	Gui::clearScreen(true, true);
 	Gui::clearScreen(false, true);
+	Gui::DrawTop(true);
+	Gui::DrawBottom(true);
+
 	drawKeyboard(kbLayout);
 	printTextCentered(Text, 0, 1, true, true);
 	int held, pressed, cursorBlink = 30;
@@ -1328,6 +1331,9 @@ int Input::getInt(std::string Text, unsigned max, int currentValue, bool showPoi
 	clearVars();
 	Gui::clearScreen(true, true);
 	Gui::clearScreen(false, true);
+	Gui::DrawTop(true);
+	Gui::DrawBottom(true);
+
 	drawKeyboard(0);
 	printTextCentered(Text, 0, 1, true, true);
 	int held, pressed, cursorBlink = 30;

@@ -35,6 +35,7 @@
 namespace Msg {
 	void DisplayPlayerSwitch(std::string message, bool redraw = true);
 	void DisplayWaitMsg(std::string message, bool redraw = true);
+	bool promptMsg(std::string message, bool hideSelector = true, bool redraw = true);
 };
 
 #endif
