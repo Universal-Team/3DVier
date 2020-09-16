@@ -1,0 +1,12 @@
+--atlas -f rgba8888 -z auto
+
+sprites/bg.png
+sprites/chip_p1.png
+sprites/chip_p2.png
+sprites/field.png
+sprites/dev_by.png
+sprites/selector_p1.png
+sprites/selector_p2.png
+sprites/stackZ.png
+sprites/u-c.png
+sprites/universal-core.png
