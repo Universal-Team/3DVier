@@ -37,16 +37,16 @@ void _3DVier_Helper::DrawField(int x, int y) {
 }
 
 void _3DVier_Helper::DrawChip(int x, int y, int player) {
-	GFX::DrawSprite(player-1 ? sprites_chip_p1_idx : sprites_chip_p2_idx, x, y);
+	GFX::DrawSprite(player-1 ? sprites_chip_p2_idx : sprites_chip_p1_idx, x, y);
 }
 
 /* Dran an animated selected chip. */
 void _3DVier_Helper::SelectedChip(int x, int y, int player, float speed) {
 	static float timer			= 0.0f;
 	float highlight_multiplier	= fmax(0.0, fabs(fmod(timer, 1.0) - 0.5) / 0.5);
-	u8 r						= (player-1 ? PLAYER_1_CHIP : PLAYER_2_CHIP) & 0xFF;
-	u8 g						= ((player-1 ? PLAYER_1_CHIP : PLAYER_2_CHIP) >> 8) & 0xFF;
-	u8 b						= ((player-1 ? PLAYER_1_CHIP : PLAYER_2_CHIP) >> 16) & 0xFF;
+	u8 r						= (player - 1 ?  PLAYER_2_CHIP : PLAYER_1_CHIP) & 0xFF;
+	u8 g						= ((player - 1 ?  PLAYER_2_CHIP : PLAYER_1_CHIP) >> 8) & 0xFF;
+	u8 b						= ((player - 1 ?  PLAYER_2_CHIP : PLAYER_1_CHIP) >> 16) & 0xFF;
 	u32 color = C2D_Color32(r + (255 - r) * highlight_multiplier, g + (255 - g) * highlight_multiplier, b + (255 - b) * highlight_multiplier, 255);
 
 	C2D_ImageTint tint;
@@ -55,6 +55,6 @@ void _3DVier_Helper::SelectedChip(int x, int y, int player, float speed) {
 	C2D_SetImageTint(&tint, C2D_BotLeft, color, 1);
 	C2D_SetImageTint(&tint, C2D_BotRight, color, 1);
 
-	C2D_DrawImageAt(C2D_SpriteSheetGetImage(sprites, player-1 ? sprites_selector_p1_idx : sprites_selector_p2_idx), x, y, 0.5f, &tint);
+	C2D_DrawImageAt(C2D_SpriteSheetGetImage(sprites, player-1 ? sprites_selector_p2_idx : sprites_selector_p1_idx), x, y, 0.5f, &tint);
 	timer += speed;
 }
