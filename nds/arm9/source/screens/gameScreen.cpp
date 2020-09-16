@@ -167,8 +167,8 @@ void GameScreen::Draw(void) const {
 	drawImage(129, 22, characters[this->avatar2], false, false, 0x10);
 
 	/* Draw Player names. */
-	printTextTinted(this->player1, TextColor::gray, 35, 140, false, false);
-	printTextTinted(this->player2, TextColor::gray, 140, 140, false, false);
+	printTextTinted(this->player1, TextColor::black, 35, 140, false, false);
+	printTextTinted(this->player2, TextColor::black, 140, 140, false, false);
 
 	this->updateTexts(); // Update the texts.
 }
@@ -191,11 +191,11 @@ void GameScreen::updateTexts(void) const {
 	if (this->results != GameRes::NotOver) printTextCentered(Lang::get("A_CONTINUE"), 0, 174, false, true); // Show A to continue, if it's over.
 
 	/* Display Chip amount + Wins for both players. */
-	printTextCenteredTinted(std::to_string(this->currentGame->GetAvailableChips(1)), TextColor::gray, 3 - 128 + (28 / 2), 28, false, true);
-	printTextCenteredTinted(std::to_string(this->currentGame->GetWins(1)), TextColor::gray, 3 - 128 + (28 / 2), 148, false, true);
+	printTextCenteredTinted(std::to_string(this->currentGame->GetAvailableChips(1)), TextColor::black, 3 - 128 + (28 / 2), 28, false, true);
+	printTextCenteredTinted(std::to_string(this->currentGame->GetWins(1)), TextColor::black, 3 - 128 + (28 / 2), 148, false, true);
 
-	printTextCenteredTinted(std::to_string(this->currentGame->GetAvailableChips(2)), TextColor::gray, 227 - 128 + (28 / 2), 28, false, true);
-	printTextCenteredTinted(std::to_string(this->currentGame->GetWins(2)), TextColor::gray, 227 - 128 + (28 / 2), 148, false, true);
+	printTextCenteredTinted(std::to_string(this->currentGame->GetAvailableChips(2)), TextColor::black, 227 - 128 + (28 / 2), 28, false, true);
+	printTextCenteredTinted(std::to_string(this->currentGame->GetWins(2)), TextColor::black, 227 - 128 + (28 / 2), 148, false, true);
 }
 
 /* Drop the chip into the slot. */
@@ -319,29 +319,29 @@ void GameScreen::displaySub(void) const {
 	Gui::DrawBottom(true);
 
 	for (int i = 0; i < 3; i++) {
-		drawRectangle(subPosMain[i].x, subPosMain[i].y, subPosMain[i].w, subPosMain[i].h, GRAY, false, true);
+		drawRectangle(subPosMain[i].x, subPosMain[i].y, subPosMain[i].w, subPosMain[i].h, BUTTON_COLOR, false, true);
 	}
 
 	switch(this->subMode) {
 		case 0:
 			/* Mode 1: Main. */
-			printTextCenteredTintedMaxW(Lang::get("LOAD_SLOT") + "...", subPosMain[0].w-5, 1, TextColor::gray, subPosMain[0].x - 128 + (subPosMain[0].w/2), subPosMain[0].y + (subPosMain[0].h/2) - 10, false, true);
-			printTextCenteredTintedMaxW(Lang::get("SAVE_SLOT") + "...", subPosMain[1].w-5, 1, TextColor::gray, subPosMain[1].x - 128 + (subPosMain[1].w/2), subPosMain[1].y + (subPosMain[1].h/2) - 10, false, true);
-			printTextCenteredTintedMaxW(Lang::get("EXIT_GAME") + "...", subPosMain[2].w-5, 1, TextColor::gray, subPosMain[2].x - 128 + (subPosMain[2].w/2), subPosMain[2].y + (subPosMain[2].h/2) - 10, false, true);
+			printTextCenteredTintedMaxW(Lang::get("LOAD_SLOT") + "...", subPosMain[0].w-5, 1, TextColor::white, subPosMain[0].x - 128 + (subPosMain[0].w/2), subPosMain[0].y + (subPosMain[0].h/2) - 10, false, true);
+			printTextCenteredTintedMaxW(Lang::get("SAVE_SLOT") + "...", subPosMain[1].w-5, 1, TextColor::white, subPosMain[1].x - 128 + (subPosMain[1].w/2), subPosMain[1].y + (subPosMain[1].h/2) - 10, false, true);
+			printTextCenteredTintedMaxW(Lang::get("EXIT_GAME") + "...", subPosMain[2].w-5, 1, TextColor::white, subPosMain[2].x - 128 + (subPosMain[2].w/2), subPosMain[2].y + (subPosMain[2].h/2) - 10, false, true);
 			break;
 		
 		case 1:
 			/* Mode 2: Load. */
-			printTextCenteredTintedMaxW(Lang::get("LOAD_SLOT") + " " + std::to_string(1), subPosMain[0].w-5, 1, TextColor::gray, subPosMain[0].x - 128 + (subPosMain[0].w/2), subPosMain[0].y + (subPosMain[0].h/2) - 10, false, true);
-			printTextCenteredTintedMaxW(Lang::get("LOAD_SLOT") + " " + std::to_string(2), subPosMain[1].w-5, 1, TextColor::gray, subPosMain[1].x - 128 + (subPosMain[1].w/2), subPosMain[1].y + (subPosMain[1].h/2) - 10, false, true);
-			printTextCenteredTintedMaxW(Lang::get("LOAD_SLOT") + " " + std::to_string(3), subPosMain[2].w-5, 1, TextColor::gray, subPosMain[2].x - 128 + (subPosMain[2].w/2), subPosMain[2].y + (subPosMain[2].h/2) - 10, false, true);
+			printTextCenteredTintedMaxW(Lang::get("LOAD_SLOT") + " " + std::to_string(1), subPosMain[0].w-5, 1, TextColor::white, subPosMain[0].x - 128 + (subPosMain[0].w/2), subPosMain[0].y + (subPosMain[0].h/2) - 10, false, true);
+			printTextCenteredTintedMaxW(Lang::get("LOAD_SLOT") + " " + std::to_string(2), subPosMain[1].w-5, 1, TextColor::white, subPosMain[1].x - 128 + (subPosMain[1].w/2), subPosMain[1].y + (subPosMain[1].h/2) - 10, false, true);
+			printTextCenteredTintedMaxW(Lang::get("LOAD_SLOT") + " " + std::to_string(3), subPosMain[2].w-5, 1, TextColor::white, subPosMain[2].x - 128 + (subPosMain[2].w/2), subPosMain[2].y + (subPosMain[2].h/2) - 10, false, true);
 			break;
 
 		case 2:
 			/* Mode 3: Save. */
-			printTextCenteredTintedMaxW(Lang::get("SAVE_SLOT") + " " + std::to_string(1), subPosMain[0].w-5, 1, TextColor::gray, subPosMain[0].x - 128 + (subPosMain[0].w/2), subPosMain[0].y + (subPosMain[0].h/2) - 10, false, true);
-			printTextCenteredTintedMaxW(Lang::get("SAVE_SLOT") + " " + std::to_string(2), subPosMain[1].w-5, 1, TextColor::gray, subPosMain[1].x - 128 + (subPosMain[1].w/2), subPosMain[1].y + (subPosMain[1].h/2) - 10, false, true);
-			printTextCenteredTintedMaxW(Lang::get("SAVE_SLOT") + " " + std::to_string(3), subPosMain[2].w-5, 1, TextColor::gray, subPosMain[2].x - 128 + (subPosMain[2].w/2), subPosMain[2].y + (subPosMain[2].h/2) - 10, false, true);
+			printTextCenteredTintedMaxW(Lang::get("SAVE_SLOT") + " " + std::to_string(1), subPosMain[0].w-5, 1, TextColor::white, subPosMain[0].x - 128 + (subPosMain[0].w/2), subPosMain[0].y + (subPosMain[0].h/2) - 10, false, true);
+			printTextCenteredTintedMaxW(Lang::get("SAVE_SLOT") + " " + std::to_string(2), subPosMain[1].w-5, 1, TextColor::white, subPosMain[1].x - 128 + (subPosMain[1].w/2), subPosMain[1].y + (subPosMain[1].h/2) - 10, false, true);
+			printTextCenteredTintedMaxW(Lang::get("SAVE_SLOT") + " " + std::to_string(3), subPosMain[2].w-5, 1, TextColor::white, subPosMain[2].x - 128 + (subPosMain[2].w/2), subPosMain[2].y + (subPosMain[2].h/2) - 10, false, true);
 			break;
 	}
 }

@@ -50,7 +50,7 @@
 enum TextColor {
 	white = 4,
 	gray  = 5,
-	black = 8
+	black = 6
 };
 
 namespace Colors {

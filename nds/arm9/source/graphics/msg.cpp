@@ -40,7 +40,7 @@ void Msg::DisplayPlayerSwitch(std::string message, bool redraw) {
 	Gui::DrawTop(true);
 	Gui::DrawBottom(true);
 
-	printTextCenteredTinted(message, TextColor::gray, 0, 80, true, true);
+	printTextCenteredTinted(message, TextColor::black, 0, 80, true, true);
 	printTextCentered(Lang::get("Y_CONTINUE"), 0, 175, true, true);
 
 	while(1) {
@@ -59,7 +59,7 @@ void Msg::DisplayWaitMsg(std::string message, bool redraw) {
 	Gui::DrawTop(true);
 	Gui::DrawBottom(true);
 
-	printTextCenteredTinted(message, TextColor::gray, 0, 80, true, true);
+	printTextCenteredTinted(message, TextColor::black, 0, 80, true, true);
 	printTextCentered(Lang::get("A_CONTINUE"), 0, 175, true, true);
 
 	while(1) {
@@ -93,7 +93,7 @@ bool Msg::promptMsg(std::string message, bool hideSelector, bool redraw) {
 	Gui::clearScreen(false, true);
 
 	Gui::DrawTop(true);
-	printTextCenteredTinted(message, TextColor::gray, 0, 80, true, true);
+	printTextCenteredTinted(message, TextColor::black, 0, 80, true, true);
 
 	Gui::DrawBottom(true);
 

@@ -37,21 +37,21 @@ static void Draw() {
 	Gui::DrawTop(true);
 	printTextCentered("DSVier - " + Lang::get("CREDITS"), 0, 1, true, true);
 
-	printTextCenteredTinted(Lang::get("DEVELOPED_BY"), TextColor::gray, 0, 23, true, true);
-	printTextCenteredTinted(Lang::get("MAIN_DEV"), TextColor::gray, 0, 35, true, true);
+	printTextCenteredTinted(Lang::get("DEVELOPED_BY"), TextColor::black, 0, 23, true, true);
+	printTextCenteredTinted(Lang::get("MAIN_DEV"), TextColor::black, 0, 35, true, true);
 	drawImage(15, 52, StackZ, true, true);
 
 	drawImage(190, 110, UT, true, true);
 
-	printTextCentered(Lang::get("CURRENT_VERSION") + VER_NUMBER, 0, 173, true, true);
+	printTextCentered(Lang::get("CURRENT_VERSION") + VER_NUMBER, 0, 175, true, true);
 
 	Gui::DrawBottom(true);
 
-	printTextCenteredTinted("devkitPro", TextColor::gray, 0, 30, false, true);
-	printTextCenteredTinted(Lang::get("DEVKITPRO"), TextColor::gray, 0, 45, false, true);
+	printTextCenteredTinted("devkitPro", TextColor::black, 0, 30, false, true);
+	printTextCenteredTinted(Lang::get("DEVKITPRO"), TextColor::black, 0, 45, false, true);
 
-	printTextCenteredTinted("SuperSaiyajinStackZ", TextColor::gray, 0, 80, false, true);
-	printTextCenteredTinted(Lang::get("DEVELOPING_APP"), TextColor::gray, 0, 95, false, true);
+	printTextCenteredTinted("SuperSaiyajinStackZ", TextColor::black, 0, 80, false, true);
+	printTextCenteredTinted(Lang::get("DEVELOPING_APP"), TextColor::black, 0, 95, false, true);
 }
 
 void Overlays::CreditsOverlay() {
