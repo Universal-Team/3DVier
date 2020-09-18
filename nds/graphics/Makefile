@@ -4,10 +4,10 @@ endif
 
 include $(DEVKITARM)/ds_rules
 
-ifneq ($(OS),Windows_NT)
-BMP2DS	?= bmp2ds
-else
+ifeq ($(OS),Windows_NT)
 BMP2DS	?= bmp2ds.exe
+else
+BMP2DS	?= bmp2ds
 endif
 
 GRAPHICS	:=	chars ui .
