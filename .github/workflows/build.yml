@@ -1,4 +1,4 @@
-name: Build 3DVeir
+name: Build 3DVier
 
 on:
   push:
@@ -50,11 +50,11 @@ jobs:
           make
 
           mkdir -p ~/artifacts
-          tools-linux/make_cia --srl="ds/DSVeir.nds"
-          cp 3ds/3DVeir.3dsx ~/artifacts
-          cp 3ds/3DVeir.cia ~/artifacts
-          cp nds/DSVeir.nds ~/artifacts
-          cp nds/DSVeir.cia ~/artifacts/DSVeir.nds.cia
+          tools-linux/make_cia --srl="ds/DSVier.nds"
+          cp 3ds/3DVier.3dsx ~/artifacts
+          cp 3ds/3DVier.cia ~/artifacts
+          cp nds/DSVier.nds ~/artifacts
+          cp nds/DSVier.cia ~/artifacts/DSVier.nds.cia
 
 
           echo ::set-output name=commit_tag::$(git describe --abbrev=0 --tags)
@@ -116,15 +116,15 @@ jobs:
           git config --global user.email "flamekat54@aol.com"
           git config --global user.name "TWLBot"
           git clone --depth 1 https://${{ secrets.TWLBOT_TOKEN }}@github.com/Universal-Team/extras.git
-          mkdir -p extras/builds/3DVeir/
-          cd extras/builds/3DVeir/
-          qrencode -o 3DVeir.png https://github.com/Universal-Team/extras/raw/v$CURRENT_DATE/builds/3DVeir/3DVeir.cia
-          qrencode -o 3DVeir.nds.png https://github.com/Universal-Team/extras/raw/v$CURRENT_DATE/builds/3DVeir/3DVeir.nds.cia
-          qrencode -o 3DVeir-release.png https://github.com/Universal-Team/3DVeir/releases/download/$COMMIT_TAG/3DVeir.cia
-          qrencode -o 3DVeir-release.nds.png https://github.com/Universal-Team/3DVeir/releases/download/$COMMIT_TAG/3DVeir.nds.cia
+          mkdir -p extras/builds/3DVier/
+          cd extras/builds/3DVier/
+          qrencode -o 3DVier.png https://github.com/Universal-Team/extras/raw/v$CURRENT_DATE/builds/3DVier/3DVier.cia
+          qrencode -o 3DVier.nds.png https://github.com/Universal-Team/extras/raw/v$CURRENT_DATE/builds/3DVier/3DVier.nds.cia
+          qrencode -o 3DVier-release.png https://github.com/Universal-Team/3DVier/releases/download/$COMMIT_TAG/3DVier.cia
+          qrencode -o 3DVier-release.nds.png https://github.com/Universal-Team/3DVier/releases/download/$COMMIT_TAG/3DVier.nds.cia
           cp ${{ github.workspace }}/build/* .
           git stage .
-          git commit -m "3DVeir | $COMMIT_HASH"
+          git commit -m "3DVier | $COMMIT_HASH"
           git tag v$CURRENT_DATE
           git push origin master v$CURRENT_DATE
       - name: Release to Universal-Team/extras
@@ -132,7 +132,7 @@ jobs:
           AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
           CONTENT_TYPE="Content-Type: application/json"
           API_URL="https://api.github.com/repos/Universal-Team/extras/releases"
-          RELEASE_INFO="{\"tag_name\": \"v${{ steps.commit.outputs.current_date }}\", \"name\": \"3DVeir | $COMMIT_HASH\", \"body\": \"$AUTHOR_NAME - $COMMIT_MESSAGE\", \"prerelease\": true}"
+          RELEASE_INFO="{\"tag_name\": \"v${{ steps.commit.outputs.current_date }}\", \"name\": \"3DVier | $COMMIT_HASH\", \"body\": \"$AUTHOR_NAME - $COMMIT_MESSAGE\", \"prerelease\": true}"
 
           RESPONSE=$(curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL" -d "$RELEASE_INFO")
 
@@ -164,7 +164,7 @@ jobs:
         run: |
           curl -o send.sh https://raw.githubusercontent.com/Universal-Team/discord-webhooks/master/send-ghactions.sh
           chmod +x send.sh
-          export IMAGE=https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/3DVeir/3DVeir.png
+          export IMAGE=https://raw.githubusercontent.com/Universal-Team/extras/v$CURRENT_DATE/builds/3DVier/3DVier.png
           ./send.sh success ${{ secrets.WEBHOOK_URL }}
       - name: Send failure webhook
         if: ${{ failure() }}
