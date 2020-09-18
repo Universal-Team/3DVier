@@ -8,7 +8,6 @@ endif
 export TARGET	:= DSVier
 export TOPDIR	:= $(CURDIR)
 
-EXECUTABLES	:= ../builds
 # specify a directory which contains the nitro filesystem
 # this is relative to the Makefile
 NITRO_FILES		:= nitrofiles
@@ -37,7 +36,7 @@ checkarm9:
 
 #---------------------------------------------------------------------------------
 $(TARGET).nds	: graphics $(NITRO_FILES) arm9/$(TARGET).elf
-	ndstool	-c $(EXECUTABLES)/$(TARGET).nds -9 arm9/$(TARGET).elf \
+	ndstool	-c $(TARGET).nds -9 arm9/$(TARGET).elf \
 	-b1 icon.bmp "$(GAME_TITLE);$(GAME_SUBTITLE1)" $(_ADDFILES) \
 	-z 80040000 -u 00030004 -a 00000138
 
@@ -53,4 +52,4 @@ graphics:
 clean:
 	$(MAKE) -C arm9 clean
 	$(MAKE) -C graphics clean
-	rm -f $(EXECUTABLES)/$(TARGET).nds $(TARGET).arm9
+	rm -f $(TARGET).nds $(TARGET).arm9

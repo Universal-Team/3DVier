@@ -5,7 +5,7 @@ A Connect Four clone for Nintendo DS(i).
 
 To build DSVier from source, you need devkitPro installed, along with devkitARM, libnds and libfat. To get these you can run `pacman -S nds-dev --noconfirm`. You will also need [bmp2ds](https://github.com/Universal-Team/bmp2ds/releases)'s latest release inside the `graphics` directory, to build the `.gfx` files for DSVier.
 
-Now that you have everything installed, you just need to clone the repository and run `make nds` in the root directory, or directly run `make` in the nds directory. You will find your `DSVier.nds` build at the end inside the `builds` folder from the root directory.
+Now that you have everything installed, you just need to clone the repository and run `make nds` in the root directory, or directly run `make` in the nds directory. You will find your `DSVier.nds` build at the end inside the current directory.
 
 ## Credits
 ### Main Developers

@@ -3,7 +3,7 @@ A Connect Four clone for Nintendo 3DS.
 
 ## Compilation
 
-To build 3DVier from source, you need devkitPro installed, along with devkitARM, libctru, Citro2D and Citro3D. To get these you can run `pacman -S 3ds-dev --noconfirm`. Now that you have everything installed, you just need to run clone the repository and run `make 3ds` in the root directory, or directly run `make` in the 3ds directory. You will find your `3DVier.3dsx` and `3DVier.cia` build at the end inside the `builds` folder from the root directory.
+To build 3DVier from source, you need devkitPro installed, along with devkitARM, libctru, Citro2D and Citro3D. To get these you can run `pacman -S 3ds-dev --noconfirm`. Now that you have everything installed, you just need to run clone the repository and run `make 3ds` in the root directory, or directly run `make` in the 3ds directory. You will find your `3DVier.3dsx` and `3DVier.cia` build at the end inside the current directory.
 
 ## Credits
 ### Main Developers
