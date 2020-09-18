@@ -64,7 +64,6 @@ private:
 	void displaySub(void) const;
 	void subLogic(u16 hDown, touchPosition touch);
 	
-
 	/* Animation and AI stuff. */
 	void drop(); // Drop a chip.
 	void AILogic(); // Logic of the AI.
@@ -90,9 +89,9 @@ private:
 	int dropSelection = 3; // Drop Selection for previewing the positions.
 
 	const std::vector<Structs::ButtonPos> subPosMain = {
-		{80, 30, 88, 32, -1}, // Load a slot.
-		{80, 80, 88, 32, -1}, // Save a slot.
-		{80, 130, 88, 32, -1} // Exit game.
+		{80, 30, 88, 32}, // Load a slot.
+		{80, 80, 88, 32}, // Save a slot.
+		{80, 130, 88, 32} // Exit game.
 	};
 
 	const std::vector<ChipIcn> GamePos = {

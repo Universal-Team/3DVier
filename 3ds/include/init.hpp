@@ -30,7 +30,7 @@
 #include <3ds.h>
 
 namespace Init {
-	// Init, Mainloop & Exit.
+	/* Init, Mainloop & Exit. */
 	Result Initialize();
 	Result MainLoop();
 	Result Exit();

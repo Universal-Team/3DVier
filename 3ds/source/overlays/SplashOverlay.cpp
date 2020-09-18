@@ -29,15 +29,17 @@
 static void Draw(void) {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-	C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
-	C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
+	C2D_TargetClear(Top, TRANSPARENT);
+	C2D_TargetClear(Bottom, TRANSPARENT);
+
 	Gui::ScreenDraw(Top);
 	GFX::DrawSprite(sprites_dev_by_idx, 0, 0);
 	Gui::DrawString(395-Gui::GetStringWidth(0.50, "2020"), 218, 0.50, C2D_Color32(255, 255, 255, 255), "2020");
-	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect.
+
 	Gui::ScreenDraw(Bottom);
 	GFX::DrawSprite(sprites_universal_core_idx, 0, 0);
-	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect
+	if (fadealpha > 0) Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(fadecolor, fadecolor, fadecolor, fadealpha)); // Fade in/out effect.
 	C3D_FrameEnd(0);
 }
 
@@ -46,6 +48,7 @@ void Overlays::SplashOverlay() {
 	fadealpha = 255;
 	int delay = 200; // The delay for exiting the overlay.
 	bool doOut = false;
+	
 	while(!doOut) {
 		Draw();
 		Gui::fadeEffects(16, 16, false);

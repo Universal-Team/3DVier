@@ -24,7 +24,7 @@
 *         reasonable ways as different from the original version.
 */
 
-#include "GameScreen.hpp"
+#include "gameScreen.hpp"
 #include "mainMenu.hpp"
 #include "settingsScreen.hpp"
 

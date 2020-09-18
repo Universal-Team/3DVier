@@ -32,9 +32,10 @@ std::string Keyboard::setString(uint maxLength, std::string old, std::string Tex
 	/* Display Text on top screen. */
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-	C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
+	C2D_TargetClear(Top, TRANSPARENT);
+
 	GFX::DrawTop(true);
-	Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.7f, Text))/2, 0.7f, TEXT_COLOR, Text, 385, 100);
+	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.7f, Text))/2, 0.7f, TEXT_COLOR, Text, 385, 100);
 	C3D_FrameEnd(0);
 
 	SwkbdState state;
@@ -52,9 +53,10 @@ int Keyboard::setInt(int maxValue, std::string Text, int numAmount, int oldVal) 
 	/* Display Text on top screen. */
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-	C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
+	C2D_TargetClear(Top, TRANSPARENT);
+
 	GFX::DrawTop(true);
-	Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.7f, Text))/2, 0.7f, TEXT_COLOR, Text, 385, 100);
+	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.7f, Text))/2, 0.7f, TEXT_COLOR, Text, 385, 100);
 	C3D_FrameEnd(0);
 
 	SwkbdState state;

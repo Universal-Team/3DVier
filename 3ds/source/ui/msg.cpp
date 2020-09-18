@@ -46,6 +46,7 @@ bool Msg::promptMsg(std::string msg) {
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 		C2D_TargetClear(Top, TRANSPARENT);
 		C2D_TargetClear(Bottom, TRANSPARENT);
+
 		GFX::DrawTop();
 		Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.8f, msg))/2-10, 0.8f, TEXT_COLOR, msg, 390, 90);
 
@@ -98,8 +99,9 @@ void Msg::DisplayWarnMsg(std::string Text) {
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 	C2D_TargetClear(Top, TRANSPARENT);
 	C2D_TargetClear(Bottom, TRANSPARENT);
+
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.8f, Text))/2, 0.8f, TEXT_COLOR, Text, 395, 70);
+	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.8f, Text))/2, 0.8f, TEXT_COLOR, Text, 395, 70);
 
 	GFX::DrawBottom();
 	C3D_FrameEnd(0);
@@ -115,8 +117,9 @@ void Msg::DisplayWaitMsg(std::string waitMsg, ...) {
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 	C2D_TargetClear(Top, TRANSPARENT);
 	C2D_TargetClear(Bottom, TRANSPARENT);
+
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.8f, waitMsg))/2, 0.8f, TEXT_COLOR, waitMsg, 390, 70);
+	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.8f, waitMsg))/2, 0.8f, TEXT_COLOR, waitMsg, 390, 70);
 	Gui::DrawStringCentered(0, 215, 0.8f, TEXT_COLOR, Lang::get("A_CONTINUE"), 390);
 
 	GFX::DrawBottom();
@@ -136,6 +139,7 @@ void Msg::DisplayWaitMsg(std::string waitMsg, ...) {
 void Msg::HelperBox(std::string Msg) {
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+
 	Gui::ScreenDraw(Top);
 	Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 190));
 	int textBoxHeight = Gui::GetStringHeight(0.6f, Msg) + 5;
@@ -144,6 +148,7 @@ void Msg::HelperBox(std::string Msg) {
 	Gui::Draw_Rect(40, 211 - textBoxHeight, 320, textBoxHeight, C2D_Color32(0, 0, 0, 190));
 	Gui::Draw_Rect(44, 215 - textBoxHeight, 312, textBoxHeight - 8, BAR_COLOR);
 	Gui::DrawStringCentered(0, 215 - textBoxHeight-2, 0.6, TEXT_COLOR, Msg, 305, Gui::GetStringHeight(0.6f, Msg));
+
 	Gui::ScreenDraw(Bottom);
 	Gui::Draw_Rect(0, 0, 320, 240, C2D_Color32(0, 0, 0, 190));
 	C3D_FrameEnd(0);
@@ -154,8 +159,10 @@ void Msg::DisplayMsg(std::string Message) {
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 	C2D_TargetClear(Top, TRANSPARENT);
 	C2D_TargetClear(Bottom, TRANSPARENT);
+
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.8f, Message))/2, 0.8f, TEXT_COLOR, Message, 390, 70);
+	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.8f, Message))/2, 0.8f, TEXT_COLOR, Message, 390, 70);
+
 	GFX::DrawBottom();
 	C3D_FrameEnd(0);
 }
@@ -170,8 +177,9 @@ void Msg::DisplayMultiPlayMsg(std::string waitMsg, ...) {
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 	C2D_TargetClear(Top, TRANSPARENT);
 	C2D_TargetClear(Bottom, TRANSPARENT);
+
 	GFX::DrawTop();
-	Gui::DrawStringCentered(0, (240-Gui::GetStringHeight(0.8f, waitMsg))/2, 0.8f, TEXT_COLOR, waitMsg, 390, 70);
+	Gui::DrawStringCentered(0, (240 - Gui::GetStringHeight(0.8f, waitMsg))/2, 0.8f, TEXT_COLOR, waitMsg, 390, 70);
 	Gui::DrawStringCentered(0, 215, 0.8f, TEXT_COLOR, Lang::get("Y_CONTINUE"), 390);
 
 	GFX::DrawBottom();

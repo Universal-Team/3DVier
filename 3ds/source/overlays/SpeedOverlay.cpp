@@ -90,8 +90,8 @@ static void DrawAnimDrop(int &dropPos, int &frameCount, int &frameDrops, int &mo
 
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-	C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
-	C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
+	C2D_TargetClear(Top, TRANSPARENT);
+	C2D_TargetClear(Bottom, TRANSPARENT);
 
 	GFX::DrawTop(false);
 	Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 210)); // Darken the screen.
@@ -108,6 +108,7 @@ static void DrawAnimDrop(int &dropPos, int &frameCount, int &frameDrops, int &mo
 
 	/* Drop Anim speed. */
 	Gui::DrawStringCentered(0, 30, 0.6, TEXT_COLOR, Lang::get("DROP_SPEED"));
+
 	for (int i = 0; i < 9; i++) {
 		if (mode == 0) {
 			if (i + 1 == Settings::dropSpeed()) Gui::drawAnimatedSelector(20 + 30 * i, 50, 30, 30, .030, SELECTED_BUTTON_COLOR, BUTTON_COLOR);
@@ -122,6 +123,7 @@ static void DrawAnimDrop(int &dropPos, int &frameCount, int &frameDrops, int &mo
 
 	/* Per each 5 frame speed. */
 	Gui::DrawStringCentered(0, 80, 0.6, TEXT_COLOR, Lang::get("SPEED_PLUS"));
+
 	for (int i = 0; i < 9; i++) {
 		/* If mode == 1, we'd display the selector here. */
 		if (mode == 1) {
@@ -137,6 +139,7 @@ static void DrawAnimDrop(int &dropPos, int &frameCount, int &frameDrops, int &mo
 
 	/* Clear Anim speed. */
 	Gui::DrawStringCentered(0, 130, 0.6, TEXT_COLOR, Lang::get("CLEAR_SPEED"));
+
 	for (int i = 0; i < 9; i++) {
 		/* If mode == 2, we'd display the selector here. */
 		if (mode == 2) {
@@ -179,8 +182,8 @@ static void DrawClearAnim(int &pos, int &frameCount, int &frameDrops, int &mode)
 
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-	C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
-	C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
+	C2D_TargetClear(Top, TRANSPARENT);
+	C2D_TargetClear(Bottom, TRANSPARENT);
 
 	GFX::DrawTop(false);
 	Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 210)); // Darken the screen.
@@ -197,6 +200,7 @@ static void DrawClearAnim(int &pos, int &frameCount, int &frameDrops, int &mode)
 
 	/* Drop Anim speed. */
 	Gui::DrawStringCentered(0, 30, 0.6, TEXT_COLOR, Lang::get("DROP_SPEED"));
+
 	for (int i = 0; i < 9; i++) {
 		/* If mode == 0, we'd display the selector here. */
 		if (mode == 0) {
@@ -212,6 +216,7 @@ static void DrawClearAnim(int &pos, int &frameCount, int &frameDrops, int &mode)
 
 	/* Per each 5 frame speed. */
 	Gui::DrawStringCentered(0, 80, 0.6, TEXT_COLOR, Lang::get("SPEED_PLUS"));
+
 	for (int i = 0; i < 9; i++) {
 		/* If mode == 1, we'd display the selector here. */
 		if (mode == 1) {
@@ -227,6 +232,7 @@ static void DrawClearAnim(int &pos, int &frameCount, int &frameDrops, int &mode)
 
 	/* Clear Anim speed. */
 	Gui::DrawStringCentered(0, 130, 0.6, TEXT_COLOR, Lang::get("CLEAR_SPEED"));
+	
 	for (int i = 0; i < 9; i++) {
 		/* If mode == 2, we'd display the selector here. */
 		if (mode == 2) {

@@ -37,8 +37,8 @@ int Overlays::AvatarOverlay(int oldAvatar, const std::string text) {
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 		C2D_TargetClear(Top, C2D_Color32(0, 0, 0, 0));
 		C2D_TargetClear(Bottom, C2D_Color32(0, 0, 0, 0));
-		GFX::DrawTop();
 
+		GFX::DrawTop();
 		Gui::Draw_Rect(0, 0, 400, 240, C2D_Color32(0, 0, 0, 190));
 		Gui::DrawStringCentered(0, -2, 0.8f, TEXT_COLOR, text, 390, 30);
 		Gui::DrawStringCentered(0, 217, 0.6f, TEXT_COLOR, Lang::get("CHAR_SELECT"), 390, 30);

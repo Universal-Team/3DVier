@@ -30,8 +30,11 @@ extern bool touching(touchPosition touch, Structs::ButtonPos button);
 
 static void Draw(void) {
 	std::string currentVersion = Lang::get("CURRENT_VERSION");
+
 	Gui::clearTextBufs();
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+	C2D_TargetClear(Top, TRANSPARENT);
+	C2D_TargetClear(Bottom, TRANSPARENT);
 
 	GFX::DrawTop();
 	Gui::DrawStringCentered(0, -2, 0.8f, TEXT_COLOR, "3DVier - " + Lang::get("CREDITS"), 400);
@@ -41,21 +44,21 @@ static void Draw(void) {
 	GFX::DrawSprite(sprites_u_c_idx, 190, 105);
 	currentVersion += V_STRING;
 	Gui::DrawString(395-Gui::GetStringWidth(0.70f, currentVersion), 217, 0.70f, TEXT_COLOR, currentVersion, 400);
-	GFX::DrawBottom();
 
+	GFX::DrawBottom();
 	Gui::DrawStringCentered(0, 28, 0.7f, TEXT_COLOR, "devkitPro", 310, 0);
 	Gui::DrawStringCentered(0, 48, 0.6f, TEXT_COLOR, Lang::get("DEVKITPRO"), 310, 0);
 	Gui::DrawStringCentered(0, 78, 0.7f, TEXT_COLOR, "SuperSaiyajinStackZ", 310, 0);
 	Gui::DrawStringCentered(0, 98, 0.6f, TEXT_COLOR, Lang::get("DEVELOPING_APP"), 310, 0);
 	Gui::DrawStringCentered(0, 128, 0.7f, TEXT_COLOR, "Universal-Team", 310, 0);
 	Gui::DrawStringCentered(0, 148, 0.6f, TEXT_COLOR, Lang::get("UNIVERSAL_CORE"), 310, 0);
-
 	C3D_FrameEnd(0);
 }
 
 
 void Overlays::CreditsOverlay() {
 	bool doOut = false;
+
 	while(!doOut) {
 		Draw();
 		hidScanInput();

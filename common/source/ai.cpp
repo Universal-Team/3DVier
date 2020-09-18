@@ -29,7 +29,7 @@
 
 /* Inside bounds checks. */
 static bool inside(int y, int x) {
-	return y >= 0 && y < HEIGHT && x >= 0 && x < WIDTH;
+	return (y >= 0 && y < HEIGHT && x >= 0 && x < WIDTH);
 }
 
 /* Get the score board. */
@@ -40,6 +40,7 @@ static int ScoreBoard(const Game& game) {
 	/* Horizontal spans. */
 	for(int y = 0; y < HEIGHT; y++) {
 		int score = game.MiniMaxHelper(y, 0) + game.MiniMaxHelper(y, 1) + game.MiniMaxHelper(y, 2);
+
 		for(int x = 3; x < WIDTH; x++) {
 			assert(inside(y, x));
 			score += game.MiniMaxHelper(y, x);
@@ -52,6 +53,7 @@ static int ScoreBoard(const Game& game) {
 	/* Vertical spans. */
 	for(int x = 0; x < WIDTH; x++) {
 		int score = game.MiniMaxHelper(0, x) + game.MiniMaxHelper(1, x) + game.MiniMaxHelper(2, x);
+
 		for(int y = 3; y < HEIGHT; y++) {
 			assert(inside(y, x));
 			score += game.MiniMaxHelper(y, x);
@@ -65,6 +67,7 @@ static int ScoreBoard(const Game& game) {
 	for(int y = 0; y < HEIGHT - 3; y++) {
 		for(int x = 0; x < WIDTH - 3; x++) {
 			int score = 0;
+
 			for(int idx = 0; idx < 4; idx++) {
 				int yy = y + idx;
 				int xx = x + idx;
@@ -80,6 +83,7 @@ static int ScoreBoard(const Game& game) {
 	for(int y = 3; y < HEIGHT; y++) {
 		for(int x = 0; x < WIDTH - 3; x++) {
 			int score = 0;
+			
 			for(int idx = 0; idx < 4; idx++) {
 				int yy = y - idx;
 				int xx = x + idx;

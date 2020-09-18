@@ -51,6 +51,6 @@ std::string langs[] = {"de", "en"};
 void Lang::load(int lang) {
 	FILE* values;
 	values = fopen((LANG_PATH + langs[lang] + "/app.json").c_str(), "rt");
-	if (values)	appJson = nlohmann::json::parse(values, nullptr, false);
+	if (values) appJson = nlohmann::json::parse(values, nullptr, false);
 	fclose(values);
 }

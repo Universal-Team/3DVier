@@ -50,7 +50,7 @@ jobs:
           make
 
           mkdir -p ~/artifacts
-          tools-linux/make_cia --srl="ds/DSVier.nds"
+          tools-linux/make_cia --srl="nds/DSVier.nds"
           cp 3ds/3DVier.3dsx ~/artifacts
           cp 3ds/3DVier.cia ~/artifacts
           cp nds/DSVier.nds ~/artifacts
