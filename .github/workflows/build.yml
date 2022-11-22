@@ -7,6 +7,7 @@ on:
     branches: ["*"]
   release:
     types: [created]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -30,7 +31,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install p7zip-full -y
 
-          curl -L https://github.com/Steveice10/bannertool/releases/download/1.1.0/bannertool.zip -o bannertool.zip
+          curl -L https://github.com/Steveice10/bannertool/releases/download/1.2.0/bannertool.zip -o bannertool.zip
           sudo 7z e bannertool.zip linux-x86_64/bannertool
           sudo chmod +x bannertool
           mv bannertool /usr/local/bin
@@ -41,7 +42,7 @@ jobs:
           mv makerom /usr/local/bin
           rm makerom-v0.17-ubuntu_x86_64.zip
 
-          curl -L https://github.com/Universal-Team/bmp2ds/releases/download/v1.0.0/bmp2ds-linux -o bmp2ds
+          curl -L https://github.com/Universal-Team/bmp2ds/releases/download/v1.1.0/bmp2ds-linux -o bmp2ds
           chmod +x bmp2ds
           mv bmp2ds /usr/local/bin
       - name: Build
