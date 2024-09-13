@@ -20,6 +20,8 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
+      - name: Setup environment
+        run: git config --global safe.directory '*'
       - name: Install tools
         run: |
           sudo apt-get update
