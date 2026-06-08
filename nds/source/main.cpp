@@ -26,13 +26,13 @@
 
 #include <fat.h>
 
-#include "flashcard.hpp"
 #include "gui.hpp"
 #include "mainMenu.hpp"
-#include "nitrofs.h"
 #include "screenCommon.hpp"
 #include "selector.hpp"
 #include "structs.hpp"
+#include <filesystem.h>
+#include <sys/stat.h>
 
 std::unique_ptr<Selector> selector;
 touchPosition touch;
@@ -62,14 +62,15 @@ int main(int argc, char **argv) {
 	/* Init filesystem. */
 	hasSD = fatInitDefault();
 
+
 	if (hasSD) {
 		/* Make directories, if not exist. */
-		mkdir(sdFound() ? "sd:/_nds" : "fat:/_nds", 0777);
-		mkdir(sdFound() ? "sd:/_nds/DSVier" : "fat:/_nds/DSVier", 0777);
+		mkdir("/_nds", 0777);
+		mkdir("/_nds/DSVier", 0777);
 	}
 
 	/* Try to init NitroFS from argv provided to the game when it was launched. */
-	if (!nitroFSInit(argv[0])) {
+	if (!nitroFSInit(NULL)) {
 		/* If that fails, try to init NitroFS on 'DSVier.nds'. */
 		if (!nitroFSInit("DSVier.nds")) {
 			if (!nitroFSInit("/_nds/DSVier/DSVier.nds")) {
@@ -77,16 +78,16 @@ int main(int argc, char **argv) {
 				consoleDemoInit();
 				printf("nitroFSInit() failed...\n\n");
 				printf("Please copy DSVier.nds to:\n\n");
-				printf("%s:/_nds/DSVier/\n", sdFound() ? (access("/Nintendo 3DS", F_OK) == 0 ? "sdmc" : "sd") : "fat");
-				printf("                  DSVier.nds\n\n");
-				printf("or launch DSVier using\n\n");
-				printf("      TWiLight Menu++ or HBMenu\n\n\n\n\n");
-				printf("(Note: TWiLight's Acekard\n");
-				printf("        theme needs a copy in ^)\n\n");
+				printf("%s_nds/DSVier/DSVier.nds\n\n", fatGetDefaultDrive());
+				printf("or launch DSVier using\n");
+				printf("TWiLight Menu++ or HBMenu.");
 				while(1) swiWaitForVBlank();
 			}
 		}
 	}
+
+	// Ensure that we're on the SD card, not NitroFS
+	chdir(fatGetDefaultDrive());
 
 	selector = std::make_unique<Selector>(88, 32);
 	if (hasSD) Settings::Read();

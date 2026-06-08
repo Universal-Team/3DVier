@@ -28,27 +28,23 @@
 #define _3DVIER_CORE_COMMON_HPP
 
 #include <array>
-#include <cstdlib> // For uint8_t etc.
 #include <memory>
 #include <string>
 #include <vector>
+#include <sys/types.h> // For uint8_t etc.
 
-#ifdef _NDS
-	#include "flashcard.hpp"
-#endif
-
-#ifdef _3DS
+#ifdef __3DS__
 	const std::array<std::string, 3> Slots = {{
 		"sdmc:/3ds/3DVier/slot1.slot",
 		"sdmc:/3ds/3DVier/slot2.slot",
 		"sdmc:/3ds/3DVier/slot3.slot"
 	}};
 
-#elif _NDS
+#elif __NDS__
 	const std::array<std::string, 3> Slots = {{
-		sdFound() ? "sd:/_nds/DSVier/slot1.slot" : "fat:/_nds/DSVier/slot1.slot",
-		sdFound() ? "sd:/_nds/DSVier/slot2.slot" : "fat:/_nds/DSVier/slot2.slot",
-		sdFound() ? "sd:/_nds/DSVier/slot3.slot" : "fat:/_nds/DSVier/slot3.slot"
+		"/_nds/DSVier/slot1.slot",
+		"/_nds/DSVier/slot2.slot",
+		"/_nds/DSVier/slot3.slot"
 	}};
 
 #else

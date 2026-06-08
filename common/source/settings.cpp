@@ -24,10 +24,6 @@
 *         reasonable ways as different from the original version.
 */
 
-#ifdef _NDS
-	#include "flashcard.hpp"
-#endif
-
 #include "json.hpp"
 #include "settings.hpp"
 #include <unistd.h>
@@ -37,14 +33,14 @@ static bool configChanged = false;
 static bool configLoaded = false;
 
 /* Change these definitions, when needed for defaults. */
-#ifdef _3DS
+#ifdef __3DS__
 	#define SETTINGS_FILE "sdmc:/3ds/3DVier/Settings.json"
 	#define SPEED_PLUS 4
 	#define DROP_SPEED 3
 	#define CLEAR_SPEED 2
 
-#elif _NDS
-	#define SETTINGS_FILE sdFound() ? "sd:/_nds/DSVier/Settings.json" : "fat:/_nds/DSVier/Settings.json"
+#elif __NDS__
+	#define SETTINGS_FILE "/_nds/DSVier/Settings.json"
 	#define SPEED_PLUS 1
 	#define DROP_SPEED 3
 	#define CLEAR_SPEED 2

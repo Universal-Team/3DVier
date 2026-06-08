@@ -26,14 +26,12 @@
 
 #include "lang.hpp"
 
-#include <stdio.h>
-
 nlohmann::json appJson;
 
 #ifdef __3DS__
 	#define LANG_PATH "romfs:/lang/"
 
-#elif _NDS
+#elif __NDS__
 	#define LANG_PATH "nitro:/lang/"
 	
 #else

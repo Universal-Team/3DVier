@@ -1,9 +1,3 @@
-ifeq ($(strip $(DEVKITARM)),)
-$(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
-endif
-
-include $(DEVKITARM)/ds_rules
-
 ifeq ($(OS),Windows_NT)
 BMP2DS	?= bmp2ds.exe
 else
@@ -21,7 +15,7 @@ TARGETS		:= $(INPUTS:.bmp=.gfx)
 .PHONY	:	clean all directories
 
 all	:	$(TARGETS)
-	@echo graphics ...
+	@echo "  GRAPHICS"
 
 %.gfx	:	%.bmp %.txt
 	@mkdir -p $(OUT)/$(@D)
@@ -32,5 +26,5 @@ all	:	$(TARGETS)
 	@$(BMP2DS) $< $(OUT)/$@
 
 clean	:
-	@echo clean ...
+	@echo "  CLEAN"
 	@rm -rf $(addprefix $(OUT)/,$(TARGETS))
