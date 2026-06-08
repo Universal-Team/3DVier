@@ -30,7 +30,7 @@
 
 nlohmann::json appJson;
 
-#ifdef _3DS
+#ifdef __3DS__
 	#define LANG_PATH "romfs:/lang/"
 
 #elif _NDS
@@ -46,7 +46,7 @@ std::string Lang::get(const std::string &key) {
 	return appJson.at(key).get_ref<const std::string&>();
 }
 
-std::string langs[] = {"de", "en"};
+std::string langs[] = {"de", "en", "fr"};
 
 void Lang::load(int lang) {
 	FILE* values;

@@ -57,7 +57,22 @@ Result Init::Initialize() {
 
 	osSetSpeedupEnable(true); // Enable speed-up for New 3DS users.
 	Settings::Read();
-	Lang::load(1);
+
+	u8 language = 1;
+	cfguInit();
+	CFGU_GetSystemLanguage(&language);
+	cfguExit();
+	switch (language) {
+		case CFG_LANGUAGE_EN: // English
+		default:
+			Lang::load(1);
+			break;
+		case CFG_LANGUAGE_FR: // French
+			Lang::load(2);
+			break;
+	}
+
+
 	Overlays::SplashOverlay();
 	Gui::setScreen(std::make_unique<MainMenu>(), false, true);
 	return 0;
